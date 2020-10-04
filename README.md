@@ -2,7 +2,7 @@
 
 JAMM is Just A Music Maintainer!
 
-It is meant to modify, manipulate, and maintain your Spotify playlists and library in ways that are currently not supported natively by Spotify.
+It is meant to modify, manipulate, and maintain Spotify playlists and libraries in ways that are currently not supported natively or easily within Spotify today.
 
 At the moment, it is meant primarily to introduce "smart playlist" functionality similar to iTunes within Spotify.
 

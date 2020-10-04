@@ -1,8 +1,8 @@
 {
-  "author": "Spotify",
-  "name": "web-api-auth-examples",
-  "description": "Basic examples of the Spotify authorization flows through OAuth 2",
-  "version": "0.0.2",
+  "author": "Ian Santagata",
+  "name": "JAMM",
+  "description": "JAMM is Just a Music Maintainer!  It is meant to modify, manipulate, and maintain Spotify playlists and libraries in ways that are currently not supported natively or easily within Spotify today.",
+  "version": "0.0.1",
   "dependencies": {
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.4",
