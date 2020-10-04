@@ -60,3 +60,6 @@ crashlytics-build.properties
 
 # Secret files
 *.secret
+
+# Node
+node_modules/
