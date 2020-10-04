@@ -58,7 +58,8 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
-# Secret files
+# Secrets
+secrets/
 *.secret
 
 # Node
