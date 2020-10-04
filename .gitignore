@@ -59,7 +59,6 @@ sysinfo.txt
 crashlytics-build.properties
 
 # Secrets
-secrets/
 *.secret
 
 # Node
