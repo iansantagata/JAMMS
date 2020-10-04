@@ -1,14 +1,15 @@
 // Depedencies
 var fs = require('fs'); // File System
+var path = require('path'); // URL and local file paths
 
 // Secrets Logic
-const secretsPath = __dirname + '/../secrets/';
+const secretsPath = path.join(__dirname, '..', 'secrets');
 
 exports.getClientId = function()
 {
     try
     {
-        return fs.readFileSync(secretsPath + 'client_id.secret', 'utf8').trim();
+        return fs.readFileSync(path.join(secretsPath, 'client_id.secret'), 'utf8').trim();
     }
     catch (err)
     {
@@ -20,7 +21,7 @@ exports.getClientSecret = function()
 {
     try
     {
-        return fs.readFileSync(secretsPath + 'client_secret.secret', 'utf8').trim();
+        return fs.readFileSync(path.join(secretsPath, 'client_secret.secret'), 'utf8').trim();
     }
     catch (err)
     {

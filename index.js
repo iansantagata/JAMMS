@@ -5,13 +5,14 @@
 // Depedencies
 var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
+var path = require('path'); // URI and local file paths
 var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
 // Custom Modules
-const customModulePath = __dirname + '/custom_modules/'
-var secrets = require(customModulePath + 'secrets.js');
+const customModulePath = path.join(__dirname, 'custom_modules')
+var secrets = require(path.join(customModulePath, 'secrets.js'));
 
 var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
@@ -33,10 +34,11 @@ var generateRandomString = function(length) {
 };
 
 var stateKey = 'spotify_auth_state';
+const staticFilesPath = path.join(__dirname, 'public');
 
 var app = express();
 
-app.use(express.static(__dirname + '/public'))
+app.use(express.static(staticFilesPath))
    .use(cors())
    .use(cookieParser());
 
