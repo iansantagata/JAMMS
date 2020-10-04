@@ -1,8 +1,10 @@
 {
-  "author": "Ian Santagata",
   "name": "JAMM",
+  "author": "Ian Santagata",
   "description": "JAMM is Just a Music Maintainer!  It is meant to modify, manipulate, and maintain Spotify playlists and libraries in ways that are currently not supported natively or easily within Spotify today.",
   "version": "0.0.1",
+  "main": "index.js",
+  "license": "MIT",
   "dependencies": {
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.4",

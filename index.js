@@ -1,31 +1,21 @@
-var fs = require('fs'); // File System
+/*
+ * Main Node Application and Event Handler for JAMM App
+ */
+
+// Depedencies
 var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
 var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
-const secretFolderLocation = './secrets/';
-
-try
-{
-    var client_id = fs.readFileSync(secretFolderLocation + 'client_id.secret', 'utf8').trim(); // Your client id
-}
-catch (err)
-{
-    console.error(err);
-}
-
-try
-{
-    var client_secret = fs.readFileSync(secretFolderLocation + 'client_secret.secret', 'utf8').trim(); // Your secret
-}
-catch (err)
-{
-    console.error(err);
-}
+// Custom Modules
+const customModulePath = './custom_modules/'
+var secrets = require(customModulePath + 'secrets.js');
 
 var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
+
+// Functions
 
 /**
  * Generates a random string containing numbers and letters
@@ -50,6 +40,7 @@ app.use(express.static(__dirname + '/public'))
    .use(cors())
    .use(cookieParser());
 
+// Login Page
 app.get('/login', function(req, res) {
 
   var state = generateRandomString(16);
@@ -60,13 +51,14 @@ app.get('/login', function(req, res) {
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       response_type: 'code',
-      client_id: client_id,
+      client_id: secrets.getClientId(),
       scope: scope,
       redirect_uri: redirect_uri,
       state: state
     }));
 });
 
+// Callback Page
 app.get('/callback', function(req, res) {
 
   // your application requests refresh and access tokens
@@ -91,7 +83,7 @@ app.get('/callback', function(req, res) {
         grant_type: 'authorization_code'
       },
       headers: {
-        'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
+        'Authorization': 'Basic ' + secrets.getBase64EncodedAuthorizationToken()
       },
       json: true
     };
@@ -129,13 +121,14 @@ app.get('/callback', function(req, res) {
   }
 });
 
+// Refresh Token Page
 app.get('/refresh_token', function(req, res) {
 
   // requesting access token from refresh token
   var refresh_token = req.query.refresh_token;
   var authOptions = {
     url: 'https://accounts.spotify.com/api/token',
-    headers: { 'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64')) },
+    headers: { 'Authorization': 'Basic ' + secrets.getBase64EncodedAuthorizationToken() },
     form: {
       grant_type: 'refresh_token',
       refresh_token: refresh_token
@@ -153,5 +146,6 @@ app.get('/refresh_token', function(req, res) {
   });
 });
 
+// Listening Port
 console.log('Listening on 8888');
 app.listen(8888);
