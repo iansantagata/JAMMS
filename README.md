@@ -1,4 +1,4 @@
-### Overview
+## Overview
 
 JAMM is Just A Music Maintainer!
 
@@ -6,15 +6,17 @@ It is meant to modify, manipulate, and maintain Spotify playlists and libraries 
 
 At the moment, it is meant primarily to introduce "smart playlist" functionality similar to iTunes within Spotify.
 
-### Inspiration
+## Inspiration
 
 JAMM was inspired by many applications like it, but in particular [PLYLST](https://plylst.app/) which has recently been taken offline.
 
 Although PLYLST is [open source](https://github.com/Shpigford/plylst), JAMM is meant to approach the same problem for individual users rather than as a service for all users.
 
-### Installation
+## Installation
 
-This application will not run without specific secrets (not included in the repository for security reasons).
+### Secrets
+
+This application will not run properly without specific secrets (not included in the repository for security reasons).
 
 For more information on where these secrets come from, see [Spotify's documentation on Application Settings](https://developer.spotify.com/documentation/general/guides/app-settings/).
 
@@ -33,3 +35,11 @@ As an example:
 3. Replace the contents of `client_id.secret` with the specific client ID needed for this application.
 4. Repeat this process for `client_secret.secret.example` file, this time using the specific client secret needed for this application.
 5. Now, there are just as many `.secret` files in the `secrets/` folder as `.secret.example` files, the job is complete!
+
+### Start-Up
+
+*Note* - this application requires both `Node.js` and `npm` in order to run.  You can download both (`npm` comes with `Node.js`) [here](https://nodejs.org).
+
+In order to start-up the application locally, run `npm install` in the root directory of the repository.  This will pull the necessary packages listed in `package.json` and `package-lock.json` from `npm` (Node Package Manager) into the `node_modules/` folder locally.
+
+To start up the application after pulling the dependencies, simply run `node index.js` in the root directory of the repository.
