@@ -2,7 +2,7 @@
 var fs = require('fs'); // File System
 
 // Secrets Logic
-const secretsPath = './secrets/';
+const secretsPath = __dirname + '/../secrets/';
 
 exports.getClientId = function()
 {

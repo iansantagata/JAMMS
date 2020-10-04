@@ -10,7 +10,7 @@ var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
 // Custom Modules
-const customModulePath = './custom_modules/'
+const customModulePath = __dirname + '/custom_modules/'
 var secrets = require(customModulePath + 'secrets.js');
 
 var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
