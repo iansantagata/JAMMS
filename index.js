@@ -14,6 +14,7 @@ const customModulePath = path.join(__dirname, 'custom_modules');
 var secrets = require(path.join(customModulePath, 'secrets.js'));
 var login = require(path.join(customModulePath, 'login.js'));
 var callback = require(path.join(customModulePath, 'callback.js'));
+var refreshAuth = require(path.join(customModulePath, 'refreshAuth.js'));
 
 var stateKey = 'spotify_auth_state';
 const staticFilesPath = path.join(__dirname, 'public');
@@ -31,29 +32,7 @@ app.get('/login', login.getLoginPage);
 app.get('/callback', callback.getCallbackPage);
 
 // Refresh Token Page
-app.get('/refresh_token', function(req, res) {
-
-  // requesting access token from refresh token
-  var refresh_token = req.query.refresh_token;
-  var authOptions = {
-    url: 'https://accounts.spotify.com/api/token',
-    headers: { 'Authorization': 'Basic ' + secrets.getBase64EncodedAuthorizationToken() },
-    form: {
-      grant_type: 'refresh_token',
-      refresh_token: refresh_token
-    },
-    json: true
-  };
-
-  request.post(authOptions, function(error, response, body) {
-    if (!error && response.statusCode === 200) {
-      var access_token = body.access_token;
-      res.send({
-        'access_token': access_token
-      });
-    }
-  });
-});
+app.get('/refresh_token', refreshAuth.getAccessToken);
 
 // Listening Port
 console.log('Listening on port 80');
