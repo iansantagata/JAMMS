@@ -7,31 +7,15 @@ var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
 var path = require('path'); // URI and local file paths
 var cors = require('cors');
-var querystring = require('querystring');
+var querystring = require('querystring'); // URI query string manipulation
 var cookieParser = require('cookie-parser');
 
 // Custom Modules
-const customModulePath = path.join(__dirname, 'custom_modules')
+const customModulePath = path.join(__dirname, 'custom_modules');
 var secrets = require(path.join(customModulePath, 'secrets.js'));
+var login = require(path.join(customModulePath, 'login.js'));
 
 var redirect_uri = 'http://localhost/callback'; // Your redirect uri
-
-// Functions
-
-/**
- * Generates a random string containing numbers and letters
- * @param  {number} length The length of the string
- * @return {string} The generated string
- */
-var generateRandomString = function(length) {
-  var text = '';
-  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-  for (var i = 0; i < length; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
-};
 
 var stateKey = 'spotify_auth_state';
 const staticFilesPath = path.join(__dirname, 'public');
@@ -43,22 +27,7 @@ app.use(express.static(staticFilesPath))
    .use(cookieParser());
 
 // Login Page
-app.get('/login', function(req, res) {
-
-  var state = generateRandomString(16);
-  res.cookie(stateKey, state);
-
-  // your application requests authorization
-  var scope = 'user-read-private user-read-email';
-  res.redirect('https://accounts.spotify.com/authorize?' +
-    querystring.stringify({
-      response_type: 'code',
-      client_id: secrets.getClientId(),
-      scope: scope,
-      redirect_uri: redirect_uri,
-      state: state
-    }));
-});
+app.get('/login', login.getLoginPage);
 
 // Callback Page
 app.get('/callback', function(req, res) {
