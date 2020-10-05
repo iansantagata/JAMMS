@@ -14,7 +14,7 @@ var cookieParser = require('cookie-parser');
 const customModulePath = path.join(__dirname, 'custom_modules')
 var secrets = require(path.join(customModulePath, 'secrets.js'));
 
-var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
+var redirect_uri = 'http://localhost/callback'; // Your redirect uri
 
 // Functions
 
@@ -149,5 +149,5 @@ app.get('/refresh_token', function(req, res) {
 });
 
 // Listening Port
-console.log('Listening on 8888');
-app.listen(8888);
+console.log('Listening on port 80');
+app.listen(80);
