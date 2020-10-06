@@ -21,7 +21,7 @@ exports.getLoginPage = function(req, res)
     var state = randomString.generateRandomString(stateLength);
     res.cookie(stateKey, state);
 
-    // Request authorization for this application
+    // Request authorization for this application via a Spotify login page
     res.redirect(spotifyAuthorizeUri + '?' +
         querystring.stringify({
             response_type: 'code',
