@@ -5,6 +5,7 @@
   "version": "0.0.1",
   "main": "index.js",
   "license": "MIT",
+  "repository": "bitbucket:iansantagata/jamm",
   "dependencies": {
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.4",
