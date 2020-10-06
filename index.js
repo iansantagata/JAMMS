@@ -10,7 +10,7 @@ var cors = require('cors');
 var cookieParser = require('cookie-parser');
 
 // Custom Modules
-const customModulePath = path.join(__dirname, 'custom_modules');
+const customModulePath = path.join(__dirname, 'modules');
 var secrets = require(path.join(customModulePath, 'secrets.js'));
 var login = require(path.join(customModulePath, 'login.js'));
 var callback = require(path.join(customModulePath, 'callback.js'));
