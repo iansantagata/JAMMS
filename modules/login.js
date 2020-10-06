@@ -20,8 +20,9 @@ const callbackEndpoint = '/callback';
 
 exports.getLoginPage = function(req, res)
 {
-    var state = randomString.generateRandomString(stateLength);
-    res.cookie(stateKey, state);
+    // Set state token locally for logging in to be validated against Spotify returned state token
+    var stateToken = randomString.generateRandomString(stateLength);
+    res.cookie(stateKey, stateToken);
 
     // Build the full Uri to work both in production and while developing
     var hostName = req.hostName;
@@ -38,7 +39,7 @@ exports.getLoginPage = function(req, res)
             client_id: secrets.getClientId(),
             scope: scope,
             redirect_uri: redirectUri,
-            state: state
+            state: stateToken
         })
     );
 };
