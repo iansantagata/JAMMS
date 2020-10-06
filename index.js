@@ -4,7 +4,7 @@
 
  console.log('Starting application');
 
-// Depedencies
+// Dependencies
 var express = require('express'); // Express web server framework
 var path = require('path'); // URI and local file paths
 var cors = require('cors');
