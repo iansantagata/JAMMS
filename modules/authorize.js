@@ -40,27 +40,21 @@ exports.getAuthorizationTokens = function(req, res, callback)
     };
 
     // Make the request to get access and refresh tokens
+    // TODO - Replace request with a different library, because this is sure to be a pain
     request.post(authorizeOptions,
-        function(error, accessResponse, body)
+        function(error, spotifyResponse, body)
         {
-            exports.handleCallback(error, res, accessResponse, body);
+            exports.handleCallback(error, res, spotifyResponse, body);
         }
     );
 }
 
-exports.handleCallback = function(err, res, accessResponse, body)
+exports.handleCallback = function(err, res, spotifyResponse, body)
 {
     // Handle if there was an error for any reason
-    // TODO - Investigate if error is even valid here as part of the response or not
-    // TODO - Convert this to be a redirect change to access denied page instead
-    if (err || res.statusCode !== 200)
+    if (err || spotifyResponse.statusCode !== 200)
     {
-        res.redirect('/#' +
-            querystring.stringify({
-                error: 'invalid_token'
-            })
-        );
-
+        res.redirect('access_denied');
         return;
     }
 
@@ -77,13 +71,16 @@ exports.handleCallback = function(err, res, accessResponse, body)
         json: true
     };
 
-    // use the access token to access the Spotify Web API
-    request.get(options, function(err, res, body)
+    // Use the access token to access the Spotify Web API
+
+    // TODO - Change this to grab the data needed for the home page (or move this call into that middleware) if any is needed at all
+    request.get(options, function(err, spotifyResponse, body)
     {
         console.log(body);
     });
 
     // we can also pass the token to the browser to make requests from there
+    // TODO - Remove this and change it to redirect somewhere else, maybe the home page
     res.redirect('/#' +
         querystring.stringify({
             access_token: accessToken,
