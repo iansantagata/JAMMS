@@ -12,10 +12,11 @@ var cookieParser = require('cookie-parser');
 
 // Custom Modules
 const customModulePath = path.join(__dirname, 'modules');
-var login = require(path.join(customModulePath, 'login.js'));
 var authorize = require(path.join(customModulePath, 'authorize.js'));
-var refreshAuth = require(path.join(customModulePath, 'refreshAuth.js'));
 var error = require(path.join(customModulePath, 'error.js'));
+// TODO - // var home = require(path.join(customModulePath, 'home.js'));
+var login = require(path.join(customModulePath, 'login.js'));
+var refreshAuth = require(path.join(customModulePath, 'refreshAuth.js'));
 
 // Setup Page Handling
 const staticFilesPath = path.join(__dirname, 'public');
@@ -25,12 +26,14 @@ app.use(express.static(staticFilesPath))
    .use(cors())
    .use(cookieParser());
 
+// Home Logic
+// TODO - // app.get('/home', home.getHomePage);
+
 // Login Logic
 app.get('/login', login.getLoginPage);
 app.get('/validateLogin', login.validateLogin);
 
 // Authorization Logic
-app.get('/authorize', authorize.getAuthorizationTokens);
 app.get('/refresh_token', refreshAuth.getAccessToken);
 
 // Error Handling

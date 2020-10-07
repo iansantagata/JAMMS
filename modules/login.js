@@ -5,13 +5,13 @@ var request = require('request'); // Make Http Requests
 
 // Custom Modules
 const customModulePath = __dirname;
-var randomString = require(path.join(customModulePath, 'randomString.js'));
+var authorize = require(path.join(customModulePath, 'authorize.js'));
 var secrets = require(path.join(customModulePath, 'secrets.js'));
+var randomString = require(path.join(customModulePath, 'randomString.js'));
+var redirect = require(path.join(customModulePath, 'redirect.js'));
 
 // Login Logic
 const spotifyAuthorizeUri = 'https://accounts.spotify.com/authorize';
-const spotifyAccessTokenUri = 'https://accounts.spotify.com/api/token';
-const spotifyGetCurrentUserUri = 'https://api.spotify.com/v1/me';
 
 // TODO - Change / remove scopes when we no longer need to access the GetCurrentUser endpoint
 const scope = 'user-read-private user-read-email';
@@ -19,26 +19,13 @@ const scope = 'user-read-private user-read-email';
 const stateKey = 'SpotifyAuthorizationState';
 const stateLength = 16;
 
-const callbackEndpoint = '/validateLogin';
-
-// Build the full Uri to work both in production and while developing
-var getRedirectUri = function(req)
-{
-    var hostName = req.hostName;
-    if (req.hostName === undefined)
-    {
-        hostName = 'localhost';
-    }
-    return req.protocol + '://' + hostName + callbackEndpoint;
-};
-
 exports.getLoginPage = function(req, res)
 {
     // Set state token locally for logging in to be validated against Spotify returned state token
     var stateToken = randomString.generateRandomString(stateLength);
     res.cookie(stateKey, stateToken);
 
-    var redirectUri = getRedirectUri(req);
+    var redirectUri = redirect.getValidateLoginRedirectUri(req);
 
     // Request authorization for this application via a Spotify login page
     res.redirect(spotifyAuthorizeUri + '?' +
@@ -69,6 +56,5 @@ exports.validateLogin = function(req, res, next)
     res.clearCookie(stateKey);
 
     // Redirect to authorization handling
-    req.redirectUri = getRedirectUri(req);
-    res.redirect('/authorize');
+    authorize.getAuthorizationTokens(req, res, authorize.handleCallback);
 };

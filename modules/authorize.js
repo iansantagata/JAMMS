@@ -1,43 +1,59 @@
 // Dependencies
 var path = require('path'); // URI and local file paths
+var querystring = require('querystring'); // URI query string manipulation
 var request = require('request'); // Make Http Requests
 
 // Custom Modules
 const customModulePath = __dirname;
+// TODO - // var home = require(path.join(customModulePath, 'home.js'));
+var login = require(path.join(customModulePath, 'login.js'));
+var redirect = require(path.join(customModulePath, 'redirect.js'));
 var secrets = require(path.join(customModulePath, 'secrets.js'));
 
 // Authorize Logic
 const spotifyAccessTokenUri = 'https://accounts.spotify.com/api/token';
+const spotifyGetCurrentUserUri = 'https://api.spotify.com/v1/me/';
 
 exports.getAuthorizationTokens = function(req, res)
 {
+    // TODO - // this.getAuthorizationTokens(req, res, home.getHomePage);
+}
+
+exports.getAuthorizationTokens = function(req, res, callback)
+{
     var code = req.query.code || null;
+    var redirectUri = redirect.getValidateLoginRedirectUri(req);
+    var authorizationHeaderValue = 'Basic ' + secrets.getBase64EncodedAuthorizationToken();
 
     // State validated successfully, can clear the state cookie and request refresh and access tokens
     var authorizeOptions = {
         url: spotifyAccessTokenUri,
         form: {
             code: code,
-            redirect_uri: req.redirectUri,
+            redirect_uri: redirectUri,
             grant_type: 'authorization_code'
         },
         headers: {
-            'Authorization': 'Basic ' + secrets.getBase64EncodedAuthorizationToken()
+            'Authorization': authorizationHeaderValue
         },
         json: true
     };
 
     // Make the request to get access and refresh tokens
-    request.post(authorizeOptions, this.handleCallback);
+    request.post(authorizeOptions,
+        function(error, accessResponse, body)
+        {
+            exports.handleCallback(error, res, accessResponse, body);
+        }
+    );
 }
 
-// TODO - Fix bug to do with infinite looping between the JS in script.js with /callback and this handler
-exports.handleCallback = function(error, response, body)
+exports.handleCallback = function(err, res, accessResponse, body)
 {
     // Handle if there was an error for any reason
     // TODO - Investigate if error is even valid here as part of the response or not
     // TODO - Convert this to be a redirect change to access denied page instead
-    if (error || response.statusCode !== 200)
+    if (err || res.statusCode !== 200)
     {
         res.redirect('/#' +
             querystring.stringify({
@@ -62,7 +78,7 @@ exports.handleCallback = function(error, response, body)
     };
 
     // use the access token to access the Spotify Web API
-    request.get(options, function(error, response, body)
+    request.get(options, function(err, res, body)
     {
         console.log(body);
     });
