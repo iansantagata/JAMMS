@@ -13,7 +13,6 @@ var cookieParser = require('cookie-parser');
 // Custom Modules
 const customModulePath = path.join(__dirname, 'modules');
 var login = require(path.join(customModulePath, 'login.js'));
-var callback = require(path.join(customModulePath, 'callback.js'));
 var refreshAuth = require(path.join(customModulePath, 'refreshAuth.js'));
 var error = require(path.join(customModulePath, 'error.js'));
 
@@ -27,9 +26,7 @@ app.use(express.static(staticFilesPath))
 
 // Login Page
 app.get('/login', login.getLoginPage);
-
-// Callback Page
-app.get('/callback', callback.getCallbackPage);
+app.get('/validateLogin', login.validateLogin);
 
 // Refresh Token Page
 app.get('/refresh_token', refreshAuth.getAccessToken);
