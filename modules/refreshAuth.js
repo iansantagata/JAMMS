@@ -1,5 +1,10 @@
 // Dependencies
+var path = require('path'); // URI and local file paths
 var request = require('request'); // Make Http Requests
+
+// Custom Modules
+const customModulePath = __dirname;
+var secrets = require(path.join(customModulePath, 'secrets.js'));
 
 // Refresh Token Logic
 const spotifyAccessTokenUri = 'https://accounts.spotify.com/api/token';
