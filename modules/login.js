@@ -1,7 +1,6 @@
 // Dependencies
 var path = require('path'); // URI and local file paths
 var querystring = require('querystring'); // URI query string manipulation
-var request = require('request'); // Make Http Requests
 
 // Custom Modules
 const customModulePath = __dirname;

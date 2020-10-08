@@ -1,7 +1,7 @@
 // Dependencies
+var axios = require('axios'); // Make HTTP requests
 var path = require('path'); // URI and local file paths
 var querystring = require('querystring'); // URI query string manipulation
-var request = require('request'); // Make Http Requests
 
 // Custom Modules
 const customModulePath = __dirname;
@@ -21,63 +21,61 @@ exports.getAuthorizationTokens = function(req, res)
 
 exports.getAuthorizationTokens = function(req, res, callback)
 {
-    var code = req.query.code || null;
-    var redirectUri = redirect.getValidateLoginRedirectUri(req);
-    var authorizationHeaderValue = 'Basic ' + secrets.getBase64EncodedAuthorizationToken();
-
-    // State validated successfully, can clear the state cookie and request refresh and access tokens
-    var authorizeOptions = {
-        url: spotifyAccessTokenUri,
-        form: {
-            code: code,
-            redirect_uri: redirectUri,
-            grant_type: 'authorization_code'
-        },
-        headers: {
-            'Authorization': authorizationHeaderValue
-        },
-        json: true
+    // Make the request to get access and refresh tokens
+    var requestData = {
+        code: req.query.code || null,
+        redirect_uri: redirect.getValidateLoginRedirectUri(req),
+        grant_type: 'authorization_code'
     };
 
-    // Make the request to get access and refresh tokens
-    // TODO - Replace request with a different library, because this is sure to be a pain
-    request.post(authorizeOptions,
-        function(error, spotifyResponse, body)
-        {
-            exports.handleCallback(error, res, spotifyResponse, body);
+    var requestOptions = {
+        headers: {
+            'Authorization': 'Basic ' + secrets.getBase64EncodedAuthorizationToken(),
+            'Content-Type': 'application/x-www-form-urlencoded'
         }
-    );
+    };
+
+    // Trigger the request and handle possible responses
+    axios.post(spotifyAccessTokenUri, querystring.stringify(requestData), requestOptions)
+        .then(response =>
+            {
+                // TODO - Move this functionality to a more appropriate place / function name
+                exports.handleCallback(res, response);
+            })
+        .catch(error =>
+            {
+                // Handle if there was an error for any reason
+                console.log(error.message);
+                res.redirect('access_denied');
+            });
 }
 
-exports.handleCallback = function(err, res, spotifyResponse, body)
+exports.handleCallback = function(res, spotifyResponse)
 {
-    // Handle if there was an error for any reason
-    if (err || spotifyResponse.statusCode !== 200)
-    {
-        res.redirect('access_denied');
-        return;
-    }
-
     // Use the access token and refresh token to validate access to Spotify's API
     // TODO - Set the access token as a cookie and figure out how to store access token to refresh token mapping server-side
-    var accessToken = body.access_token;
-    var refreshToken = body.refresh_token;
+    var accessToken = spotifyResponse.data.access_token;
+    var refreshToken = spotifyResponse.data.refresh_token;
 
     // TODO - This is where we should actually be making calls and doing important stuff!
     // TODO - Replace all of the below with what we actually want the app to do
-    var options = {
-        url: spotifyGetCurrentUserUri,
-        headers: { 'Authorization': 'Bearer ' + accessToken },
-        json: true
-    };
+    var requestOptions = {
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        }
+    }
 
     // Use the access token to access the Spotify Web API
-
     // TODO - Change this to grab the data needed for the home page (or move this call into that middleware) if any is needed at all
-    request.get(options, function(err, spotifyResponse, body)
-    {
-        console.log(body);
-    });
+    axios.get(spotifyGetCurrentUserUri, requestOptions)
+        .then(response =>
+            {
+                console.log(response.data)
+            })
+        .catch(error =>
+            {
+                console.log(error.message);
+            });
 
     // we can also pass the token to the browser to make requests from there
     // TODO - Remove this and change it to redirect somewhere else, maybe the home page
