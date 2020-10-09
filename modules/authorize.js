@@ -48,6 +48,7 @@ exports.getAuthorizationTokens = function(req, res)
                 };
 
                 // TODO - Figure out a better way to store this information than browser cookies (which is insecure, at least for refresh token)
+                // TODO - Look into signed cookies (see cookie-parser docs) to still use client cookies, but ensure tampering is accounted for (interception still an issue however)
                 res.cookie(accessKey, tokenType + ' ' + accessToken, cookieOptions);
                 res.cookie(refreshKey, refreshToken); // Session cookie since it has no timeout
 
