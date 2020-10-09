@@ -16,7 +16,6 @@ var authorize = require(path.join(customModulePath, 'authorize.js'));
 var error = require(path.join(customModulePath, 'error.js'));
 var home = require(path.join(customModulePath, 'home.js'));
 var login = require(path.join(customModulePath, 'login.js'));
-var refreshAuth = require(path.join(customModulePath, 'refreshAuth.js'));
 
 // Setup Page Handling
 const staticFilesPath = path.join(__dirname, 'public');
@@ -34,7 +33,8 @@ app.get('/login', login.getLoginPage);
 app.get('/validateLogin', login.validateLogin);
 
 // Authorization Logic
-app.get('/refresh_token', refreshAuth.getAccessToken);
+// TODO - For testing only, this should be called by other middleware when the access token is expired, not triggered directly through an endpoint
+app.get('/authorize', authorize.getAuthorizationTokensViaRefresh)
 
 // Error Handling
 app.use('/access_denied', error.handleAccessNotAllowed);

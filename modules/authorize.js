@@ -12,6 +12,9 @@ var secrets = require(path.join(customModulePath, 'secrets.js'));
 // Authorize Logic
 const spotifyAccessTokenUri = 'https://accounts.spotify.com/api/token';
 
+const accessKey = 'accessToken';
+const refreshKey = 'refreshToken';
+
 exports.getAuthorizationTokens = function(req, res)
 {
     // Make the request to get access and refresh tokens
@@ -33,12 +36,20 @@ exports.getAuthorizationTokens = function(req, res)
         .then(response =>
             {
                 // Use the access token and refresh token to validate access to Spotify's API
+                // TODO - Remove most of these, saves as variables to show what the output could be, but don't need most of it
                 var accessToken = response.data.access_token;
                 var refreshToken = response.data.refresh_token;
+                var scopes = response.data.scope;
+                var tokenExpirationInMsec = response.data.expires_in * 1000;
+                var tokenType = response.data.token_type;
+
+                var cookieOptions = {
+                    maxAge: tokenExpirationInMsec
+                };
 
                 // TODO - Figure out a better way to store this information than browser cookies (which is insecure, at least for refresh token)
-                res.cookie(accessToken);
-                res.cookie(refreshToken);
+                res.cookie(accessKey, tokenType + ' ' + accessToken, cookieOptions);
+                res.cookie(refreshKey, refreshToken); // Session cookie since it has no timeout
 
                 // Once we have our tokens, redirect to the home page
                 // TODO - Depending on how and when we have to re-authenticate and refresh the keys, may need to make this redirect dynamic (a param))
@@ -48,6 +59,62 @@ exports.getAuthorizationTokens = function(req, res)
             {
                 // Handle if there was an error for any reason
                 console.log(error.message);
+                res.redirect('/access_denied');
+            });
+};
+
+exports.getAuthorizationTokensViaRefresh = function(req, res)
+{
+    // Get the refresh token from cookies
+    // TODO - Access token is the only one that should be a cookie, figure out how to handle this more securely
+    var refreshToken = req.cookies ? req.cookies[refreshKey] : null;
+
+    if (refreshToken === null) {
+        var error = new Error('Refresh token not found, unable to get new access token to authorize Spotify usage.');
+        console.error(error);
+        res.redirect('/access_denied');
+        return;
+    }
+
+    // Request the access token from the refresh token
+    var requestData = {
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken
+    };
+
+    var requestOptions = {
+        headers: {
+            'Authorization': 'Basic ' + secrets.getBase64EncodedAuthorizationToken()
+        }
+    };
+
+    // Make the request to Spotify to get a new access token
+    axios.post(spotifyAccessTokenUri, querystring.stringify(requestData), requestOptions)
+        .then(response =>
+            {
+                // TODO - Remove most of these, saves as variables to show what the output could be, but don't need most of it
+                var accessToken = response.data.access_token;
+                var updatedRefreshToken = response.data.refresh_token;
+                var tokenType = response.data.token_type;
+                var scopes = response.data.scope;
+                var tokenExpirationInMsec = response.data.expires_in * 1000;
+
+                var cookieOptions = {
+                    maxAge: tokenExpirationInMsec
+                };
+
+                // Throw the new token back into a cookie for the user to use
+                res.cookie(accessKey, tokenType + ' ' + accessToken, cookieOptions);
+
+                // If the request did return a new refresh token, make sure we overwrite the old token
+                if (updatedRefreshToken !== undefined)
+                {
+                    res.cookie(refreshKey, updatedRefreshToken);
+                }
+            })
+        .catch(error =>
+            {
+                console.error(error.message);
                 res.redirect('/access_denied');
             });
 };

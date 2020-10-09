@@ -28,15 +28,23 @@ exports.getLoginPage = function(req, res)
         querystring.stringify({
             response_type: 'code',
             client_id: secrets.getClientId(),
-            scope: scope,
             redirect_uri: redirectUri,
             state: stateToken
         })
     );
 };
 
-exports.validateLogin = function(req, res, next)
+exports.validateLogin = function(req, res)
 {
+    // Check for errors after the response page from Spotify
+    if (req.query.error !== undefined)
+    {
+        var error = new Error('Failed to authorize user with Spotify - ' + req.query.error);
+        console.error(error);
+        res.redirect('/access_denied');
+        return;
+    }
+
     // Validate state token from Spotify callback request is the same from the request made locally
     var stateToken = req.query.state || null;
     var storedStateToken = req.cookies ? req.cookies[stateKey] : null;
@@ -44,7 +52,8 @@ exports.validateLogin = function(req, res, next)
     if (stateToken === null || storedStateToken === null || stateToken !== storedStateToken)
     {
         var error = new Error('State mismatch between browser state token and Spotify state token');
-        next(error);
+        console.error(error);
+        rs.redirect('/access_denied');
         return;
     }
 
