@@ -7,14 +7,14 @@
 // Dependencies
 var express = require('express'); // Express web server framework
 var path = require('path'); // URI and local file paths
-var cors = require('cors');
-var cookieParser = require('cookie-parser');
+var cors = require('cors'); // Cross-origin resource sharing
+var cookieParser = require('cookie-parser'); // Parsing and storing encrypted cookies
 
 // Custom Modules
 const customModulePath = path.join(__dirname, 'modules');
 var authorize = require(path.join(customModulePath, 'authorize.js'));
 var error = require(path.join(customModulePath, 'error.js'));
-// TODO - // var home = require(path.join(customModulePath, 'home.js'));
+var home = require(path.join(customModulePath, 'home.js'));
 var login = require(path.join(customModulePath, 'login.js'));
 var refreshAuth = require(path.join(customModulePath, 'refreshAuth.js'));
 
@@ -27,7 +27,7 @@ app.use(express.static(staticFilesPath))
    .use(cookieParser());
 
 // Home Logic
-// TODO - // app.get('/home', home.getHomePage);
+app.get('/home', home.getHomePage);
 
 // Login Logic
 app.get('/login', login.getLoginPage);
