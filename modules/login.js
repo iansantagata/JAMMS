@@ -12,9 +12,6 @@ var redirect = require(path.join(customModulePath, 'redirect.js'));
 // Login Logic
 const spotifyAuthorizeUri = 'https://accounts.spotify.com/authorize';
 
-// TODO - Change / remove scopes when we no longer need to access the GetCurrentUser endpoint
-const scope = 'user-read-private user-read-email';
-
 const stateKey = 'SpotifyAuthorizationState';
 const stateLength = 16;
 
@@ -55,5 +52,5 @@ exports.validateLogin = function(req, res, next)
     res.clearCookie(stateKey);
 
     // Redirect to authorization handling
-    authorize.getAuthorizationTokens(req, res, authorize.handleCallback);
+    authorize.getAuthorizationTokens(req, res);
 };
