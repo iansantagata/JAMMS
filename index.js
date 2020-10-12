@@ -9,6 +9,7 @@ var express = require('express'); // Express web server framework
 var path = require('path'); // URI and local file paths
 var cors = require('cors'); // Cross-origin resource sharing
 var cookieParser = require('cookie-parser'); // Parsing and storing encrypted cookies
+var vash = require('vash'); // Templating and building HTML files to render
 
 // Custom Modules
 const customModulePath = path.join(__dirname, 'modules');
@@ -19,11 +20,16 @@ var login = require(path.join(customModulePath, 'login.js'));
 
 // Setup Page Handling
 const staticFilesPath = path.join(__dirname, 'public');
+const viewsFilesPath = path.join(__dirname, 'views');
 
 var app = express();
 app.use(express.static(staticFilesPath))
    .use(cors())
    .use(cookieParser());
+
+ // Setup Templating Views
+ app.set('view engine', 'vash')
+    .set('views', viewsFilesPath);
 
 // Home Logic
 app.get('/home', home.getHomePage);

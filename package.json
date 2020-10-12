@@ -11,6 +11,7 @@
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.4",
     "express": "~4.16.0",
-    "querystring": "~0.2.0"
+    "querystring": "~0.2.0",
+    "vash": "^0.13.0"
   }
 }
