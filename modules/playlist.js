@@ -24,7 +24,7 @@ exports.getAllUserPlaylists = async function(req, res)
 
     var requestOptions = {
         headers: {
-            'Authorization': authorize.getAccessTokenFromCookies(req, res)
+            'Authorization': await authorize.getAccessTokenFromCookies(req, res)
         }
     };
 

@@ -64,7 +64,7 @@ exports.getAuthorizationTokens = function(req, res)
             });
 };
 
-exports.getAuthorizationTokensViaRefresh = function(req, res)
+exports.getAuthorizationTokensViaRefresh = async function(req, res)
 {
     // Get the refresh token from cookies
     // TODO - Access token is the only one that should be a cookie, figure out how to handle this more securely
@@ -73,7 +73,7 @@ exports.getAuthorizationTokensViaRefresh = function(req, res)
     if (refreshToken === null) {
         var error = new Error('Refresh token not found, unable to get new access token to authorize Spotify usage.');
         console.error(error);
-        return false;
+        return Promise.reject();
     }
 
     // Request the access token from the refresh token
@@ -89,50 +89,56 @@ exports.getAuthorizationTokensViaRefresh = function(req, res)
     };
 
     // Make the request to Spotify to get a new access token
-    axios.post(spotifyAccessTokenUri, querystring.stringify(requestData), requestOptions)
-        .then(response =>
-            {
-                // TODO - Remove most of these, saves as variables to show what the output could be, but don't need most of it
-                var accessToken = response.data.access_token;
-                var updatedRefreshToken = response.data.refresh_token;
-                var tokenType = response.data.token_type;
-                var scopes = response.data.scope;
-                var tokenExpirationInMsec = response.data.expires_in * 1000;
+    try
+    {
+        var response = await axios.post(spotifyAccessTokenUri, querystring.stringify(requestData), requestOptions);
+    }
+    catch (error)
+    {
+        // Failed to re-authorize, return failure
+        console.error(error.message);
+        return Promise.reject();
+    }
 
-                var cookieOptions = {
-                    maxAge: tokenExpirationInMsec
-                };
+    // Got a new access token successfully
+    // TODO - Remove most of these, saves as variables to show what the output could be, but don't need most of it
+    var accessToken = response.data.access_token;
+    var updatedRefreshToken = response.data.refresh_token;
+    var tokenType = response.data.token_type;
+    var scopes = response.data.scope;
+    var tokenExpirationInMsec = response.data.expires_in * 1000;
 
-                // Throw the new token back into a cookie for the user to use
-                res.cookie(accessKey, tokenType + ' ' + accessToken, cookieOptions);
+    var cookieOptions = {
+        maxAge: tokenExpirationInMsec
+    };
 
-                // If the request did return a new refresh token, make sure we overwrite the old token
-                if (updatedRefreshToken !== undefined)
-                {
-                    res.cookie(refreshKey, updatedRefreshToken);
-                }
+    // Throw the new token back into a cookie for the user to use
+    res.cookie(accessKey, tokenType + ' ' + accessToken, cookieOptions);
 
-                // Return success when re-authorization occurred
-                return true;
-            })
-        .catch(error =>
-            {
-                // Failed to re-authorize, return failure
-                console.error(error.message);
-                return false;
-            });
+    // If the request did return a new refresh token, make sure we overwrite the old token
+    if (updatedRefreshToken !== undefined && updatedRefreshToken !== null)
+    {
+        res.cookie(refreshKey, updatedRefreshToken);
+    }
+
+    // Return success when re-authorization occurred
+    return Promise.resolve();
 };
 
-exports.getAccessTokenFromCookies = function(req, res)
+exports.getAccessTokenFromCookies = async function(req, res)
 {
     var accessToken = req.cookies ? req.cookies[accessKey] : null;
 
     // Make sure we actually have the cookie, but if it expired, try to refresh it
     if (accessToken === undefined || accessToken === null)
     {
-        var isCookieSetSuccess = exports.getAuthorizationTokensViaRefresh(req, res);
-        if (!isCookieSetSuccess)
+        try
         {
+            await exports.getAuthorizationTokensViaRefresh(req, res);
+        }
+        catch (error)
+        {
+            // Did not successfully set cookie
             res.redirect('/access_denied');
             return;
         }
