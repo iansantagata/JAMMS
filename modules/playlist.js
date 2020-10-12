@@ -10,7 +10,7 @@ var authorize = require(path.join(customModulePath, 'authorize.js'));
 // Playlist Logic
 const spotifyGetUserPlaylistsUri = 'https://api.spotify.com/v1/me/playlists';
 
-exports.getAllUserPlaylists = function(req, res)
+exports.getAllUserPlaylists = async function(req, res)
 {
     // TODO - Make this configurable so a user can control how many to fetch at once in the UI layer and utilize paging
     var userPlaylistRequestLimit = 50;
@@ -29,30 +29,32 @@ exports.getAllUserPlaylists = function(req, res)
     };
 
     // Trigger the request and handle possible responses
-    axios.get(spotifyGetUserPlaylistsUri + '?' + querystring.stringify(requestData), requestOptions)
-        .then(response => {
-            var statusCode = response.status;
-            var headers = response.headers;
+    try
+    {
+        var response = await axios.get(spotifyGetUserPlaylistsUri + '?' + querystring.stringify(requestData), requestOptions);
+    }
+    catch (error)
+    {
+        // Restructure the error response to only concern itself with the error message
+        console.log(error.message);
 
-            var spotifyPagedResponse = {
-                    items: response.data.items,
-                    limit: response.data.limit,
-                    offset: response.data.offset,
-                    total: response.data.total,
-                    isValidResponse: true,
-                    errorMessage: null
-            };
+        var invalidResponse = {
+            errorMessage: error.message
+        };
 
-            return spotifyPagedResponse;
-        })
-        .catch(error => {
-            console.log(error.message);
+        return Promise.reject(invalidResponse);
+    }
 
-            var invalidResponse = {
-                isValidResponse: false,
-                errorMessage: error.message
-            };
+    // Extract only the data from the successful response that the user will care to see
+    var statusCode = response.status;
+    var headers = response.headers;
 
-            return invalidResponse;
-        });
+    var spotifyPagedResponse = {
+            items: response.data.items,
+            limit: response.data.limit,
+            offset: response.data.offset,
+            total: response.data.total
+    };
+
+    return Promise.resolve(spotifyPagedResponse);
 };
