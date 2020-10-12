@@ -39,13 +39,20 @@ exports.getAllUserPlaylists = function(req, res)
                     limit: response.data.limit,
                     offset: response.data.offset,
                     total: response.data.total,
-                    previous: response.data.previous,
-                    next: response.data.next
+                    isValidResponse: true,
+                    errorMessage: null
             };
 
-            console.log(spotifyPagedResponse);
+            return spotifyPagedResponse;
         })
         .catch(error => {
             console.log(error.message);
+
+            var invalidResponse = {
+                isValidResponse: false,
+                errorMessage: error.message
+            };
+
+            return invalidResponse;
         });
-}
+};
