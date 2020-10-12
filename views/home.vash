@@ -1,5 +1,22 @@
 @html.extend('layout', function(model) {
 	@html.block('content', function(model) {
 		<h2>Welcome Home!</h2>
+		<h3>Your Playlists</h3>
+		<p>You currently have <b>@model.totalNumberOfPlaylists</b> playlists in Spotify!</p>
+		<p>Current page number is <b>@model.currentPage</b> out of <b>@model.numberOfPages</b>.</p>
+
+		@if(model.playlists.length > 0)
+		{
+			<div class="card">
+				<ul>
+					@model.playlists.forEach(function(item){
+						<li>
+							<p>Name: <b>@item.name</b></p>
+							<img src="@item.images[0].url">
+						</li>
+					})
+				</ul>
+			</div>
+		}
 	})
 })

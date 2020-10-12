@@ -19,9 +19,17 @@ exports.getHomePage = async function(req, res, next)
         return;
     }
 
-    // TODO - Change me to utilize a template like Vash to fill in HTML with some data from Spotify!
-    console.log(spotifyResponse);
+    var numberOfPages = Math.ceil(spotifyResponse.total / spotifyResponse.limit);
+    var currentPage = Math.floor((spotifyResponse.offset + spotifyResponse.limit) / spotifyResponse.limit);
 
-    // TODO - Update me (eventually) to be a full-fledged home page pointing to the various functionality of this app
-    res.render('home');
+    var homePageData = {
+        currentPage: currentPage,
+        numberOfPages: numberOfPages,
+        numberOfPlaylistsPerPage: spotifyResponse.limit,
+        totalNumberOfPlaylists: spotifyResponse.total,
+        playlists: spotifyResponse.items
+    };
+
+    // Shove the playlist response data onto the home page for the user to interact with
+    res.render('home', homePageData);
 };
