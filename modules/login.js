@@ -12,6 +12,8 @@ var redirect = require(path.join(customModulePath, 'redirect.js'));
 // Login Logic
 const spotifyAuthorizeUri = 'https://accounts.spotify.com/authorize';
 
+const scopes = 'playlist-read-private playlist-read-collaborative';
+
 const stateKey = 'SpotifyAuthorizationState';
 const stateLength = 16;
 
@@ -21,17 +23,16 @@ exports.getLoginPage = function(req, res)
     var stateToken = randomString.generateRandomString(stateLength);
     res.cookie(stateKey, stateToken);
 
-    var redirectUri = redirect.getValidateLoginRedirectUri(req);
+    var requestParameters = {
+        response_type: 'code',
+        client_id: secrets.getClientId(),
+        scope: scopes,
+        redirect_uri: redirect.getValidateLoginRedirectUri(req),
+        state: stateToken
+    };
 
     // Request authorization for this application via a Spotify login page
-    res.redirect(spotifyAuthorizeUri + '?' +
-        querystring.stringify({
-            response_type: 'code',
-            client_id: secrets.getClientId(),
-            redirect_uri: redirectUri,
-            state: stateToken
-        })
-    );
+    res.redirect(spotifyAuthorizeUri + '?' + querystring.stringify(requestParameters));
 };
 
 exports.validateLogin = function(req, res)

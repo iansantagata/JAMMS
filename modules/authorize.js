@@ -73,8 +73,7 @@ exports.getAuthorizationTokensViaRefresh = function(req, res)
     if (refreshToken === null) {
         var error = new Error('Refresh token not found, unable to get new access token to authorize Spotify usage.');
         console.error(error);
-        res.redirect('/access_denied');
-        return;
+        return false;
     }
 
     // Request the access token from the refresh token
@@ -112,10 +111,35 @@ exports.getAuthorizationTokensViaRefresh = function(req, res)
                 {
                     res.cookie(refreshKey, updatedRefreshToken);
                 }
+
+                // Return success when re-authorization occurred
+                return true;
             })
         .catch(error =>
             {
+                // Failed to re-authorize, return failure
                 console.error(error.message);
-                res.redirect('/access_denied');
+                return false;
             });
 };
+
+exports.getAccessTokenFromCookies = function(req, res)
+{
+    var accessToken = req.cookies ? req.cookies[accessKey] : null;
+
+    // Make sure we actually have the cookie, but if it expired, try to refresh it
+    if (accessToken === undefined || accessToken === null)
+    {
+        var isCookieSetSuccess = exports.getAuthorizationTokensViaRefresh(req, res);
+        if (!isCookieSetSuccess)
+        {
+            res.redirect('/access_denied');
+            return;
+        }
+
+        // Since we refreshed the cookie, re-retrieve it
+        accessToken = req.cookies[accessKey]; // TODO - Not sure if this is right since we haven't changed requests yet?  Unsure, needs testing
+    }
+
+    return accessToken;
+}
