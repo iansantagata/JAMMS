@@ -12,13 +12,13 @@
 		  crossorigin="anonymous">
 	</head>
 	<body>
-		<header class="card-header">
+		<header class="card-header text-center">
 			JAMM - Just a Music Maintainer
 		</header>
 		<div class="container">
 			@html.block('content')
 		</div>
-		<footer class="card-footer">
+		<footer class="card-footer text-center">
 			Created by Ian Santagata
 		</footer>
 	</body>
