@@ -15,6 +15,7 @@ const userPlaylistPageNumberDefault = 1;
 
 exports.getAllUserPlaylists = async function(req, res)
 {
+    // TODO - Handle the case where user passes in a bogus number to either of these (fallback to default)
     var userPlaylistRequestLimit = req.query.playlistsPerPage || userPlaylistRequestLimitDefault;
     var userPlaylistPageNumber = req.query.pageNumber || userPlaylistPageNumberDefault;
     var userPlaylistRequestOffset = (userPlaylistPageNumber - 1) * userPlaylistRequestLimit;

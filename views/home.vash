@@ -1,7 +1,7 @@
 @html.extend('layout', function(model) {
 	@html.block('content', function(model) {
-		<h2 class="text-center">Your Playlists</h2>
-		<p class="text-center">You currently have <b>@model.totalNumberOfPlaylists</b> playlists saved in Spotify!</p>
+		<h2>Your Playlists</h2>
+		<p>You currently have <b>@model.totalNumberOfPlaylists</b> playlists saved in Spotify!</p>
 
 		@if(model.playlists.length > 0)
 		{
@@ -10,7 +10,7 @@
 					<div class="col px-5 py-3">
 						<figure class="figure">
 							<img src="@item.images[0].url" class="img-fluid" alt="Playlist Named @item.name">
-							<figcaption class="figure-caption text-center">@item.name</figcaption>
+							<figcaption class="figure-caption font-weight-bold">@item.name</figcaption>
 						</figure>
 					</div>
 				})
@@ -57,5 +57,18 @@
 					role="button" class="btn btn-info btn-sm @disabledClass">&gt;&gt;</a>
 			</div>
 		</div>
+
+    <div id="playlistsPerPageSelector" class="row align-items-center justify-content-center mb-4">
+      <div class="col-3 dropdown">
+        <button class="btn btn-outline-info btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Playlists Per Page</button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/home?playlistsPerPage=3">3</a>
+          <a class="dropdown-item" href="/home?playlistsPerPage=9">9</a>
+          <a class="dropdown-item" href="/home?playlistsPerPage=18">18</a>
+          <a class="dropdown-item" href="/home?playlistsPerPage=36">36</a>
+          <a class="dropdown-item" href="/home?playlistsPerPage=48">48</a>
+        </div>
+      </div>
+    </div>
 	})
 })
