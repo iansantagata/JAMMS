@@ -33,3 +33,5 @@ exports.getPlaylistPage = async function(req, res, next)
     // Shove the playlist response data onto the home page for the user to interact with
     res.render('playlist', playlistData);
 };
+
+// TODO - Add endpoints as seen on buttons in playlist.vash page
