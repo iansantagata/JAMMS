@@ -1,0 +1,27 @@
+@html.extend('layout', function(model) {
+	@html.block('content', function(model) {
+    <h2>Your Playlist</h2>
+
+    <div id="playlist" class="row align-items-center justify-content-around">
+      <div class="col-4 my-5">
+        <img src="@model.images[0].url" class="img-fluid" alt="Playlist Named @model.playlistName">
+      </div>
+
+      <div class="col-4 text-wrap">
+        <h3 class="text-capitalize mb-3">@model.playlistName</h3>
+        @if(model.playlistDescription !== null)
+        {
+          <p class="mb-3">@html.raw(model.playlistDescription)</p>
+        }
+        @{
+          var isCollaborative = model.isCollaborative ? 'Yes' : 'No';
+          var isPublic = model.isPublic ? 'Yes' : 'No';
+        }
+        <p>Tracks: @model.trackCount</p>
+        <p>Followers: @model.followersCount</p>
+        <p>Public: @isPublic</p>
+        <p>Collaborative: @isCollaborative</p>
+      </div>
+    </div>
+  })
+})

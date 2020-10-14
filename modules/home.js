@@ -3,7 +3,7 @@ var path = require('path'); // URI and local file paths
 
 // Custom Modules
 const customModulePath = __dirname;
-var playlist = require(path.join(customModulePath, 'playlist.js'));
+var spotifyPlaylistClient = require(path.join(customModulePath, 'spotifyPlaylistClient.js'));
 
 // Home Logic
 exports.getHomePage = async function(req, res, next)
@@ -11,7 +11,7 @@ exports.getHomePage = async function(req, res, next)
     // Grab all playlist data from the user to show them on the home page in case they want to edit their playlists
     try
     {
-        var spotifyResponse = await playlist.getAllUserPlaylists(req, res);
+        var spotifyResponse = await spotifyPlaylistClient.getAllUserPlaylists(req, res);
     }
     catch (errorResponse)
     {

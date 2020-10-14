@@ -17,6 +17,7 @@ var authorize = require(path.join(customModulePath, 'authorize.js'));
 var error = require(path.join(customModulePath, 'error.js'));
 var home = require(path.join(customModulePath, 'home.js'));
 var login = require(path.join(customModulePath, 'login.js'));
+var playlist = require(path.join(customModulePath, 'playlist.js'));
 
 // Setup Page Handling
 const staticFilesPath = path.join(__dirname, 'public');
@@ -37,6 +38,9 @@ app.get('/home', home.getHomePage);
 // Login Logic
 app.get('/login', login.getLoginPage);
 app.get('/validateLogin', login.validateLogin);
+
+// Playlist Logic
+app.get('/playlist', playlist.getPlaylistPage);
 
 // Authorization Logic
 // TODO - For testing only, this should be called by other middleware when the access token is expired, not triggered directly through an endpoint

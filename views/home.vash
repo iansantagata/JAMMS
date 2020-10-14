@@ -8,10 +8,12 @@
 			<div id="playlists" class="row row-cols-3 align-items-center justify-content-center">
 				@model.playlists.forEach(function(item){
 					<div class="col px-5 py-3">
-						<figure class="figure">
-							<img src="@item.images[0].url" class="img-fluid" alt="Playlist Named @item.name">
-							<figcaption class="figure-caption font-weight-bold">@item.name</figcaption>
-						</figure>
+            <a href="/playlist?playlistId=@item.id">
+  						<figure class="figure">
+  							<img src="@item.images[0].url" class="img-fluid" alt="Playlist Named @item.name">
+  							<figcaption class="figure-caption font-weight-bold">@item.name</figcaption>
+  						</figure>
+            </a>
 					</div>
 				})
 			</div>
