@@ -15,7 +15,7 @@ exports.getHomePage = async function(req, res, next)
     }
     catch (errorResponse)
     {
-        next(spotifyResponse.errorMessage);
+        next(errorResponse.errorMessage);
         return;
     }
 
