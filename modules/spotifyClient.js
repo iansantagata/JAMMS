@@ -98,7 +98,10 @@ exports.getAllPlaylists = async function(req, res)
         playlistRequestLimit <= 0 ||
         playlistRequestLimit > 50)
     {
-        console.log('User requested invalid playlist limit: ' + playlistRequestLimit);
+        if (playlistRequestLimit !== undefined)
+        {
+            console.log('User requested invalid playlist limit: ' + playlistRequestLimit);
+        }
         playlistRequestLimit = playlistRequestLimitDefault;
     }
 
@@ -106,7 +109,10 @@ exports.getAllPlaylists = async function(req, res)
         playlistPageNumber === null ||
         playlistPageNumber <= 0)
     {
-        console.log('User requested invalid playlist page: ' + playlistPageNumber);
+        if (playlistPageNumber !== undefined)
+        {
+            console.log('User requested invalid playlist page: ' + playlistPageNumber);
+        }
         playlistPageNumber = playlistPageNumberDefault;
     }
 
@@ -201,7 +207,10 @@ exports.getTopArtists = async function(req, res, next)
         artistRequestLimit <= 0 ||
         artistRequestLimit > 50)
     {
-        console.log('User requested invalid artist limit: ' + artistRequestLimit);
+        if (artistRequestLimit !== undefined)
+        {
+            console.log('User requested invalid artist limit: ' + artistRequestLimit);
+        }
         artistRequestLimit = artistRequestLimitDefault;
     }
 
@@ -209,7 +218,10 @@ exports.getTopArtists = async function(req, res, next)
         artistPageNumber === null ||
         artistPageNumber <= 0)
     {
-        console.log('User requested invalid artist page: ' + artistPageNumber);
+        if (artistPageNumber !== undefined)
+        {
+            console.log('User requested invalid artist page: ' + artistPageNumber);
+        }
         artistPageNumber = artistPageNumberDefault;
     }
 
@@ -269,7 +281,10 @@ exports.getAllArtists = async function(req, res, next)
         artistRequestLimit <= 0 ||
         artistRequestLimit > 50)
     {
-        console.log('User requested invalid artist limit: ' + artistRequestLimit);
+        if (artistRequestLimit !== undefined)
+        {
+            console.log('User requested invalid artist limit: ' + artistRequestLimit);
+        }
         artistRequestLimit = artistRequestLimitDefault;
     }
 
@@ -317,7 +332,10 @@ exports.getAllAlbums = async function(req, res, next)
         albumsRequestLimit <= 0 ||
         albumsRequestLimit > 50)
     {
-        console.log('User requested invalid albums limit: ' + albumsRequestLimit);
+        if (albumsRequestLimit !== undefined)
+        {
+            console.log('User requested invalid albums limit: ' + albumsRequestLimit);
+        }
         albumsRequestLimit = albumsRequestLimitDefault;
     }
 
@@ -325,7 +343,10 @@ exports.getAllAlbums = async function(req, res, next)
         albumsPageNumber === null ||
         albumsPageNumber <= 0)
     {
-        console.log('User requested invalid albums page: ' + albumsPageNumber);
+        if (albumsPageNumber !== undefined)
+        {
+            console.log('User requested invalid albums page: ' + albumsPageNumber);
+        }
         albumsPageNumber = albumsPageNumberDefault;
     }
 
@@ -374,7 +395,10 @@ exports.getAllTracks = async function(req, res, next)
         tracksRequestLimit <= 0 ||
         tracksRequestLimit > 50)
     {
-        console.log('User requested invalid tracks limit: ' + tracksRequestLimit);
+        if (tracksRequestLimit !== undefined)
+        {
+            console.log('User requested invalid tracks limit: ' + tracksRequestLimit);
+        }
         tracksRequestLimit = tracksRequestLimitDefault;
     }
 
@@ -382,7 +406,10 @@ exports.getAllTracks = async function(req, res, next)
         tracksPageNumber === null ||
         tracksPageNumber <= 0)
     {
-        console.log('User requested invalid tracks page: ' + tracksPageNumber);
+        if (tracksPageNumber !== undefined)
+        {
+            console.log('User requested invalid tracks page: ' + tracksPageNumber);
+        }
         tracksPageNumber = tracksPageNumberDefault;
     }
 
@@ -432,7 +459,10 @@ exports.getTopTracks = async function(req, res, next)
         tracksRequestLimit <= 0 ||
         tracksRequestLimit > 50)
     {
-        console.log('User requested invalid tracks limit: ' + tracksRequestLimit);
+        if (tracksRequestLimit !== undefined)
+        {
+            console.log('User requested invalid tracks limit: ' + tracksRequestLimit);
+        }
         tracksRequestLimit = tracksRequestLimitDefault;
     }
 
@@ -440,7 +470,10 @@ exports.getTopTracks = async function(req, res, next)
         tracksPageNumber === null ||
         tracksPageNumber <= 0)
     {
-        console.log('User requested invalid tracks page: ' + tracksPageNumber);
+        if (tracksPageNumber !== undefined)
+        {
+            console.log('User requested invalid tracks page: ' + tracksPageNumber);
+        }
         tracksPageNumber = tracksPageNumberDefault;
     }
 
