@@ -5,7 +5,18 @@
 		<h3>Your Playlists</h3>
 		<p>You currently have <b>@model.numberOfPlaylists</b> playlists saved in Spotify!</p>
 
-    <!-- TODO - Put some sample data here -->
+    @if(model.samplePlaylistData.length > 0)
+		{
+			<div id="playlists" class="row row-cols-3 align-items-center justify-content-center">
+				@model.samplePlaylistData.forEach(function(item){
+					<div class="col px-5 py-3">
+            <img src="@item.images[0].url" class="img-fluid" alt="Playlist Named @item.name">
+            <a href="/playlist?playlistId=@item.id" role="button"
+              class="btn btn-outline-info btn-sm stretched-link my-2">@item.name</a>
+					</div>
+				})
+			</div>
+		}
 
     <div id="interact" class="row align-items-center justify-content-center mb-5">
       <div class="col-2">
