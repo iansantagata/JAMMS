@@ -2,7 +2,7 @@
 	@html.block('content', function(model) {
     <h2 class="mb-3">Welcome!</h2>
 
-		<h3>Your Playlists</h2>
+		<h3>Your Playlists</h3>
 		<p>You currently have <b>@model.numberOfPlaylists</b> playlists saved in Spotify!</p>
 
     <!-- TODO - Put some sample data here -->
@@ -14,7 +14,7 @@
       </div>
     </div>
 
-    <h3>Your Library</h2>
+    <h3>Your Library</h3>
     <p>You currently have <b>@model.numberOfTracks</b> songs saved in Spotify!</p>
 
     <!-- TODO - Put some sample data here -->
@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <h3>Your Artists</h2>
+    <h3>Your Artists</h3>
     <p>You currently have <b>@model.numberOfArtists</b> artists saved in Spotify!</p>
 
     <!-- TODO - Put some sample data here -->
@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <h3>Your Albums</h2>
+    <h3>Your Albums</h3>
     <p>You currently have <b>@model.numberOfAlbums</b> albums saved in Spotify!</p>
 
     <!-- TODO - Put some sample data here -->
@@ -48,7 +48,7 @@
 
     <div id="interact" class="row align-items-center justify-content-center mb-5">
       <div class="col-2">
-        <a href="/artists"
+        <a href="/albums"
             role="button" class="btn btn-info btn-sm">See All Albums</a>
       </div>
     </div>
