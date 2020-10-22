@@ -85,13 +85,8 @@ exports.getSingleUserPlaylist = async function(req, res)
     }
     catch (error)
     {
-        // Restructure the error response to only concern itself with the error message
         console.error(error.message);
-
-        var invalidResponse = {
-            errorMessage: error.message
-        };
-        return Promise.reject(invalidResponse);
+        return Promise.reject(error);
     }
 
     // Extract only the data from the successful response that the user will care to see

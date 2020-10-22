@@ -13,9 +13,9 @@ exports.getPlaylistPage = async function(req, res, next)
     {
         var spotifyResponse = await spotifyPlaylistClient.getSingleUserPlaylist(req, res);
     }
-    catch (errorResponse)
+    catch (error)
     {
-        next(errorResponse.errorMessage);
+        next(error);
         return;
     }
 
@@ -27,10 +27,12 @@ exports.getPlaylistPage = async function(req, res, next)
         isPublic: spotifyResponse.public,
         followersCount: spotifyResponse.followers.total,
         trackCount: spotifyResponse.tracks.total,
-        images: spotifyResponse.images
+        images: spotifyResponse.images,
+        deleted: false
     };
 
     // Shove the playlist response data onto the home page for the user to interact with
+    res.location('/playlist');
     res.render('playlist', playlistData);
 };
 

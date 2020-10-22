@@ -13,9 +13,9 @@ exports.getHomePage = async function(req, res, next)
     {
         var spotifyResponse = await spotifyPlaylistClient.getAllUserPlaylists(req, res);
     }
-    catch (errorResponse)
+    catch (error)
     {
-        next(errorResponse.errorMessage);
+        next(error);
         return;
     }
 

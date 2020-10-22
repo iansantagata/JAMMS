@@ -15,8 +15,7 @@ exports.handleAccessNotAllowed = function(req, res)
 
 exports.handleUnexpectedError = function(err, req, res, next)
 {
-    console.error(err.name + ' : ' + err.message);
-
+    // TODO - Eventually, log errors to a file on the server to have an error log
     // TODO - Change this (eventually) to point to a nicer, static HTML 500 page instead
     res.location('error')
     res.sendStatus(500);
