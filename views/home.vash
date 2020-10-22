@@ -1,29 +1,56 @@
 @html.extend('layout', function(model) {
 	@html.block('content', function(model) {
-    <h2>Welcome!</h2>
+    <h2 class="mb-3">Welcome!</h2>
 
-		<h2>Your Playlists</h2>
+		<h3>Your Playlists</h2>
 		<p>You currently have <b>@model.numberOfPlaylists</b> playlists saved in Spotify!</p>
 
     <!-- TODO - Put some sample data here -->
-    <!-- TODO - Put a button here to go to the playlists page -->
 
-    <h2>Your Library</h2>
+    <div id="interact" class="row align-items-center justify-content-center mb-5">
+      <div class="col-2">
+        <a href="/playlists"
+            role="button" class="btn btn-info btn-sm">See All Playlists</a>
+      </div>
+    </div>
+
+    <h3>Your Library</h2>
     <p>You currently have <b>@model.numberOfTracks</b> songs saved in Spotify!</p>
 
     <!-- TODO - Put some sample data here -->
-    <!-- TODO - Put a button here to go to the tracks page -->
+    <!-- TODO - Create the tracks page -->
 
-    <h2>Your Artists</h2>
+    <div id="interact" class="row align-items-center justify-content-center mb-5">
+      <div class="col-2">
+        <a href="/tracks"
+            role="button" class="btn btn-info btn-sm">See All Tracks</a>
+      </div>
+    </div>
+
+    <h3>Your Artists</h2>
     <p>You currently have <b>@model.numberOfArtists</b> artists saved in Spotify!</p>
 
     <!-- TODO - Put some sample data here -->
-    <!-- TODO - Put a button here to go to the artists page -->
+    <!-- TODO - Create the artists page -->
 
-    <h2>Your Albums</h2>
+    <div id="interact" class="row align-items-center justify-content-center mb-5">
+      <div class="col-2">
+        <a href="/artists"
+            role="button" class="btn btn-info btn-sm">See All Artists</a>
+      </div>
+    </div>
+
+    <h3>Your Albums</h2>
     <p>You currently have <b>@model.numberOfAlbums</b> albums saved in Spotify!</p>
 
     <!-- TODO - Put some sample data here -->
-    <!-- TODO - Put a button here to go to the albums page -->
+    <!-- TODO - Create the albums page -->
+
+    <div id="interact" class="row align-items-center justify-content-center mb-5">
+      <div class="col-2">
+        <a href="/artists"
+            role="button" class="btn btn-info btn-sm">See All Albums</a>
+      </div>
+    </div>
   })
 })
