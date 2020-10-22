@@ -81,7 +81,7 @@ exports.getUserData = async function(req, res)
         numberOfTracks: tracksResponse.total,
         sampleTrackData: topTracksResponse.items,
         numberOfAlbums: albumsResponse.total,
-        sampleAlbumsData: albumsResponse.items
+        sampleAlbumData: albumsResponse.items
     };
 
     return Promise.resolve(fullSpotifyResponse);

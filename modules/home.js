@@ -27,7 +27,7 @@ exports.getHomePage = async function(req, res, next)
         numberOfTracks: spotifyResponse.numberOfTracks,
         sampleTracksData: spotifyResponse.sampleTracksData,
         numberOfAlbums: spotifyResponse.numberOfAlbums,
-        sampleAlbumsData: spotifyResponse.sampleAlbumsData
+        sampleAlbumData: spotifyResponse.sampleAlbumData
     };
 
     // Shove the playlist response data onto the home page for the user to interact with
