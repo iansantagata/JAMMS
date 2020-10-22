@@ -40,6 +40,7 @@ app.get('/login', login.getLoginPage);
 app.get('/validateLogin', login.validateLogin);
 
 // Playlist Logic
+app.get('/playlists', playlist.getAllPlaylistPage);
 app.get('/playlist', playlist.getPlaylistPage);
 
 // Authorization Logic

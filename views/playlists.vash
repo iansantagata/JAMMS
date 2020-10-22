@@ -1,0 +1,75 @@
+@html.extend('layout', function(model) {
+	@html.block('content', function(model) {
+		<h2>Your Playlists</h2>
+		<p>You currently have <b>@model.totalNumberOfPlaylists</b> playlists saved in Spotify!</p>
+
+    <!-- TODO - Create new button here for creating a playlist -->
+
+		@if(model.playlists.length > 0)
+		{
+			<div id="playlists" class="row row-cols-3 align-items-center justify-content-center">
+				@model.playlists.forEach(function(item){
+					<div class="col px-5 py-3">
+            <img src="@item.images[0].url" class="img-fluid" alt="Playlist Named @item.name">
+            <a href="/playlist?playlistId=@item.id" role="button"
+              class="btn btn-outline-info btn-sm stretched-link my-2">@item.name</a>
+					</div>
+				})
+			</div>
+		}
+
+		<div id="pages" class="row align-items-center justify-content-center mb-4">
+			<div id="firstPage" class="col-1">
+				@{
+					var disabledClass = model.currentPage - 2 > 0 ? "" : "disabled";
+				}
+				<a href="/playlists?pageNumber=1&playlistsPerPage=@model.numberOfPlaylistsPerPage"
+					role="button" class="btn btn-info btn-sm @disabledClass">&lt;&lt;</a>
+			</div>
+
+			<div id="backOnePage" class="col-1">
+				@{
+					var disabledClass = model.currentPage - 1 > 0 ? "" : "disabled";
+					var onePageBack = model.currentPage - 1;
+				}
+				<a href="/playlists?pageNumber=@onePageBack&playlistsPerPage=@model.numberOfPlaylistsPerPage"
+					role="button" class="btn btn-info btn-sm @disabledClass">&lt;</a>
+			</div>
+
+			<div id="currentPage" class="col-1">
+				<a href="/playlists?pageNumber=@model.currentPage&playlistsPerPage=@model.numberOfPlaylistsPerPage"
+					role="button" class="btn btn-info btn-sm disabled">@model.currentPage</a>
+			</div>
+
+			<div id="forwardOnePage" class="col-1">
+				@{
+					var disabledClass = model.currentPage + 1 <= model.numberOfPages ? "" : "disabled";
+					var onePageForward = model.currentPage + 1;
+				}
+				<a href="/playlists?pageNumber=@onePageForward&playlistsPerPage=@model.numberOfPlaylistsPerPage"
+					role="button" class="btn btn-info btn-sm @disabledClass">&gt;</a>
+			</div>
+
+			<div id="lastPage" class="col-1">
+				@{
+					var disabledClass = model.currentPage + 2 <= model.numberOfPages ? "" : "disabled";
+				}
+				<a href="/playlists?pageNumber=@model.numberOfPages&playlistsPerPage=@model.numberOfPlaylistsPerPage"
+					role="button" class="btn btn-info btn-sm @disabledClass">&gt;&gt;</a>
+			</div>
+		</div>
+
+    <div id="playlistsPerPageSelector" class="row align-items-center justify-content-center mb-4">
+      <div class="col-3 dropdown">
+        <button class="btn btn-outline-info btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Playlists Per Page</button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/playlists?playlistsPerPage=3">3</a>
+          <a class="dropdown-item" href="/playlists?playlistsPerPage=9">9</a>
+          <a class="dropdown-item" href="/playlists?playlistsPerPage=18">18</a>
+          <a class="dropdown-item" href="/playlists?playlistsPerPage=36">36</a>
+          <a class="dropdown-item" href="/playlists?playlistsPerPage=48">48</a>
+        </div>
+      </div>
+    </div>
+	})
+})

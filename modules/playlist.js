@@ -3,7 +3,7 @@ var path = require('path'); // URI and local file paths
 
 // Custom Modules
 const customModulePath = __dirname;
-var spotifyPlaylistClient = require(path.join(customModulePath, 'spotifyPlaylistClient.js'));
+var spotifyClient = require(path.join(customModulePath, 'spotifyClient.js'));
 
 // Playlist Logic
 exports.getPlaylistPage = async function(req, res, next)
@@ -11,7 +11,7 @@ exports.getPlaylistPage = async function(req, res, next)
     // Grab single playlist data that the user has requested
     try
     {
-        var spotifyResponse = await spotifyPlaylistClient.getSingleUserPlaylist(req, res);
+        var spotifyResponse = await spotifyClient.getSinglePlaylist(req, res);
     }
     catch (error)
     {
@@ -27,13 +27,40 @@ exports.getPlaylistPage = async function(req, res, next)
         isPublic: spotifyResponse.public,
         followersCount: spotifyResponse.followers.total,
         trackCount: spotifyResponse.tracks.total,
-        images: spotifyResponse.images,
-        deleted: false
+        images: spotifyResponse.images
     };
 
     // Shove the playlist response data onto the home page for the user to interact with
     res.location('/playlist');
     res.render('playlist', playlistData);
 };
+
+exports.getAllPlaylistPage = async function(req, res, next)
+{
+    // Grab all playlist data from the user to show them on the home page in case they want to edit their playlists
+    try
+    {
+        var spotifyResponse = await spotifyClient.getAllPlaylists(req, res);
+    }
+    catch (error)
+    {
+        next(error);
+        return;
+    }
+
+    var numberOfPages = Math.ceil(spotifyResponse.total / spotifyResponse.limit);
+    var currentPage = Math.floor((spotifyResponse.offset + spotifyResponse.limit) / spotifyResponse.limit);
+
+    var playlistsPageData = {
+        currentPage: currentPage,
+        numberOfPages: numberOfPages,
+        numberOfPlaylistsPerPage: spotifyResponse.limit,
+        totalNumberOfPlaylists: spotifyResponse.total,
+        playlists: spotifyResponse.items
+    };
+
+    // Shove the playlist response data onto the home page for the user to interact with
+    res.render('playlists', playlistsPageData);
+}
 
 // TODO - Add endpoints as seen on buttons in playlist.vash page
