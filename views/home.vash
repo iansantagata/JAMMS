@@ -28,7 +28,43 @@
     <h3>Your Library</h3>
     <p>You currently have <b>@model.numberOfTracks</b> songs saved in Spotify!</p>
 
-    <!-- TODO - Put some sample data here -->
+    @if(model.sampleTrackData.length > 0)
+    {
+      <div id="songs" class="table-responsive">
+        <table class="table table-striped">
+          <caption class="text-center">Your Top Tracks</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="align-middle">Track #</th>
+              <th scope="col" class="align-middle">Title</th>
+              <th scope="col" class="align-middle">Artist</th>
+              <th scope="col" class="align-middle">Album</th>
+              <th scope="col" class="align-middle">Album Art</th>
+            </tr>
+          </thead>
+          <tbody>
+            @{
+              var trackCount = 1;
+            }
+            @model.sampleTrackData.forEach(function(item) {
+              <tr>
+                <th scope="row" class="align-middle">@trackCount</th>
+                <td class="align-middle">@item.name</td>
+                <td class="align-middle">@item.artists[0].name</td>
+                <td class="align-middle">@item.album.name</td>
+                <td class="align-middle">
+                  <img src="@item.album.images[item.album.images.length - 1].url" class="img-fluid" alt="Album Named @item.album.name" />
+                </td>
+              </tr>
+              @{
+                trackCount++;
+              }
+            })
+          </tbody>
+        </table>
+      </div>
+    }
+
     <!-- TODO - Create the tracks page -->
 
     <div id="interact" class="row align-items-center justify-content-center mb-5">

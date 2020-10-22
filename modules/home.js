@@ -25,7 +25,7 @@ exports.getHomePage = async function(req, res, next)
         numberOfArtists: spotifyResponse.numberOfArtists,
         sampleArtistData: spotifyResponse.sampleArtistData,
         numberOfTracks: spotifyResponse.numberOfTracks,
-        sampleTracksData: spotifyResponse.sampleTracksData,
+        sampleTrackData: spotifyResponse.sampleTrackData,
         numberOfAlbums: spotifyResponse.numberOfAlbums,
         sampleAlbumData: spotifyResponse.sampleAlbumData
     };
