@@ -41,8 +41,21 @@
     <h3>Your Artists</h3>
     <p>You currently have <b>@model.numberOfArtists</b> artists saved in Spotify!</p>
 
-    <!-- TODO - Put some sample data here -->
+    @if(model.sampleArtistData.length > 0)
+		{
+			<div id="artists" class="row row-cols-3 align-items-center justify-content-center">
+				@model.sampleArtistData.forEach(function(item){
+					<div class="col px-5 py-3">
+            <img src="@item.images[0].url" class="img-fluid" alt="Artist Named @item.name">
+            <a href="/artist?artistId=@item.id" role="button"
+              class="btn btn-outline-info btn-sm stretched-link my-2">@item.name</a>
+					</div>
+				})
+			</div>
+		}
+
     <!-- TODO - Create the artists page -->
+    <!-- TODO - Create the singular artist page -->
 
     <div id="interact" class="row align-items-center justify-content-center mb-5">
       <div class="col-2">
