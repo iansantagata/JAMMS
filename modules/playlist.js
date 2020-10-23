@@ -27,10 +27,11 @@ exports.getPlaylistPage = async function(req, res, next)
         isPublic: spotifyResponse.public,
         followersCount: spotifyResponse.followers.total,
         trackCount: spotifyResponse.tracks.total,
-        images: spotifyResponse.images
+        images: spotifyResponse.images,
+        deleted: false
     };
 
-    // Shove the playlist response data onto the home page for the user to interact with
+    // Shove the playlist response data onto the playlist page for the user to interact with
     res.location('/playlist');
     res.render('playlist', playlistData);
 };
@@ -59,8 +60,70 @@ exports.getAllPlaylistPage = async function(req, res, next)
         playlists: spotifyResponse.items
     };
 
-    // Shove the playlist response data onto the home page for the user to interact with
+    // Shove the playlist response data onto the playlists page for the user to interact with
     res.render('playlists', playlistsPageData);
+}
+
+exports.deletePlaylistPage = async function(req, res, next)
+{
+    // Grab single playlist data that the user has requested, then delete the playlist
+    try
+    {
+        var spotifyResponse = await spotifyClient.getSinglePlaylist(req, res);
+        await spotifyClient.deleteSinglePlaylist(req, res);
+    }
+    catch (error)
+    {
+        next(error);
+        return;
+    }
+
+    var playlistData = {
+        playlistId: spotifyResponse.id,
+        playlistName: spotifyResponse.name,
+        playlistDescription: spotifyResponse.description,
+        isCollaborative: spotifyResponse.collaborative,
+        isPublic: spotifyResponse.public,
+        followersCount: spotifyResponse.followers.total,
+        trackCount: spotifyResponse.tracks.total,
+        images: spotifyResponse.images,
+        deleted: true
+    };
+
+    // Shove the playlist response data onto the home page for the user to interact with
+    res.location('/playlist');
+    res.render('playlist', playlistData);
+}
+
+exports.restorePlaylistPage = async function(req, res, next)
+{
+    // Restore the playlist that was previously deleted, then grab that single playlist data
+    try
+    {
+        await spotifyClient.restoreSinglePlaylist(req, res);
+        var spotifyResponse = await spotifyClient.getSinglePlaylist(req, res);
+    }
+    catch (error)
+    {
+        next(error);
+        return;
+    }
+
+    var playlistData = {
+        playlistId: spotifyResponse.id,
+        playlistName: spotifyResponse.name,
+        playlistDescription: spotifyResponse.description,
+        isCollaborative: spotifyResponse.collaborative,
+        isPublic: spotifyResponse.public,
+        followersCount: spotifyResponse.followers.total,
+        trackCount: spotifyResponse.tracks.total,
+        images: spotifyResponse.images,
+        deleted: false
+    };
+
+    // Shove the playlist response data onto the playlist page for the user to interact with
+    res.location('/playlist');
+    res.render('playlist', playlistData);
 }
 
 // TODO - Add endpoints as seen on buttons in playlist.vash page

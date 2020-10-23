@@ -10,6 +10,8 @@ var authorize = require(path.join(customModulePath, 'authorize.js'));
 // Spotify URIs
 const spotifyGetAllPlaylistsUri = 'https://api.spotify.com/v1/me/playlists';
 const spotifyGetSinglePlaylistUri = 'https://api.spotify.com/v1/playlists';
+const spotifyDeleteSinglePlaylistUri = 'https://api.spotify.com/v1/playlists';
+const spotifyRestoreSinglePlaylistUri = 'https://api.spotify.com/v1/playlists';
 const spotifyGetTopDataUri = 'https://api.spotify.com/v1/me/top';
 const spotifyGetAllTracksUri = 'https://api.spotify.com/v1/me/tracks';
 const spotifyGetAllArtistsUri = 'https://api.spotify.com/v1/me/following';
@@ -27,7 +29,7 @@ const tracksTimeRangeDefault = 'long_term';
 const albumsRequestLimitDefault = 9;
 const albumsPageNumberDefault = 1;
 
-// Playlist Logic
+// Spotify Client Logic
 exports.getUserData = async function(req, res)
 {
     // Call a series of Spotify endpoints to get a small amount of sample data
@@ -158,7 +160,7 @@ exports.getSinglePlaylist = async function(req, res)
 
     if (playlistId === undefined || playlistId === null)
     {
-        var error = new Error('Invalid playlist ID requested');
+        var error = new Error('Invalid playlist ID requested to retrieve: ' + playlistId);
         console.error(error.message);
         return Promise.reject(error);
     }
@@ -195,7 +197,78 @@ exports.getSinglePlaylist = async function(req, res)
     return Promise.resolve(spotifyResponse);
 }
 
-exports.getTopArtists = async function(req, res, next)
+exports.deleteSinglePlaylist = async function(req, res)
+{
+    var playlistId = req.query.playlistId || null;
+
+    if (playlistId === undefined || playlistId === null)
+    {
+        var error = new Error('Invalid playlist ID requested to delete: ' + playlistId);
+        console.error(error.message);
+        return Promise.reject(error);
+    }
+
+    var requestOptions = {
+        headers: {
+            'Authorization': await authorize.getAccessTokenFromCookies(req, res)
+        }
+    };
+
+    // Make the request to "unfollow" the playlist, Spotify's way of deleting it from the user's library
+    try
+    {
+        var deleteSinglePlaylistFullUri = spotifyDeleteSinglePlaylistUri + '/' + playlistId + '/followers';
+        var response = await axios.delete(deleteSinglePlaylistFullUri, requestOptions);
+    }
+    catch (error)
+    {
+        console.error(error.message);
+        return Promise.reject(error);
+    }
+
+    // No response message for this endpoint, just return successfully
+    return Promise.resolve();
+}
+
+exports.restoreSinglePlaylist = async function(req, res)
+{
+    var playlistId = req.query.playlistId || null;
+
+    if (playlistId === undefined || playlistId === null)
+    {
+        var error = new Error('Invalid playlist ID requested to restore: ' + playlistId);
+        console.error(error.message);
+        return Promise.reject(error);
+    }
+
+    var requestData = {
+        public: true
+    };
+
+    var requestOptions = {
+        headers: {
+            'Authorization': await authorize.getAccessTokenFromCookies(req, res),
+            'Content-Type': 'application/json'
+        }
+    };
+
+    // Make the request to "unfollow" the playlist, Spotify's way of deleting it from the user's library
+    try
+    {
+        var restoreSinglePlaylistFullUri = spotifyRestoreSinglePlaylistUri + '/' + playlistId + '/followers';
+        var response = await axios.put(restoreSinglePlaylistFullUri, querystring.stringify(requestData), requestOptions);
+    }
+    catch (error)
+    {
+        console.error(error.message);
+        return Promise.reject(error);
+    }
+
+    // No response message for this endpoint, just return successfully
+    return Promise.resolve();
+}
+
+exports.getTopArtists = async function(req, res)
 {
     var artistRequestLimit = req.query.artistsPerPage;
     var artistPageNumber = req.query.pageNumber;
@@ -269,7 +342,7 @@ exports.getTopArtists = async function(req, res, next)
     return Promise.resolve(spotifyPagedResponse);
 }
 
-exports.getAllArtists = async function(req, res, next)
+exports.getAllArtists = async function(req, res)
 {
     // TODO - Since this particular endpoint is cursor based rather than page based,
     // TODO - Will need to setup "after" parameter to point to last ID retrieved
@@ -321,7 +394,7 @@ exports.getAllArtists = async function(req, res, next)
     return Promise.resolve(spotifyPagedResponse);
 }
 
-exports.getAllAlbums = async function(req, res, next)
+exports.getAllAlbums = async function(req, res)
 {
     var albumsRequestLimit = req.query.albumsPerPage;
     var albumsPageNumber = req.query.pageNumber;
@@ -384,7 +457,7 @@ exports.getAllAlbums = async function(req, res, next)
     return Promise.resolve(spotifyPagedResponse);
 }
 
-exports.getAllTracks = async function(req, res, next)
+exports.getAllTracks = async function(req, res)
 {
     var tracksRequestLimit = req.query.tracksPerPage;
     var tracksPageNumber = req.query.pageNumber;
@@ -447,7 +520,7 @@ exports.getAllTracks = async function(req, res, next)
     return Promise.resolve(spotifyPagedResponse);
 }
 
-exports.getTopTracks = async function(req, res, next)
+exports.getTopTracks = async function(req, res)
 {
     var tracksRequestLimit = req.query.tracksPerPage;
     var tracksPageNumber = req.query.pageNumber;

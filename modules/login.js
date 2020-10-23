@@ -12,7 +12,7 @@ var redirect = require(path.join(customModulePath, 'redirect.js'));
 // Login Logic
 const spotifyAuthorizeUri = 'https://accounts.spotify.com/authorize';
 
-const scopes = 'playlist-read-private playlist-read-collaborative user-top-read user-library-read user-follow-read';
+const scopes = 'playlist-read-private playlist-read-collaborative user-top-read user-library-read user-follow-read playlist-modify-public playlist-modify-private';
 
 const stateKey = 'SpotifyAuthorizationState';
 const stateLength = 16;
