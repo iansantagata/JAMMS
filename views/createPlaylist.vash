@@ -1,0 +1,30 @@
+@html.extend('layout', function(model) {
+	@html.block('content', function(model) {
+    <h2>Create Playlist</h2>
+
+    <div id="playlist" class="row align-items-center justify-content-around">
+      <div class="col-8 text-wrap">
+        <form>
+          <!-- TODO - Make all of this look like its a nice form! -->
+          <div class="form-group">
+            <label for="playlistNameInput">Playlist Name</label>
+            <input type="text" name="playlistName" class="form-control" id="playlistNameInput" placeholder="Your Playlist" required />
+          </div>
+          <div class="form-group">
+            <label for="playlistDescriptionInput">Playlist Description</label>
+            <textarea class="form-control" name="playlistDescription" id="playlistDescriptionInput" placeholder="An optional short description of this playlist!"></textarea>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label" for="playlistCollaborativeInput">Collaborative</label>
+            <input type="checkbox" name="playlistIsCollaborative" class="form-check-input" id="playlistCollaborativeInput" value="true" />
+          </div>
+          <div class="form-check">
+            <label class="form-check-label" for="playlistPublicInput">Public</label>
+            <input type="checkbox" name="playlistIsPublic" class="form-check-input" id="playlistPublicInput" value="true" />
+          </div>
+          <button type="submit" formaction="/createPlaylist" formmethod="post" class="btn btn-info btn-sm">Create Playlist</button>
+        </form>
+      </div>
+    </div>
+  })
+})

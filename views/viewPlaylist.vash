@@ -4,7 +4,15 @@
 
     <div id="playlist" class="row align-items-center justify-content-around">
       <div class="col-4 my-5">
-        <img src="@model.images[0].url" class="img-fluid" alt="Playlist Named @model.playlistName">
+        @if(model.images[0] !== undefined)
+        {
+          <img src="@model.images[0].url" class="img-fluid" alt="Playlist Named @model.playlistName">
+        }
+        else
+        {
+          <!-- TODO - Add placeholder image here -->
+          <img src="" class="img-fluid" alt="Playlist Named @model.playlistName">
+        }
       </div>
 
       <div class="col-4 text-wrap">

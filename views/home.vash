@@ -10,7 +10,15 @@
 			<div id="playlists" class="row row-cols-3 align-items-center justify-content-center">
 				@model.samplePlaylistData.forEach(function(item){
 					<div class="col px-5 py-3">
-            <img src="@item.images[0].url" class="img-fluid" alt="Playlist Named @item.name">
+            @if(item.images[0] !== undefined)
+            {
+              <img src="@item.images[0].url" class="img-fluid" alt="Playlist Named @item.playlistName">
+            }
+            else
+            {
+              <!-- TODO - Add placeholder image here -->
+              <img src="" class="img-fluid" alt="Playlist Named @model.playlistName">
+            }
             <a href="/playlist?playlistId=@item.id" role="button"
               class="btn btn-outline-info btn-sm stretched-link my-2">@item.name</a>
 					</div>
@@ -22,6 +30,10 @@
       <div class="col-2">
         <a href="/playlists"
             role="button" class="btn btn-info btn-sm">See All Playlists</a>
+      </div>
+      <div class="col-2">
+        <a href="/createPlaylist"
+            role="button" class="btn btn-info btn-sm">Create Playlist</a>
       </div>
     </div>
 

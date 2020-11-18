@@ -10,8 +10,11 @@ var authorize = require(path.join(customModulePath, 'authorize.js'));
 // Spotify URIs
 const spotifyGetAllPlaylistsUri = 'https://api.spotify.com/v1/me/playlists';
 const spotifyGetSinglePlaylistUri = 'https://api.spotify.com/v1/playlists';
+const spotifyCreateSinglePlaylistUri = 'https://api.spotify.com/v1/users';
 const spotifyDeleteSinglePlaylistUri = 'https://api.spotify.com/v1/playlists';
 const spotifyRestoreSinglePlaylistUri = 'https://api.spotify.com/v1/playlists';
+
+const spotifyGetCurrentUserUri = 'https://api.spotify.com/v1/me';
 const spotifyGetTopDataUri = 'https://api.spotify.com/v1/me/top';
 const spotifyGetAllTracksUri = 'https://api.spotify.com/v1/me/tracks';
 const spotifyGetAllArtistsUri = 'https://api.spotify.com/v1/me/following';
@@ -28,8 +31,32 @@ const tracksPageNumberDefault = 1;
 const tracksTimeRangeDefault = 'long_term';
 const albumsRequestLimitDefault = 9;
 const albumsPageNumberDefault = 1;
+const createdPlaylistDescription = "Playlist created with JAMM!";
 
 // Spotify Client Logic
+exports.getCurrentUserId = async function(req, res)
+{
+    var requestOptions = {
+        headers: {
+            'Authorization': await authorize.getAccessTokenFromCookies(req, res)
+        }
+    };
+
+    // Make the request to get the current user's data
+    try
+    {
+        var response = await axios.get(spotifyGetCurrentUserUri, requestOptions);
+    }
+    catch (error)
+    {
+        console.error(error.message);
+        return Promise.reject(error);
+    }
+
+    // Return only this user's ID
+    return Promise.resolve(response.data.id);
+}
+
 exports.getUserData = async function(req, res)
 {
     // Call a series of Spotify endpoints to get a small amount of sample data
@@ -197,6 +224,94 @@ exports.getSinglePlaylist = async function(req, res)
     return Promise.resolve(spotifyResponse);
 }
 
+exports.createSinglePlaylist = async function(req, res)
+{
+    var userId = req.body.userId || null;
+
+    if (userId === undefined || userId === null)
+    {
+        var error = new Error('Invalid user ID to create new playlist: ' + userId);
+        console.error(error.message);
+        return Promise.reject(error);
+    }
+
+    var playlistName = req.body.playlistName || null;
+    if (playlistName === undefined || playlistName === null)
+    {
+        var error = new Error('Invalid playlist name to create new playlist: ' + playlistName);
+        console.error(error.message);
+        return Promise.reject(error);
+    }
+
+    var playlistDescription = req.body.playlistDescription || null;
+    if (playlistDescription === undefined || playlistDescription === null)
+    {
+        playlistDescription = createdPlaylistDescription;
+    }
+    else
+    {
+        playlistDescription = createdPlaylistDescription + ' ' + playlistDescription;
+    }
+
+    var playlistIsPublic = req.body.playlistIsPublic || null;
+    if (playlistIsPublic === undefined || playlistIsPublic === null)
+    {
+        playlistIsPublic = false;
+    }
+
+    var playlistIsCollaborative = req.body.playlistIsCollaborative || null;
+    if (playlistIsCollaborative === undefined || playlistIsCollaborative === null)
+    {
+        playlistIsCollaborative = false;
+    }
+    else if (playlistIsCollaborative && playlistIsPublic)
+    {
+        // Playlists cannot both be collaborative and public, so let public override collaboration
+        playlistIsCollaborative = false;
+    }
+
+    var requestData = {
+        name: playlistName,
+        description: playlistDescription,
+        public: playlistIsPublic,
+        collaborative: playlistIsCollaborative
+    };
+
+    var requestOptions = {
+        headers: {
+            'Authorization': await authorize.getAccessTokenFromCookies(req, res),
+            'Content-Type': 'application/json'
+        }
+    };
+
+    // Make the request to create a new playlist, albeit an empty one to start
+    try
+    {
+        // TODO - Change all the endpoints like this to instead use string replacement for {playlist_id} and use the full URI in the global variable
+        var createSinglePlaylistFullUri = spotifyCreateSinglePlaylistUri + '/' + userId + '/playlists';
+        var response = await axios.post(createSinglePlaylistFullUri, requestData, requestOptions);
+    }
+    catch (error)
+    {
+        console.error(error.message);
+        return Promise.reject(error);
+    }
+
+    // Extract only the data from the successful response that the user will care to see
+    var spotifyResponse = {
+        id: response.data.id,
+        name: response.data.name,
+        description: response.data.description,
+        public: response.data.public,
+        collaborative: response.data.collaborative,
+        followers: response.data.followers,
+        images: response.data.images,
+        tracks: response.data.tracks
+    };
+
+    return Promise.resolve(spotifyResponse);
+}
+
 exports.deleteSinglePlaylist = async function(req, res)
 {
     var playlistId = req.query.playlistId || null;
@@ -252,11 +367,11 @@ exports.restoreSinglePlaylist = async function(req, res)
         }
     };
 
-    // Make the request to "unfollow" the playlist, Spotify's way of deleting it from the user's library
+    // Make the request to "re-follow" the playlist, Spotify's way of restoring a deleted playlist from the user's library
     try
     {
         var restoreSinglePlaylistFullUri = spotifyRestoreSinglePlaylistUri + '/' + playlistId + '/followers';
-        var response = await axios.put(restoreSinglePlaylistFullUri, querystring.stringify(requestData), requestOptions);
+        var response = await axios.put(restoreSinglePlaylistFullUri, requestData, requestOptions);
     }
     catch (error)
     {

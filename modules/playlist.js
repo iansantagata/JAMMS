@@ -33,7 +33,7 @@ exports.getPlaylistPage = async function(req, res, next)
 
     // Shove the playlist response data onto the playlist page for the user to interact with
     res.location('/playlist');
-    res.render('playlist', playlistData);
+    res.render('viewPlaylist', playlistData);
 };
 
 exports.getAllPlaylistPage = async function(req, res, next)
@@ -61,7 +61,7 @@ exports.getAllPlaylistPage = async function(req, res, next)
     };
 
     // Shove the playlist response data onto the playlists page for the user to interact with
-    res.render('playlists', playlistsPageData);
+    res.render('viewPlaylists', playlistsPageData);
 }
 
 exports.deletePlaylistPage = async function(req, res, next)
@@ -92,7 +92,7 @@ exports.deletePlaylistPage = async function(req, res, next)
 
     // Shove the playlist response data onto the home page for the user to interact with
     res.location('/playlist');
-    res.render('playlist', playlistData);
+    res.render('viewPlaylist', playlistData);
 }
 
 exports.restorePlaylistPage = async function(req, res, next)
@@ -123,7 +123,47 @@ exports.restorePlaylistPage = async function(req, res, next)
 
     // Shove the playlist response data onto the playlist page for the user to interact with
     res.location('/playlist');
-    res.render('playlist', playlistData);
+    res.render('viewPlaylist', playlistData);
+}
+
+exports.createPlaylistPage = async function(req, res, next)
+{
+    // Simply show the user the page to create a new playlist
+    res.location('/createPlaylist');
+    res.render('createPlaylist');
+}
+
+exports.createPlaylist = async function(req, res, next)
+{
+    // Create a new playlist based on the user's request parameters
+    try
+    {
+        // Only thing we do not have supplied from the user is their user ID
+        // The app has to get their user ID first to attach this new playlist to their profile
+        req.body.userId = await spotifyClient.getCurrentUserId(req, res);
+        var spotifyResponse = await spotifyClient.createSinglePlaylist(req, res);
+    }
+    catch (error)
+    {
+        next(error);
+        return;
+    }
+
+    var playlistData = {
+        playlistId: spotifyResponse.id,
+        playlistName: spotifyResponse.name,
+        playlistDescription: spotifyResponse.description,
+        isCollaborative: spotifyResponse.collaborative,
+        isPublic: spotifyResponse.public,
+        followersCount: spotifyResponse.followers.total,
+        trackCount: spotifyResponse.tracks.total,
+        images: spotifyResponse.images,
+        deleted: false
+    };
+
+    // Shove the playlist response data onto the playlist page for the user to interact with
+    res.location('/playlist');
+    res.render('viewPlaylist', playlistData);
 }
 
 // TODO - Add endpoints as seen on buttons in playlist.vash page

@@ -32,6 +32,7 @@ exports.getAuthorizationTokens = function(req, res)
     };
 
     // Trigger the request and handle possible responses
+    // TODO - Change this axios HTTP call to use promises
     axios.post(spotifyAccessTokenUri, querystring.stringify(requestData), requestOptions)
         .then(response =>
             {

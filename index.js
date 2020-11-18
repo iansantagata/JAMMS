@@ -26,7 +26,8 @@ const viewsFilesPath = path.join(__dirname, 'views');
 var app = express();
 app.use(express.static(staticFilesPath))
    .use(cors())
-   .use(cookieParser());
+   .use(cookieParser())
+   .use(express.urlencoded({ extended: true }));
 
  // Setup Templating Views
  app.set('view engine', 'vash')
@@ -42,8 +43,11 @@ app.get('/validateLogin', login.validateLogin);
 // Playlist Logic
 app.get('/playlists', playlist.getAllPlaylistPage);
 app.get('/playlist', playlist.getPlaylistPage);
+app.get('/createPlaylist', playlist.createPlaylistPage);
 app.get('/deletePlaylist', playlist.deletePlaylistPage);
 app.get('/restorePlaylist', playlist.restorePlaylistPage);
+
+app.post('/createPlaylist', playlist.createPlaylist);
 
 // Authorization Logic
 // TODO - For testing only, this should be called by other middleware when the access token is expired, not triggered directly through an endpoint
