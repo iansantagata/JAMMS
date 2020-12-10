@@ -35,6 +35,10 @@
         <a href="/createPlaylist"
             role="button" class="btn btn-info btn-sm">Create Playlist</a>
       </div>
+      <div class="col-2">
+        <a href="/createSmartPlaylist"
+            role="button" class="btn btn-info btn-sm">Create Smart Playlist</a>
+      </div>
     </div>
 
     <h3>Your Library</h3>
