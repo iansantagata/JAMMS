@@ -1,9 +1,9 @@
 // Error Handling Logic
 exports.handlePageNotFound = function(req, res)
 {
-    // TODO - Change this (eventually) to point to a nicer, static HTML 404 page instead
     res.location('not_found');
-    res.sendStatus(404);
+    res.status(404);
+    res.render('not_found');
 }
 
 exports.handleAccessNotAllowed = function(req, res)
