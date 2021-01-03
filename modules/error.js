@@ -15,16 +15,16 @@ exports.handleAccessNotAllowed = function(req, res)
 
 exports.handleExpectedError = function(req, res)
 {
-    // TODO - Change this (eventually) to point to a nicer, static HTML 500 page instead
     res.location('error');
-    res.sendStatus(500);
+    res.status(500);
+    res.render('error');
 }
 
 exports.handleUnexpectedError = function(err, req, res, next)
 {
     // TODO - Eventually, log errors to a file on the server to have an error log
-    // TODO - Change this (eventually) to point to a nicer, static HTML 500 page instead
     res.location('error')
-    res.sendStatus(500);
+    res.status(500);
+    res.render('error');
     next(err);
 }

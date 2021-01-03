@@ -1,0 +1,8 @@
+@html.extend('layout', function(model) {
+	@html.block('content', function(model) {
+    <h2>Request Error</h2>
+    <p>
+      We apologize, but either we cannot let you access what you are requesting or there was an error in trying to process your request.
+    </p>
+  })
+})
