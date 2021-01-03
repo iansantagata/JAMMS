@@ -34,6 +34,7 @@ app.use(express.static(staticFilesPath))
     .set('views', viewsFilesPath);
 
 // Home Logic
+app.get('/', home.getLandingPage);
 app.get('/home', home.getHomePage);
 
 // Login Logic

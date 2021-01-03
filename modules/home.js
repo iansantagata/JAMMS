@@ -6,6 +6,13 @@ const customModulePath = __dirname;
 var spotifyClient = require(path.join(customModulePath, 'spotifyClient.js'));
 
 // Home Logic
+exports.getLandingPage = async function(req, res, next)
+{
+    // TODO - Automatically redirect to home if the user is already logged in
+    res.location('/');
+    res.render('landing');
+}
+
 exports.getHomePage = async function(req, res, next)
 {
     // We want a broad overlook of data for the home page, showing users all of their data at a glance
