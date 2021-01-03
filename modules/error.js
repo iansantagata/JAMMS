@@ -8,9 +8,9 @@ exports.handlePageNotFound = function(req, res)
 
 exports.handleAccessNotAllowed = function(req, res)
 {
-    // TODO - Change this (eventually) to point to a nicer, static HTML 403 page instead
     res.location('access_denied');
-    res.sendStatus(403);
+    res.status(403);
+    res.render('access_denied');
 }
 
 exports.handleExpectedError = function(req, res)
