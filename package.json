@@ -7,7 +7,7 @@
   "license": "MIT",
   "repository": "github:iansantagata/jamm",
   "dependencies": {
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.4",
     "express": "~4.16.0",
