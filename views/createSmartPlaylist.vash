@@ -3,34 +3,110 @@
     <h2>Create Smart Playlist</h2>
 
     <div id="playlist" class="row align-items-center justify-content-around">
-      <div class="col-6 text-wrap my-3">
+      <div class="col-9 text-wrap my-3">
         <form>
           <div class="form-group">
             <label for="playlistNameInput">Playlist Name</label>
             <input type="text" name="playlistName" class="form-control" id="playlistNameInput" placeholder="Your Playlist" required />
           </div>
-          <div class="form-group">
-            <label for="playlistDescriptionInput">Playlist Description</label>
-            <textarea class="form-control" name="playlistDescription" id="playlistDescriptionInput" placeholder="An optional short description of this playlist!"></textarea>
-          </div>
-          <div class="form-row align-items-center justify-content-center">
-            <div class="col-3">
-              <div class="form-check-inline">
-                <input type="checkbox" name="playlistIsPublic" class="form-check-input" id="playlistPublicInput" value="true" />
-                <label class="form-check-label" for="playlistPublicInput">Public</label>
-              </div>
+
+          <h4 class="my-3">Rules</h4>
+          <div class="form-row">
+            <div class="col-4">
+              <select name="playlistRuleType" class="form-control" id="playlistRuleTypeInput" required >
+                <option value="artist" selected>Artist Name</option>
+                <option value="song">Song Name</option>
+                <option value="album">Album Name</option>
+                <option value="year">Release Year</option>
+                <option value="genre">Genre</option>
+              </select>
             </div>
-            <div class="col-3">
-              <div class="form-check-inline">
-                <input type="checkbox" name="playlistIsCollaborative" class="form-check-input" id="playlistCollaborativeInput" value="true" />
-                <label class="form-check-label" for="playlistCollaborativeInput">Collaborative</label>
-              </div>
+            <div class="col-4">
+              <select name="playlistRuleOperator" class="form-control" id="playlistRuleOperatorInput" required>
+                <option value="equal" selected>is</option>
+                <option value="notEqual">is not</option>
+                <option value="greaterThan">is greater than</option>
+                <option value="lessThan">is less than</option>
+                <option value="contains">contains</option>
+              </select>
+            </div>
+            <div class="col-4">
+              <input type="text" name="playlistRuleText" class="form-control" id="playlistRuleTextInput" placeholder="Your Rule Data" required />
+            </div>
+          </div>
+          <div class="form-row justify-content-center">
+            <div class="col-2">
+              <button type="button" name="addRuleButton" class="btn btn-outline-info btn-sm my-3">Add Rule</button>
+            </div>
+            <div class="col-2">
+              <button type="button" name="removeRuleButton" class="btn btn-outline-info btn-sm my-3">Remove Rule</button>
             </div>
           </div>
 
-          <!-- TODO - Other smart playlist options here -->
+          <h4 class="my-3">Optional Settings</h4>
+          <div class="form-row">
+            <div class="col-1">
+              <div class="form-check-inline">
+                <input type="checkbox" name="playlistLimitEnabled" class="form-check-input" id="playlistLimitEnabledInput" value="false" />
+              </div>
+            </div>
+            <div class="col-3">
+              <p>Limit playlist to</p>
+            </div>
+            <div class="col-4">
+              <input type="number" name="playlistLimitValue" class="form-control" id="playlistLimitValueInput" min="1" value="25" />
+            </div>
+            <div class="col-4">
+              <select name="playlistLimitType" class="form-control" id="playlistLimitTypeInput">
+                <option value="songs" selected>Songs</option>
+                <option value="minutes">Minutes</option>
+                <option value="hours">Hours</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col-1">
+              <div class="form-check-inline">
+                <input type="checkbox" name="playlistOrderEnabled" class="form-check-input" id="playlistOrderEnabledInput" value="false" />
+              </div>
+            </div>
+            <div class="col-3">
+              <p>Order songs in</p>
+            </div>
+            <div class="col-3">
+              <select name="playlistOrderDirection" class="form-control" id="playlistOrderDirectionInput">
+                <option value="ascending" selected>Ascending Order</option>
+                <option value="descending">Descending Order</option>
+              </select>
+            </div>
+            <div class="col-2">
+              <p>by</p>
+            </div>
+            <div class="col-3">
+              <select name="playlistOrderField" class="form-control" id="playlistOrderFieldInput">
+                <option value="artist" selected>Artist Name</option>
+                <option value="song">Song Name</option>
+                <option value="album">Album Name</option>
+                <option value="year">Release Year</option>
+                <option value="genre">Genre</option>
+                <option value="addDate">Date Added to Library</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row justify-content-start">
+            <div class="col-1">
+              <div class="form-check-inline">
+                <input type="checkbox" name="playlistIsPublic" class="form-check-input" id="playlistPublicInput" value="false" />
+              </div>
+            </div>
+            <div class="col-3">
+              <p>Set playlist to public</p>
+            </div>
+          </div>
+
           <!-- TODO - Create endpoint for createSmartPlaylist -->
-
           <div class="mt-3">
             <button type="submit" formaction="/createSmartPlaylist" formmethod="post" class="btn btn-info btn-sm">Create Smart Playlist</button>
           </div>

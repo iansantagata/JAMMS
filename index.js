@@ -45,10 +45,12 @@ app.get('/validateLogin', login.validateLogin);
 app.get('/playlists', playlist.getAllPlaylistPage);
 app.get('/playlist', playlist.getPlaylistPage);
 app.get('/createPlaylist', playlist.createPlaylistPage);
+app.get('/createSmartPlaylist', playlist.createSmartPlaylistPage);
 app.get('/deletePlaylist', playlist.deletePlaylistPage);
 app.get('/restorePlaylist', playlist.restorePlaylistPage);
 
 app.post('/createPlaylist', playlist.createPlaylist);
+app.post('/createSmartPlaylist', playlist.createSmartPlaylist);
 
 // Authorization Logic
 // TODO - For testing only, this should be called by other middleware when the access token is expired, not triggered directly through an endpoint

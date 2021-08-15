@@ -23,13 +23,13 @@
 <body>
   <!-- TODO - Have to put a warning / acceptance alert about cookies eventually if they continue to be used -->
   <!-- TODO - Figure out how to automatically redirect someone to home if they are already logged in -->
-  <header class="card-header text-center">
+  <header class="card-header text-center mb-2">
     JAMM - Just a Music Maintainer
   </header>
   <div class="container text-center">
     @html.block('content')
   </div>
-  <footer class="card-footer text-center">
+  <footer class="card-footer text-center mt-2">
     Created by Ian Santagata
   </footer>
 </body>
