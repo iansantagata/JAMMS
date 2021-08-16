@@ -7,7 +7,7 @@
     <div id="smartPlaylist" class="row align-items-center justify-content-around">
       <div class="col-9 text-wrap my-3">
         <form>
-          
+
           <div class="form-group">
             <label for="playlistNameInput">Playlist Name</label>
             <input type="text" name="playlistName" class="form-control" id="playlistNameInput" placeholder="Your Playlist" required />
@@ -103,7 +103,7 @@
           <div class="form-row justify-content-start my-2">
             <div class="col-1">
               <div class="form-check-inline">
-                <input type="checkbox" name="playlistIsPublic" class="form-check-input" id="playlistPublicInput" value="false" />
+                <input type="checkbox" name="playlistIsPublic" class="form-check-input" id="playlistPublicInput" defaultValue="false" />
               </div>
             </div>
             <div class="col-3">

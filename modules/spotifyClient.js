@@ -258,6 +258,9 @@ exports.createSinglePlaylist = async function(req, res)
     {
         playlistIsPublic = false;
     }
+    else {
+        playlistIsPublic = true;
+    }
 
     var playlistIsCollaborative = req.body.playlistIsCollaborative || null;
     if (playlistIsCollaborative === undefined || playlistIsCollaborative === null)
@@ -268,6 +271,9 @@ exports.createSinglePlaylist = async function(req, res)
     {
         // Playlists cannot both be collaborative and public, so let public override collaboration
         playlistIsCollaborative = false;
+    }
+    else {
+        playlistIsCollaborative = true;
     }
 
     var requestData = {
