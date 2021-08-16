@@ -18,6 +18,7 @@ var error = require(path.join(customModulePath, 'error.js'));
 var home = require(path.join(customModulePath, 'home.js'));
 var login = require(path.join(customModulePath, 'login.js'));
 var playlist = require(path.join(customModulePath, 'playlist.js'));
+var smartPlaylist = require(path.join(customModulePath, 'smartPlaylist.js'));
 
 // Setup Page Handling
 const staticFilesPath = path.join(__dirname, 'public');
@@ -45,12 +46,15 @@ app.get('/validateLogin', login.validateLogin);
 app.get('/playlists', playlist.getAllPlaylistPage);
 app.get('/playlist', playlist.getPlaylistPage);
 app.get('/createPlaylist', playlist.createPlaylistPage);
-app.get('/createSmartPlaylist', playlist.createSmartPlaylistPage);
 app.get('/deletePlaylist', playlist.deletePlaylistPage);
 app.get('/restorePlaylist', playlist.restorePlaylistPage);
 
 app.post('/createPlaylist', playlist.createPlaylist);
-app.post('/createSmartPlaylist', playlist.createSmartPlaylist);
+
+// Smart Playlist Logic
+app.get('/createSmartPlaylist', smartPlaylist.createSmartPlaylistPage);
+
+app.post('/createSmartPlaylist', smartPlaylist.createSmartPlaylist);
 
 // Authorization Logic
 // TODO - For testing only, this should be called by other middleware when the access token is expired, not triggered directly through an endpoint

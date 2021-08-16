@@ -165,18 +165,3 @@ exports.createPlaylist = async function(req, res, next)
     res.location('/playlist');
     res.render('viewPlaylist', playlistData);
 }
-
-// TODO - Separate smart playlist functionality from playlist functionality
-// TODO - Add endpoints as seen on buttons in playlist.vash page
-
-exports.createSmartPlaylistPage = async function(req, res, next)
-{
-    // Simply show the user the page to create a new smart playlist
-    res.location('/createSmartPlaylist');
-    res.render('createSmartPlaylist');
-}
-
-exports.createSmartPlaylist = async function(req, res, next)
-{
-    // TODO - Create the endpoint to create the smart playlist
-}
