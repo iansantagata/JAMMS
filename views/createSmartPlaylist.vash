@@ -7,9 +7,14 @@
     <div id="smartPlaylist" class="row align-items-center justify-content-around">
       <div class="col-9 text-wrap my-3">
         <form>
+          
           <div class="form-group">
             <label for="playlistNameInput">Playlist Name</label>
             <input type="text" name="playlistName" class="form-control" id="playlistNameInput" placeholder="Your Playlist" required />
+          </div>
+          <div class="form-group">
+            <label for="playlistDescriptionInput">Playlist Description</label>
+            <textarea class="form-control" name="playlistDescription" id="playlistDescriptionInput" placeholder="An optional short description of this playlist!"></textarea>
           </div>
 
           <h4 class="my-3">Rules</h4>
@@ -44,7 +49,7 @@
           <button type="button" name="addRuleButton" id="addRuleButton" class="btn btn-outline-info btn-sm my-3">Add Rule</button>
 
           <h4 class="my-3">Optional Settings</h4>
-          <div class="form-row">
+          <div class="form-row my-2">
             <div class="col-1">
               <div class="form-check-inline">
                 <input type="checkbox" name="playlistLimitEnabled" class="form-check-input" id="playlistLimitEnabledInput" value="false" />
@@ -65,7 +70,7 @@
             </div>
           </div>
 
-          <div class="form-row">
+          <div class="form-row my-2">
             <div class="col-1">
               <div class="form-check-inline">
                 <input type="checkbox" name="playlistOrderEnabled" class="form-check-input" id="playlistOrderEnabledInput" value="false" />
@@ -95,7 +100,7 @@
             </div>
           </div>
 
-          <div class="form-row justify-content-start">
+          <div class="form-row justify-content-start my-2">
             <div class="col-1">
               <div class="form-check-inline">
                 <input type="checkbox" name="playlistIsPublic" class="form-check-input" id="playlistPublicInput" value="false" />
