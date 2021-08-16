@@ -42,7 +42,7 @@ exports.validateLogin = function(req, res)
     {
         var error = new Error('Failed to authorize user with Spotify - ' + req.query.error);
         console.error(error);
-        res.redirect('/access_denied');
+        res.redirect('/accessDenied');
         return;
     }
 
@@ -54,7 +54,7 @@ exports.validateLogin = function(req, res)
     {
         var error = new Error('State mismatch between browser state token and Spotify state token');
         console.error(error);
-        rs.redirect('/access_denied');
+        rs.redirect('/accessDenied');
         return;
     }
 

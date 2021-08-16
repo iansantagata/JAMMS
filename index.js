@@ -57,7 +57,7 @@ app.post('/createSmartPlaylist', playlist.createSmartPlaylist);
 app.get('/authorize', authorize.getAuthorizationTokensViaRefresh)
 
 // Error Handling
-app.use('/access_denied', error.handleAccessNotAllowed);
+app.use('/accessDenied', error.handleAccessNotAllowed);
 app.use('/error', error.handleExpectedError);
 app.use(error.handlePageNotFound);
 app.use(error.handleUnexpectedError);

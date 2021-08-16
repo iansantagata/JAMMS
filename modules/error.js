@@ -1,16 +1,16 @@
 // Error Handling Logic
 exports.handlePageNotFound = function(req, res)
 {
-    res.location('not_found');
+    res.location('notFound');
     res.status(404);
-    res.render('not_found');
+    res.render('notFound');
 }
 
 exports.handleAccessNotAllowed = function(req, res)
 {
-    res.location('access_denied');
+    res.location('accessDenied');
     res.status(403);
-    res.render('access_denied');
+    res.render('accessDenied');
 }
 
 exports.handleExpectedError = function(req, res)

@@ -61,7 +61,7 @@ exports.getAuthorizationTokens = function(req, res)
             {
                 // Handle if there was an error for any reason
                 console.log(error.message);
-                res.redirect('/access_denied');
+                res.redirect('/accessDenied');
             });
 };
 
@@ -140,7 +140,7 @@ exports.getAccessTokenFromCookies = async function(req, res)
         catch (error)
         {
             // Did not successfully set cookie
-            res.redirect('/access_denied');
+            res.redirect('/accessDenied');
             return;
         }
 
