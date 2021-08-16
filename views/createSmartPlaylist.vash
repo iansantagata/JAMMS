@@ -2,6 +2,8 @@
 	@html.block('content', function(model) {
     <h2>Create Smart Playlist</h2>
 
+    <script defer src="smartPlaylist.js"></script>
+
     <div id="playlist" class="row align-items-center justify-content-around">
       <div class="col-9 text-wrap my-3">
         <form>
@@ -45,25 +47,20 @@
           <button type="button" name="addRuleButton" class="btn btn-outline-info btn-sm my-3">Add Rule</button>
 
           <h4 class="my-3">Optional Settings</h4>
-          @{
-            var playlistLimitEnabledElementId = 'playlistLimitEnabledInput';
-            var playlistLimitValueElementId = 'playlistLimitValueInput';
-            var playlistLimitTypeElementId = 'playlistLimitTypeInput';
-          }
           <div class="form-row">
             <div class="col-1">
               <div class="form-check-inline">
-                <input type="checkbox" name="playlistLimitEnabled" class="form-check-input" id="@playlistLimitEnabledElementId" value="false" />
+                <input type="checkbox" name="playlistLimitEnabled" class="form-check-input" id="playlistLimitEnabledInput" value="false" />
               </div>
             </div>
             <div class="col-3">
               <p>Limit playlist to</p>
             </div>
             <div class="col-4">
-              <input type="number" name="playlistLimitValue" class="form-control" id="@playlistLimitValueElementId" min="1" value="25" disabled />
+              <input type="number" name="playlistLimitValue" class="form-control" id="playlistLimitValueInput" min="1" value="25" disabled />
             </div>
             <div class="col-4">
-              <select name="playlistLimitType" class="form-control" id="@playlistLimitTypeElementId" disabled>
+              <select name="playlistLimitType" class="form-control" id="playlistLimitTypeInput" disabled>
                 <option value="songs" selected>Songs</option>
                 <option value="minutes">Minutes</option>
                 <option value="hours">Hours</option>
@@ -71,22 +68,17 @@
             </div>
           </div>
 
-          @{
-            var playlistOrderEnabledElementId = 'playlistOrderEnabledInput';
-            var playlistOrderDirectionElementId = 'playlistOrderDirectionInput';
-            var playlistOrderFieldElementId = 'playlistOrderFieldInput';
-          }
           <div class="form-row">
             <div class="col-1">
               <div class="form-check-inline">
-                <input type="checkbox" name="playlistOrderEnabled" class="form-check-input" id="@playlistOrderEnabledElementId" value="false" />
+                <input type="checkbox" name="playlistOrderEnabled" class="form-check-input" id="playlistOrderEnabledInput" value="false" />
               </div>
             </div>
             <div class="col-3">
               <p>Order songs in</p>
             </div>
             <div class="col-4">
-              <select name="playlistOrderDirection" class="form-control" id="@playlistOrderDirectionElementId" disabled>
+              <select name="playlistOrderDirection" class="form-control" id="playlistOrderDirectionInput" disabled>
                 <option value="ascending" selected>Ascending Order</option>
                 <option value="descending">Descending Order</option>
               </select>
@@ -95,7 +87,7 @@
               <p>by</p>
             </div>
             <div class="col-3">
-              <select name="playlistOrderField" class="form-control" id="@playlistOrderFieldElementId" disabled>
+              <select name="playlistOrderField" class="form-control" id="playlistOrderFieldInput" disabled>
                 <option value="artist" selected>Artist Name</option>
                 <option value="song">Song Name</option>
                 <option value="album">Album Name</option>
@@ -105,32 +97,6 @@
               </select>
             </div>
           </div>
-          <script type="text/javascript">
-            var playlistLimitEventElement = document.getElementById("@playlistLimitEnabledElementId");
-            playlistLimitEventElement.addEventListener("click", controlEnablementOfLimitElements);
-
-            var playlistOrderEventElement = document.getElementById("@playlistOrderEnabledElementId");
-            playlistOrderEventElement.addEventListener("click", controlEnablementOfOrderElements);
-
-            function controlEnablementOfLimitElements()
-            {
-              controlEnablementOfElementById("@playlistLimitValueElementId");
-              controlEnablementOfElementById("@playlistLimitTypeElementId");
-            }
-
-            function controlEnablementOfOrderElements()
-            {
-              controlEnablementOfElementById("@playlistOrderDirectionElementId");
-              controlEnablementOfElementById("@playlistOrderFieldElementId");
-            }
-
-            function controlEnablementOfElementById(id)
-            {
-              var element = document.getElementById(id);
-              var isDisabled = element.disabled;
-              element.disabled = !isDisabled;
-            }
-          </script>
 
           <div class="form-row justify-content-start">
             <div class="col-1">
