@@ -260,7 +260,8 @@ exports.createSinglePlaylist = async function(req, res)
     {
         playlistIsPublic = false;
     }
-    else {
+    else
+    {
         playlistIsPublic = true;
     }
 

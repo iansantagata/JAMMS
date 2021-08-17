@@ -59,7 +59,7 @@
               <p>Limit playlist to</p>
             </div>
             <div class="col-4">
-              <input type="number" name="playlistLimitValue" class="form-control" id="playlistLimitValueInput" min="1" value="25" disabled />
+              <input type="number" name="playlistLimitValue" class="form-control" id="playlistLimitValueInput" min="1" max="10000" value="25" disabled />
             </div>
             <div class="col-4">
               <select name="playlistLimitType" class="form-control" id="playlistLimitTypeInput" disabled>

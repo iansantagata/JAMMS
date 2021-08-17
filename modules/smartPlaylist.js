@@ -19,13 +19,49 @@ exports.createSmartPlaylist = async function(req, res, next)
     try
     {
         // First, process all of the rules and optional settings from the request
-        var isPlaylistLimitEnabled = req.body.playlistLimitEnabled !== undefined;
-        var playlistLimitValue = req.body.playlistLimitValue;
-        var playlistLimitType = req.body.playlistLimitType;
+        var isPlaylistLimitEnabled = req.body.playlistLimitEnabled || null;
+        if (isPlaylistLimitEnabled === undefined || isPlaylistLimitEnabled === null)
+        {
+            isPlaylistLimitEnabled = false;
+        }
+        else
+        {
+            isPlaylistLimitEnabled = true;
+        }
+
+        if (isPlaylistLimitEnabled)
+        {
+            var playlistLimitValue = req.body.playlistLimitValue || null;
+            var playlistLimitType = req.body.playlistLimitType || null;
+
+            if (playlistLimitType === undefined || playlistLimitType === null)
+            {
+                isPlaylistLimitEnabled = false;
+            }
+
+            if (playlistLimitValue === undefined || playlistLimitValue === null)
+            {
+                isPlaylistLimitEnabled = false;
+            }
+
+            if (playlistLimitValue <= 0)
+            {
+                var error = new Error('Invalid playlist limit value; Value cannot zero or negative: ' + playlistLimitValue);
+                console.error(error.message);
+                return Promise.reject(error);
+            }
+
+            if (playlistLimitValue > 10000)
+            {
+                var error = new Error('Invalid playlist limit value; Value cannot be greater than ten thousand: ' + playlistLimitValue);
+                console.error(error.message);
+                return Promise.reject(error);
+            }
+        }
 
         var isPlaylistOrderEnabled = req.body.playlistOrderEnabled !== undefined;
-        var playlistOrderDirection = req.body.playlistOrderDirection;
-        var playlistOrderField = req.body.playlistOrderField;
+        var playlistOrderDirection = req.body.playlistOrderDirection || null;
+        var playlistOrderField = req.body.playlistOrderField || null;
 
         var rules = [];
 
@@ -50,7 +86,13 @@ exports.createSmartPlaylist = async function(req, res, next)
             // TODO - Figure out a way to make AND and OR rules work here
             tracksInPlaylist.push(trackInBatch);
             // TODO - Ordering
+
             // TODO - Filtering
+            if (isPlaylistLimitEnabled && playlistLimitType === "songs" && tracksInPlaylist.length > playlistLimitValue)
+            {
+                // TODO - Change this to remove based on ordering
+                tracksInPlaylist.pop();
+            }
         });
 
         // Only thing we do not have supplied from the user is their user ID
@@ -61,9 +103,7 @@ exports.createSmartPlaylist = async function(req, res, next)
         // Now that we have created the playlist, we want to add the valid songs to it based on the smart playlist rules
         var playlistId = createPlaylistResponse.id;
         req.body.playlistId = playlistId;
-        req.body.trackUris = tracksInPlaylist.map((trackInPlaylist) => {
-            return trackInPlaylist.track.uri;
-        });
+        req.body.trackUris = tracksInPlaylist.map(getUriFromSavedTrack);
         var addTracksToPlaylistResponse = await spotifyClient.addTracksToPlaylist(req, res);
 
         // Finally, we want to show the user info about their new playlist, so retrieve that data after songs were inserted
@@ -91,4 +131,10 @@ exports.createSmartPlaylist = async function(req, res, next)
     // Shove the playlist response data onto the playlist page for the user to interact with
     res.location('/playlist');
     res.render('viewPlaylist', playlistData);
+}
+
+// Local Helper Functions
+getUriFromSavedTrack = function(savedTrack)
+{
+    return savedTrack.track.uri;
 }
