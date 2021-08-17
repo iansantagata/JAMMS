@@ -57,6 +57,18 @@ exports.createSmartPlaylist = async function(req, res, next)
                 console.error(error.message);
                 return Promise.reject(error);
             }
+
+            // Convert the value from its unit to milliseconds to be easier to work with (if applicable)
+            if (playlistLimitType === "minutes")
+            {
+                playlistLimitValue = playlistLimitValue * 60 * 1000;
+                playlistLimitType = "milliseconds";
+            }
+            else if (playlistLimitType === "hours")
+            {
+                 playlistLimitValue = playlistLimitValue * 60 * 60 * 1000;
+                 playlistLimitType = "milliseconds";
+            }
         }
 
         var isPlaylistOrderEnabled = req.body.playlistOrderEnabled !== undefined;
@@ -79,12 +91,15 @@ exports.createSmartPlaylist = async function(req, res, next)
         req.query.pageNumber = 1; // Start with first page
         req.query.tracksPerPage = 50; // Maximum value of tracks to retrieve per page
         var getAllTracksBatchedResponse = await spotifyClient.getAllTracks(req, res);
+
+        var timeOfTracksInPlaylistInMsec = 0;
         var tracksInBatch = getAllTracksBatchedResponse.items;
         tracksInBatch.forEach((trackInBatch) => {
 
             // TODO - Rule Checking
             // TODO - Figure out a way to make AND and OR rules work here
             tracksInPlaylist.push(trackInBatch);
+            timeOfTracksInPlaylistInMsec += trackInBatch.track.duration_ms;
             // TODO - Ordering
 
             // TODO - Filtering
@@ -92,6 +107,13 @@ exports.createSmartPlaylist = async function(req, res, next)
             {
                 // TODO - Change this to remove based on ordering
                 tracksInPlaylist.pop();
+                timeOfTracksInPlaylistInMsec -= trackInBatch.track.duration_ms;
+            }
+
+            if (isPlaylistLimitEnabled && playlistLimitType === "milliseconds" && timeOfTracksInPlaylistInMsec > playlistLimitValue)
+            {
+                tracksInPlaylist.pop();
+                timeOfTracksInPlaylistInMsec -= trackInBatch.track.duration_ms;
             }
         });
 
