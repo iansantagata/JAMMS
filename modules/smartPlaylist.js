@@ -296,6 +296,7 @@ getOrderingFunction = function(orderField, orderDirection)
         case "artist":
             break;
         case "album":
+            orderingFunction = getOrderingFunctionByDirection(compareByAlbumAscending, compareByAlbumDescending, orderDirection);
             break;
         case "year":
             break;
@@ -397,6 +398,42 @@ compareByAddTimeDescending = function(targetTrack, existingTrack)
     }
 
     if (targetTrackAddTimeStamp > existingTrackAddTimeStamp)
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+compareByAlbumAscending = function(targetTrack, existingTrack)
+{
+    var targetTrackAlbumName = targetTrack.track.album.name.toUpperCase();
+    var existingTrackAlbumName = existingTrack.track.album.name.toUpperCase();
+
+    if (targetTrackAlbumName < existingTrackAlbumName)
+    {
+        return -1;
+    }
+
+    if (targetTrackAlbumName > existingTrackAlbumName)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+compareByAlbumDescending = function(targetTrack, existingTrack)
+{
+    var targetTrackAlbumName = targetTrack.track.album.name.toUpperCase();
+    var existingTrackAlbumName = existingTrack.track.album.name.toUpperCase();
+
+    if (targetTrackAlbumName < existingTrackAlbumName)
+    {
+        return 1;
+    }
+
+    if (targetTrackAlbumName > existingTrackAlbumName)
     {
         return -1;
     }
