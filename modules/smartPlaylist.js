@@ -302,6 +302,7 @@ getOrderingFunction = function(orderField, orderDirection)
         case "genre":
             break;
         case "addDate":
+            orderingFunction = getOrderingFunctionByDirection(compareByAddTimeAscending, compareByAddTimeDescending, orderDirection);
             break;
         case "song":
         default:
@@ -360,6 +361,42 @@ compareBySongDescending = function(targetTrack, existingTrack)
     }
 
     if (targetTrackSongName > existingTrackSongName)
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+compareByAddTimeAscending = function(targetTrack, existingTrack)
+{
+    var targetTrackAddTimeStamp = targetTrack.added_at;
+    var existingTrackAddTimeStamp = existingTrack.added_at;
+
+    if (targetTrackAddTimeStamp < existingTrackAddTimeStamp)
+    {
+        return -1;
+    }
+
+    if (targetTrackAddTimeStamp > existingTrackAddTimeStamp)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+compareByAddTimeDescending = function(targetTrack, existingTrack)
+{
+    var targetTrackAddTimeStamp = targetTrack.added_at;
+    var existingTrackAddTimeStamp = existingTrack.added_at;
+
+    if (targetTrackAddTimeStamp < existingTrackAddTimeStamp)
+    {
+        return 1;
+    }
+
+    if (targetTrackAddTimeStamp > existingTrackAddTimeStamp)
     {
         return -1;
     }
