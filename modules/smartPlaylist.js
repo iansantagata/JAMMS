@@ -102,8 +102,11 @@ exports.createSmartPlaylist = async function(req, res, next)
                 console.error(error.message);
                 return Promise.reject(error);
             }
+
+            var orderComparisonFunction = getOrderingFunction(playlistOrderField, playlistOrderDirection);
         }
 
+        // TODO - Add functions of rules to this array to evaluate each one for a song
         var rules = [];
 
         var tracksInPlaylist = [];
@@ -131,19 +134,21 @@ exports.createSmartPlaylist = async function(req, res, next)
             var lastTrackAddedIndex = tracksInPlaylist.length - 1;
             timeOfTracksInPlaylistInMsec += trackInBatch.track.duration_ms;
 
-            // TODO - Ordering
-            if (!isPlaylistOrderEnabled)
+            // Figure out where this track should be ordered in the playlist
+            if (isPlaylistOrderEnabled)
             {
-                trackOrderingInPlaylist.push(lastTrackAddedIndex);
+                trackOrderingInPlaylist = getOrderForTracks(lastTrackAddedIndex, tracksInPlaylist, trackOrderingInPlaylist, orderComparisonFunction);
             }
             else
             {
-                // Figure out where this track should be ordered in the playlist
+                // If order does not matter, just add the track to the end of the list
+                trackOrderingInPlaylist.push(lastTrackAddedIndex);
             }
 
             // Filter the tracks in the playlist based on number of songs limit (if applicable)
             if (isPlaylistLimitEnabled && playlistLimitType === "songs" && tracksInPlaylist.length > playlistLimitValue)
             {
+                // If we have to remove something, it should be the last track in the list based on ordering
                 var trackIndexToRemoveBySongLimit = trackOrderingInPlaylist.pop();
                 tracksInPlaylist[trackIndexToRemoveBySongLimit] = undefined;
                 timeOfTracksInPlaylistInMsec -= trackInBatch.track.duration_ms;
@@ -152,9 +157,14 @@ exports.createSmartPlaylist = async function(req, res, next)
             // Filter the tracks in the playlist based on total time limit (if applicable)
             if (isPlaylistLimitEnabled && playlistLimitType === "milliseconds" && timeOfTracksInPlaylistInMsec > playlistLimitValue)
             {
+                // If we have to remove something, it should be the last track in the list based on ordering
                 var trackIndexToRemoveByTimeLimit = trackOrderingInPlaylist.pop();
                 tracksInPlaylist[trackIndexToRemoveByTimeLimit] = undefined;
                 timeOfTracksInPlaylistInMsec -= trackInBatch.track.duration_ms;
+
+                // TODO - It's entirely possible that the last song added was a very long song added in the middle of the order (or just not last) and removing the last doesn't get us below the time limit again.
+                // TODO - Revisit this limit and validate it works with ordering properly.
+                // TODO - May have to apply limitations after all ordering has taken place.
             }
         });
 
@@ -208,3 +218,153 @@ getUriFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.uri;
 }
+
+getOrderForTracks = function(targetTrackIndex, tracks, orderOfTracks, orderComparisonFunction)
+{
+    if (orderOfTracks === undefined || orderOfTracks === null || !Array.isArray(orderOfTracks))
+    {
+        return [];
+    }
+
+    if (targetTrackIndex === undefined || targetTrackIndex === null || typeof(targetTrackIndex) !== "number")
+    {
+        return orderOfTracks;
+    }
+
+    if (tracks === undefined || tracks === null || !Array.isArray(tracks) || tracks.length <= 0)
+    {
+        return orderOfTracks;
+    }
+
+    if (orderComparisonFunction === undefined || orderComparisonFunction === null || typeof(orderComparisonFunction) !== "function")
+    {
+        return orderOfTracks;
+    }
+
+    // Figure out where this track goes in the existing ordering
+    var targetOrderIndex = 0;
+    var lowerBoundInclusive = 0;
+    var upperBoundExclusive = orderOfTracks.length;
+    var trackToInsert = tracks[targetTrackIndex];
+
+    // Converge on the location to insert by moving the bounds until they are equal
+    while (lowerBoundInclusive !== upperBoundExclusive)
+    {
+        // Grab the closest approximation to the middle index in the remaining bounded range
+        // This is done in order to shrink the search space and use O(log(n)) instead of O(n)
+        targetOrderIndex = upperBoundExclusive - 1 - Math.floor((upperBoundExclusive - lowerBoundInclusive) / 2);
+
+        // Use the order index to retrieve the target track
+        var targetTrack = tracks[orderOfTracks[targetOrderIndex]];
+
+        // Compare the track to be inserted against the track at the current index
+        var comparisonResult = orderComparisonFunction(trackToInsert, targetTrack);
+
+        // Track to insert should come in order before the target track
+        if (comparisonResult < 0)
+        {
+            upperBoundExclusive = targetOrderIndex;
+        }
+
+        // Track to insert should come in order after the target track
+        else if (comparisonResult > 0)
+        {
+            lowerBoundInclusive = targetOrderIndex + 1;
+        }
+
+        // Track to insert is equivalent in order to the target track
+        else
+        {
+            lowerBoundInclusive = targetOrderIndex;
+            upperBoundExclusive = targetOrderIndex;
+        }
+    }
+
+    // Insert into the order array, pushing everything at the index (inclusive) back
+    targetOrderIndex = lowerBoundInclusive;
+    orderOfTracks.splice(targetOrderIndex, 0, targetTrackIndex);
+    return orderOfTracks;
+}
+
+getOrderingFunction = function(orderField, orderDirection)
+{
+    var orderingFunction = () => {};
+
+    // TODO - Fill these out once the functions are created
+    switch (orderField)
+    {
+        case "artist":
+            break;
+        case "album":
+            break;
+        case "year":
+            break;
+        case "genre":
+            break;
+        case "addDate":
+            break;
+        case "song":
+        default:
+            orderingFunction = getOrderingFunctionByDirection(compareBySongAscending, compareBySongDescending, orderDirection);
+            break;
+    }
+
+    return orderingFunction;
+}
+
+getOrderingFunctionByDirection = function(ascendingFunction, descendingFunction, direction)
+{
+    var orderingFunctionByDirection = () => {};
+
+    switch (direction)
+    {
+        case "descending":
+            orderingFunctionByDirection = descendingFunction;
+            break;
+        case "ascending":
+        default:
+            orderingFunctionByDirection = ascendingFunction;
+            break;
+    }
+
+    return orderingFunctionByDirection;
+}
+
+// Comparison Functions
+compareBySongAscending = function(targetTrack, existingTrack)
+{
+    var targetTrackSongName = targetTrack.track.name.toUpperCase();
+    var existingTrackSongName = existingTrack.track.name.toUpperCase();
+
+    if (targetTrackSongName < existingTrackSongName)
+    {
+        return -1;
+    }
+
+    if (targetTrackSongName > existingTrackSongName)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+compareBySongDescending = function(targetTrack, existingTrack)
+{
+    var targetTrackSongName = targetTrack.track.name.toUpperCase();
+    var existingTrackSongName = existingTrack.track.name.toUpperCase();
+
+    if (targetTrackSongName < existingTrackSongName)
+    {
+        return 1;
+    }
+
+    if (targetTrackSongName > existingTrackSongName)
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+// TODO - Create all the compare by functions
