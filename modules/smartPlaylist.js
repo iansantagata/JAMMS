@@ -19,6 +19,7 @@ exports.createSmartPlaylist = async function(req, res, next)
     try
     {
         // First, process all of the rules and optional settings from the request
+        // Playlist Limits
         var isPlaylistLimitEnabled = req.body.playlistLimitEnabled || null;
         if (isPlaylistLimitEnabled === undefined || isPlaylistLimitEnabled === null)
         {
@@ -31,14 +32,13 @@ exports.createSmartPlaylist = async function(req, res, next)
 
         if (isPlaylistLimitEnabled)
         {
-            var playlistLimitValue = req.body.playlistLimitValue || null;
             var playlistLimitType = req.body.playlistLimitType || null;
-
             if (playlistLimitType === undefined || playlistLimitType === null)
             {
                 isPlaylistLimitEnabled = false;
             }
 
+            var playlistLimitValue = req.body.playlistLimitValue || null;
             if (playlistLimitValue === undefined || playlistLimitValue === null)
             {
                 isPlaylistLimitEnabled = false;
@@ -71,9 +71,38 @@ exports.createSmartPlaylist = async function(req, res, next)
             }
         }
 
-        var isPlaylistOrderEnabled = req.body.playlistOrderEnabled !== undefined;
-        var playlistOrderDirection = req.body.playlistOrderDirection || null;
-        var playlistOrderField = req.body.playlistOrderField || null;
+        // Playlist Ordering
+        var isPlaylistOrderEnabled = req.body.playlistOrderEnabled || null;
+        if (isPlaylistOrderEnabled === undefined || isPlaylistOrderEnabled === null)
+        {
+            isPlaylistOrderEnabled = false;
+        }
+        else
+        {
+            isPlaylistOrderEnabled = true;
+        }
+
+        if (isPlaylistOrderEnabled)
+        {
+            var playlistOrderField = req.body.playlistOrderField || null;
+            if (playlistOrderField === undefined || playlistOrderField === null)
+            {
+                isPlaylistOrderEnabled = false;
+            }
+
+            var playlistOrderDirection = req.body.playlistOrderDirection || null;
+            if (playlistOrderDirection === undefined || playlistOrderDirection === null)
+            {
+                isPlaylistOrderEnabled = false;
+            }
+
+            if (playlistOrderDirection !== "ascending" && playlistOrderDirection !== "descending")
+            {
+                var error = new Error('Invalid playlist order by direction; Valid values are "ascending" or "descending" only: ' + playlistOrderDirection);
+                console.error(error.message);
+                return Promise.reject(error);
+            }
+        }
 
         var rules = [];
 
@@ -99,23 +128,42 @@ exports.createSmartPlaylist = async function(req, res, next)
             // TODO - Rule Checking
             // TODO - Figure out a way to make AND and OR rules work here
             tracksInPlaylist.push(trackInBatch);
+            var lastTrackAddedIndex = tracksInPlaylist.length - 1;
             timeOfTracksInPlaylistInMsec += trackInBatch.track.duration_ms;
-            // TODO - Ordering
 
-            // TODO - Filtering
+            // TODO - Ordering
+            if (!isPlaylistOrderEnabled)
+            {
+                trackOrderingInPlaylist.push(lastTrackAddedIndex);
+            }
+            else
+            {
+                // Figure out where this track should be ordered in the playlist
+            }
+
+            // Filter the tracks in the playlist based on number of songs limit (if applicable)
             if (isPlaylistLimitEnabled && playlistLimitType === "songs" && tracksInPlaylist.length > playlistLimitValue)
             {
-                // TODO - Change this to remove based on ordering
-                tracksInPlaylist.pop();
+                var trackIndexToRemoveBySongLimit = trackOrderingInPlaylist.pop();
+                tracksInPlaylist[trackIndexToRemoveBySongLimit] = undefined;
                 timeOfTracksInPlaylistInMsec -= trackInBatch.track.duration_ms;
             }
 
+            // Filter the tracks in the playlist based on total time limit (if applicable)
             if (isPlaylistLimitEnabled && playlistLimitType === "milliseconds" && timeOfTracksInPlaylistInMsec > playlistLimitValue)
             {
-                tracksInPlaylist.pop();
+                var trackIndexToRemoveByTimeLimit = trackOrderingInPlaylist.pop();
+                tracksInPlaylist[trackIndexToRemoveByTimeLimit] = undefined;
                 timeOfTracksInPlaylistInMsec -= trackInBatch.track.duration_ms;
             }
         });
+
+        // Once we have an ordered list of all the tracks to use, shuffle around the track data to be in that order
+        var orderedTracksInPlaylist = [];
+        for (var trackIndex of trackOrderingInPlaylist)
+        {
+            orderedTracksInPlaylist.push(tracksInPlaylist[trackIndex]);
+        }
 
         // Only thing we do not have supplied from the user is their user ID
         // The app has to get their user ID first to attach this new playlist to their profile
@@ -125,7 +173,7 @@ exports.createSmartPlaylist = async function(req, res, next)
         // Now that we have created the playlist, we want to add the valid songs to it based on the smart playlist rules
         var playlistId = createPlaylistResponse.id;
         req.body.playlistId = playlistId;
-        req.body.trackUris = tracksInPlaylist.map(getUriFromSavedTrack);
+        req.body.trackUris = orderedTracksInPlaylist.map(getUriFromSavedTrack);
         var addTracksToPlaylistResponse = await spotifyClient.addTracksToPlaylist(req, res);
 
         // Finally, we want to show the user info about their new playlist, so retrieve that data after songs were inserted

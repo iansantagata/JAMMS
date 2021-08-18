@@ -95,7 +95,7 @@
                 <option value="album">Album Name</option>
                 <option value="year">Release Year</option>
                 <option value="genre">Genre</option>
-                <option value="addDate">Date Added to Library</option>
+                <option value="addDate">Date Added</option>
               </select>
             </div>
           </div>
