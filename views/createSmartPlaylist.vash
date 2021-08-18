@@ -93,9 +93,9 @@
                 <option value="artist" selected>Artist Name</option>
                 <option value="song">Song Name</option>
                 <option value="album">Album Name</option>
-                <option value="year">Release Year</option>
+                <option value="release">Release Date</option>
                 <option value="genre">Genre</option>
-                <option value="addDate">Date Added</option>
+                <option value="library">Library Add Date</option>
               </select>
             </div>
           </div>

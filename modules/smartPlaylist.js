@@ -298,12 +298,13 @@ getOrderingFunction = function(orderField, orderDirection)
         case "album":
             orderingFunction = getOrderingFunctionByDirection(compareByAlbumAscending, compareByAlbumDescending, orderDirection);
             break;
-        case "year":
+        case "release":
+            orderingFunction = getOrderingFunctionByDirection(compareByReleaseAscending, compareByReleaseDescending, orderDirection);
             break;
         case "genre":
             break;
-        case "addDate":
-            orderingFunction = getOrderingFunctionByDirection(compareByAddTimeAscending, compareByAddTimeDescending, orderDirection);
+        case "library":
+            orderingFunction = getOrderingFunctionByDirection(compareByLibraryAscending, compareByLibraryDescending, orderDirection);
             break;
         case "song":
         default:
@@ -369,17 +370,17 @@ compareBySongDescending = function(targetTrack, existingTrack)
     return 0;
 }
 
-compareByAddTimeAscending = function(targetTrack, existingTrack)
+compareByLibraryAscending = function(targetTrack, existingTrack)
 {
-    var targetTrackAddTimeStamp = targetTrack.added_at;
-    var existingTrackAddTimeStamp = existingTrack.added_at;
+    var targetTrackLibraryAddTimeStamp = targetTrack.added_at;
+    var existingTrackLibraryAddTimeStamp = existingTrack.added_at;
 
-    if (targetTrackAddTimeStamp < existingTrackAddTimeStamp)
+    if (targetTrackLibraryAddTimeStamp < existingTrackLibraryAddTimeStamp)
     {
         return -1;
     }
 
-    if (targetTrackAddTimeStamp > existingTrackAddTimeStamp)
+    if (targetTrackLibraryAddTimeStamp > existingTrackLibraryAddTimeStamp)
     {
         return 1;
     }
@@ -387,17 +388,17 @@ compareByAddTimeAscending = function(targetTrack, existingTrack)
     return 0;
 }
 
-compareByAddTimeDescending = function(targetTrack, existingTrack)
+compareByLibraryDescending = function(targetTrack, existingTrack)
 {
-    var targetTrackAddTimeStamp = targetTrack.added_at;
-    var existingTrackAddTimeStamp = existingTrack.added_at;
+    var targetTrackLibraryAddTimeStamp = targetTrack.added_at;
+    var existingTrackLibraryAddTimeStamp = existingTrack.added_at;
 
-    if (targetTrackAddTimeStamp < existingTrackAddTimeStamp)
+    if (targetTrackLibraryAddTimeStamp < existingTrackLibraryAddTimeStamp)
     {
         return 1;
     }
 
-    if (targetTrackAddTimeStamp > existingTrackAddTimeStamp)
+    if (targetTrackLibraryAddTimeStamp > existingTrackLibraryAddTimeStamp)
     {
         return -1;
     }
@@ -434,6 +435,42 @@ compareByAlbumDescending = function(targetTrack, existingTrack)
     }
 
     if (targetTrackAlbumName > existingTrackAlbumName)
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+compareByReleaseAscending = function(targetTrack, existingTrack)
+{
+    var targetTrackReleaseDate = targetTrack.track.album.release_date;
+    var existingTrackReleaseDate = existingTrack.track.album.release_date;
+
+    if (targetTrackReleaseDate < existingTrackReleaseDate)
+    {
+        return -1;
+    }
+
+    if (targetTrackReleaseDate > existingTrackReleaseDate)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+compareByReleaseDescending = function(targetTrack, existingTrack)
+{
+    var targetTrackReleaseDate = targetTrack.track.album.release_date;
+    var existingTrackReleaseDate = existingTrack.track.album.release_date;
+
+    if (targetTrackReleaseDate < existingTrackReleaseDate)
+    {
+        return 1;
+    }
+
+    if (targetTrackReleaseDate > existingTrackReleaseDate)
     {
         return -1;
     }
