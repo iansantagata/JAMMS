@@ -219,6 +219,11 @@ getUriFromSavedTrack = function(savedTrack)
     return savedTrack.track.uri;
 }
 
+getArtistNameFromArtist = function(artist)
+{
+    return artist.name.toUpperCase();
+}
+
 getOrderForTracks = function(targetTrackIndex, tracks, orderOfTracks, orderComparisonFunction)
 {
     if (orderOfTracks === undefined || orderOfTracks === null || !Array.isArray(orderOfTracks))
@@ -294,6 +299,7 @@ getOrderingFunction = function(orderField, orderDirection)
     switch (orderField)
     {
         case "artist":
+            orderingFunction = getOrderingFunctionByDirection(compareByArtistAscending, compareByArtistDescending, orderDirection);
             break;
         case "album":
             orderingFunction = getOrderingFunctionByDirection(compareByAlbumAscending, compareByAlbumDescending, orderDirection);
@@ -471,6 +477,42 @@ compareByReleaseDescending = function(targetTrack, existingTrack)
     }
 
     if (targetTrackReleaseDate > existingTrackReleaseDate)
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+compareByArtistAscending = function(targetTrack, existingTrack)
+{
+    var targetTrackArtists = targetTrack.track.artists.map(getArtistNameFromArtist).join(", ");
+    var existingTrackArtists = existingTrack.track.artists.map(getArtistNameFromArtist).join(", ");
+
+    if (targetTrackArtists < existingTrackArtists)
+    {
+        return -1;
+    }
+
+    if (targetTrackArtists > existingTrackArtists)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+compareByArtistDescending = function(targetTrack, existingTrack)
+{
+    var targetTrackArtists = targetTrack.track.artists.map(getArtistNameFromArtist).join(", ");
+    var existingTrackArtists = existingTrack.track.artists.map(getArtistNameFromArtist).join(", ");
+
+    if (targetTrackArtists < existingTrackArtists)
+    {
+        return 1;
+    }
+
+    if (targetTrackArtists > existingTrackArtists)
     {
         return -1;
     }
