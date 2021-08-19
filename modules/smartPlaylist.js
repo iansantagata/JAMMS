@@ -312,8 +312,8 @@ getOrderingFunction = function(orderField, orderDirection)
         case "library":
             orderingFunction = getOrderingFunctionByDirection(compareByLibraryAscending, compareByLibraryDescending, orderDirection);
             break;
-        case "songPopularity":
-            orderingFunction = getOrderingFunctionByDirection(compareByTrackPopularityAscending, compareByTrackPopularityDescending, orderDirection);
+        case "popularity":
+            orderingFunction = getOrderingFunctionByDirection(compareByPopularityAscending, compareByPopularityDescending, orderDirection);
             break;
         case "song":
         default:
@@ -563,7 +563,7 @@ compareByDurationDescending = function(targetTrack, existingTrack)
     return 0;
 }
 
-compareByTrackPopularityAscending = function(targetTrack, existingTrack)
+compareByPopularityAscending = function(targetTrack, existingTrack)
 {
     var targetTrackPopularity = targetTrack.track.popularity;
     var existingTrackPopularity = existingTrack.track.popularity;
@@ -581,7 +581,7 @@ compareByTrackPopularityAscending = function(targetTrack, existingTrack)
     return 0;
 }
 
-compareByTrackPopularityDescending = function(targetTrack, existingTrack)
+compareByPopularityDescending = function(targetTrack, existingTrack)
 {
     var targetTrackPopularity = targetTrack.track.popularity;
     var existingTrackPopularity = existingTrack.track.popularity;
