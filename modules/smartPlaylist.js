@@ -295,7 +295,6 @@ getOrderingFunction = function(orderField, orderDirection)
 {
     var orderingFunction = () => {};
 
-    // TODO - Fill these out once the functions are created
     switch (orderField)
     {
         case "artist":
@@ -312,6 +311,9 @@ getOrderingFunction = function(orderField, orderDirection)
             break;
         case "library":
             orderingFunction = getOrderingFunctionByDirection(compareByLibraryAscending, compareByLibraryDescending, orderDirection);
+            break;
+        case "songPopularity":
+            orderingFunction = getOrderingFunctionByDirection(compareByTrackPopularityAscending, compareByTrackPopularityDescending, orderDirection);
             break;
         case "song":
         default:
@@ -554,6 +556,42 @@ compareByDurationDescending = function(targetTrack, existingTrack)
     }
 
     if (targetTrackDuration > existingTrackDuration)
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+compareByTrackPopularityAscending = function(targetTrack, existingTrack)
+{
+    var targetTrackPopularity = targetTrack.track.popularity;
+    var existingTrackPopularity = existingTrack.track.popularity;
+
+    if (targetTrackPopularity < existingTrackPopularity)
+    {
+        return -1;
+    }
+
+    if (targetTrackPopularity > existingTrackPopularity)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+compareByTrackPopularityDescending = function(targetTrack, existingTrack)
+{
+    var targetTrackPopularity = targetTrack.track.popularity;
+    var existingTrackPopularity = existingTrack.track.popularity;
+
+    if (targetTrackPopularity < existingTrackPopularity)
+    {
+        return 1;
+    }
+
+    if (targetTrackPopularity > existingTrackPopularity)
     {
         return -1;
     }

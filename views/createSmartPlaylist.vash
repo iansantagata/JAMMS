@@ -81,12 +81,14 @@
             </div>
             <div class="col-4">
               <select name="playlistOrderField" class="form-control" id="playlistOrderFieldInput" disabled>
-                <option value="artist" selected>Artist Name</option>
-                <option value="song">Song Name</option>
                 <option value="album">Album Name</option>
+                <option value="artist" selected>Artist Name</option>
+                <option value="artistPopularity">Artist Popularity</option>
+                <option value="library">Library Add Date</option>
                 <option value="release">Release Date</option>
                 <option value="duration">Song Length</option>
-                <option value="library">Library Add Date</option>
+                <option value="song">Song Name</option>
+                <option value="songPopularity">Song Popularity</option>
               </select>
             </div>
             <div class="col-1">
