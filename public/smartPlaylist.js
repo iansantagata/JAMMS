@@ -25,18 +25,6 @@ function addRuleFormFields()
     var ruleIndex = lastActiveRuleIndex + 1;
 
     // Create pieces of the form row needed for the new rule
-    // Remove Rule Button
-    var removeRuleButton = document.createElement("button");
-    removeRuleButton.setAttribute("type", "button");
-    removeRuleButton.setAttribute("name", "removeRuleButton");
-    removeRuleButton.setAttribute("id", "removeRuleButton-" + ruleIndex);
-    removeRuleButton.setAttribute("class", "btn btn-outline-danger btn-sm form-control");
-    removeRuleButton.innerText = "Remove Rule";
-
-    var removeRuleButtonDiv = document.createElement("div");
-    removeRuleButtonDiv.setAttribute("class", "col-2");
-    removeRuleButtonDiv.appendChild(removeRuleButton);
-
     // Rule Type Selection
     var artistOptionRuleType = document.createElement("option");
     artistOptionRuleType.setAttribute("value", "artist");
@@ -121,14 +109,26 @@ function addRuleFormFields()
     ruleTextDataDiv.setAttribute("class", "col-4");
     ruleTextDataDiv.appendChild(inputRuleTextData);
 
+    // Remove Rule Button
+    var removeRuleButton = document.createElement("button");
+    removeRuleButton.setAttribute("type", "button");
+    removeRuleButton.setAttribute("name", "removeRuleButton");
+    removeRuleButton.setAttribute("id", "removeRuleButton-" + ruleIndex);
+    removeRuleButton.setAttribute("class", "btn btn-outline-danger btn-sm form-control");
+    removeRuleButton.innerText = "Remove Rule";
+
+    var removeRuleButtonDiv = document.createElement("div");
+    removeRuleButtonDiv.setAttribute("class", "col-2");
+    removeRuleButtonDiv.appendChild(removeRuleButton);
+
     // Add all the components to the top level rule div
     var ruleDiv = document.createElement("div");
     ruleDiv.setAttribute("class", "form-row my-2");
     ruleDiv.setAttribute("id", "rule-" + ruleIndex);
-    ruleDiv.appendChild(removeRuleButtonDiv);
     ruleDiv.appendChild(ruleTypeDiv);
     ruleDiv.appendChild(ruleOperatorDiv);
     ruleDiv.appendChild(ruleTextDataDiv)
+    ruleDiv.appendChild(removeRuleButtonDiv);
 
     // Append a form row of fields for a new rule
     var rulesContainerElement = document.getElementById("rulesContainer");
