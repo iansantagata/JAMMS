@@ -96,13 +96,6 @@ exports.createSmartPlaylist = async function(req, res, next)
                 isPlaylistOrderEnabled = false;
             }
 
-            if (playlistOrderDirection !== "ascending" && playlistOrderDirection !== "descending")
-            {
-                var error = new Error('Invalid playlist order by direction; Valid values are "ascending" or "descending" only: ' + playlistOrderDirection);
-                console.error(error.message);
-                return Promise.reject(error);
-            }
-
             var orderComparisonFunction = getOrderingFunction(playlistOrderField, playlistOrderDirection);
         }
 
