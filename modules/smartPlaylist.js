@@ -144,29 +144,27 @@ exports.createSmartPlaylist = async function(req, res, next)
                 // If order does not matter, just add the track to the end of the list
                 trackOrderingInPlaylist.push(lastTrackAddedIndex);
             }
-
-            // Filter the tracks in the playlist based on number of songs limit (if applicable)
-            if (isPlaylistLimitEnabled && playlistLimitType === "songs" && tracksInPlaylist.length > playlistLimitValue)
-            {
-                // If we have to remove something, it should be the last track in the list based on ordering
-                var trackIndexToRemoveBySongLimit = trackOrderingInPlaylist.pop();
-                tracksInPlaylist[trackIndexToRemoveBySongLimit] = undefined;
-                timeOfTracksInPlaylistInMsec -= trackInBatch.track.duration_ms;
-            }
-
-            // Filter the tracks in the playlist based on total time limit (if applicable)
-            if (isPlaylistLimitEnabled && playlistLimitType === "milliseconds" && timeOfTracksInPlaylistInMsec > playlistLimitValue)
-            {
-                // If we have to remove something, it should be the last track in the list based on ordering
-                var trackIndexToRemoveByTimeLimit = trackOrderingInPlaylist.pop();
-                tracksInPlaylist[trackIndexToRemoveByTimeLimit] = undefined;
-                timeOfTracksInPlaylistInMsec -= trackInBatch.track.duration_ms;
-
-                // TODO - It's entirely possible that the last song added was a very long song added in the middle of the order (or just not last) and removing the last doesn't get us below the time limit again.
-                // TODO - Revisit this limit and validate it works with ordering properly.
-                // TODO - May have to apply limitations after all ordering has taken place.
-            }
         });
+
+        // Filter the tracks in the playlist based on number of songs limit (if applicable)
+        while (isPlaylistLimitEnabled && playlistLimitType === "songs" && trackOrderingInPlaylist.length > playlistLimitValue)
+        {
+            // If we have to remove something, it should be the last track in the list based on ordering
+            var trackIndexToRemoveBySongLimit = trackOrderingInPlaylist.pop();
+            var trackToRemoveBySongLimit = tracksInPlaylist[trackIndexToRemoveBySongLimit];
+            timeOfTracksInPlaylistInMsec -= trackToRemoveBySongLimit.track.duration_ms;
+            tracksInPlaylist[trackIndexToRemoveBySongLimit] = undefined;
+        }
+
+        // Filter the tracks in the playlist based on total time limit (if applicable)
+        while (isPlaylistLimitEnabled && playlistLimitType === "milliseconds" && timeOfTracksInPlaylistInMsec > playlistLimitValue)
+        {
+            // If we have to remove something, it should be the last track in the list based on ordering
+            var trackIndexToRemoveByTimeLimit = trackOrderingInPlaylist.pop();
+            var trackToRemoveByTimeLimit = tracksInPlaylist[trackIndexToRemoveByTimeLimit];
+            timeOfTracksInPlaylistInMsec -= trackToRemoveByTimeLimit.track.duration_ms;
+            tracksInPlaylist[trackIndexToRemoveByTimeLimit] = undefined;
+        }
 
         // Once we have an ordered list of all the tracks to use, shuffle around the track data to be in that order
         var orderedTracksInPlaylist = [];
