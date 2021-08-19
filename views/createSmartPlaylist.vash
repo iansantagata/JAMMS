@@ -63,9 +63,9 @@
             </div>
             <div class="col-4">
               <select name="playlistLimitType" class="form-control" id="playlistLimitTypeInput" disabled>
-                <option value="songs" selected>Songs</option>
-                <option value="minutes">Minutes</option>
                 <option value="hours">Hours</option>
+                <option value="minutes">Minutes</option>
+                <option value="songs" selected>Songs</option>
               </select>
             </div>
           </div>
@@ -77,25 +77,25 @@
               </div>
             </div>
             <div class="col-3">
-              <p>Order songs in</p>
+              <p>Order songs by</p>
             </div>
             <div class="col-4">
-              <select name="playlistOrderDirection" class="form-control" id="playlistOrderDirectionInput" disabled>
-                <option value="ascending" selected>Ascending Order</option>
-                <option value="descending">Descending Order</option>
-              </select>
-            </div>
-            <div class="col-1">
-              <p>by</p>
-            </div>
-            <div class="col-3">
               <select name="playlistOrderField" class="form-control" id="playlistOrderFieldInput" disabled>
                 <option value="artist" selected>Artist Name</option>
                 <option value="song">Song Name</option>
                 <option value="album">Album Name</option>
                 <option value="release">Release Date</option>
-                <option value="genre">Genre</option>
+                <option value="duration">Song Length</option>
                 <option value="library">Library Add Date</option>
+              </select>
+            </div>
+            <div class="col-1">
+              <p>in</p>
+            </div>
+            <div class="col-3">
+              <select name="playlistOrderDirection" class="form-control" id="playlistOrderDirectionInput" disabled>
+                <option value="ascending" selected>Ascending Order</option>
+                <option value="descending">Descending Order</option>
               </select>
             </div>
           </div>

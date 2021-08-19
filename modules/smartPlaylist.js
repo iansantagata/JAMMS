@@ -307,7 +307,8 @@ getOrderingFunction = function(orderField, orderDirection)
         case "release":
             orderingFunction = getOrderingFunctionByDirection(compareByReleaseAscending, compareByReleaseDescending, orderDirection);
             break;
-        case "genre":
+        case "duration":
+            orderingFunction = getOrderingFunctionByDirection(compareByDurationAscending, compareByDurationDescending, orderDirection);
             break;
         case "library":
             orderingFunction = getOrderingFunctionByDirection(compareByLibraryAscending, compareByLibraryDescending, orderDirection);
@@ -486,6 +487,8 @@ compareByReleaseDescending = function(targetTrack, existingTrack)
 
 compareByArtistAscending = function(targetTrack, existingTrack)
 {
+    // A track can have multiple artists and is usually in a particular order
+    // Take all the artists on a track and join them into a comma separated string for comparison
     var targetTrackArtists = targetTrack.track.artists.map(getArtistNameFromArtist).join(", ");
     var existingTrackArtists = existingTrack.track.artists.map(getArtistNameFromArtist).join(", ");
 
@@ -504,6 +507,8 @@ compareByArtistAscending = function(targetTrack, existingTrack)
 
 compareByArtistDescending = function(targetTrack, existingTrack)
 {
+    // A track can have multiple artists and is usually in a particular order
+    // Take all the artists on a track and join them into a comma separated string for comparison
     var targetTrackArtists = targetTrack.track.artists.map(getArtistNameFromArtist).join(", ");
     var existingTrackArtists = existingTrack.track.artists.map(getArtistNameFromArtist).join(", ");
 
@@ -520,4 +525,38 @@ compareByArtistDescending = function(targetTrack, existingTrack)
     return 0;
 }
 
-// TODO - Create all the compare by functions
+compareByDurationAscending = function(targetTrack, existingTrack)
+{
+    var targetTrackDuration = targetTrack.track.duration_ms;
+    var existingTrackDuration = existingTrack.track.duration_ms;
+
+    if (targetTrackDuration < existingTrackDuration)
+    {
+        return -1;
+    }
+
+    if (targetTrackDuration > existingTrackDuration)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+compareByDurationDescending = function(targetTrack, existingTrack)
+{
+    var targetTrackDuration = targetTrack.track.duration_ms;
+    var existingTrackDuration = existingTrack.track.duration_ms;
+
+    if (targetTrackDuration < existingTrackDuration)
+    {
+        return 1;
+    }
+
+    if (targetTrackDuration > existingTrackDuration)
+    {
+        return -1;
+    }
+
+    return 0;
+}
