@@ -132,57 +132,71 @@ exports.createSmartPlaylist = async function(req, res, next)
             }
         }
 
+        // Keep track of the tracks to be in the playlist and the order of them as well
         var tracksInPlaylist = [];
         var trackOrderingInPlaylist = [];
+        var timeOfTracksInPlaylistInMsec = 0;
+        var existMoreBatchesToRetrieve = true;
 
-        // TODO - While there are still batches of songs to grab:
-        // TODO - Grab a batch of 50 songs
-        // TODO - Foreach song in a batch:
-        // TODO - 1. Validate it fits all the rules, if not then continue
-        // TODO - 2. Insert it in order into the list of applicable songs (if ordering applies)
-        // TODO - 3. Trim the list of applicable songs by limit criteria (if limiting applies)
-
-        // TODO - Looping over batches
         req.query.pageNumber = 1; // Start with first page
         req.query.tracksPerPage = 50; // Maximum value of tracks to retrieve per page
-        var getAllTracksBatchedResponse = await spotifyClient.getAllTracks(req, res);
 
-        var timeOfTracksInPlaylistInMsec = 0;
-        var tracksInBatch = getAllTracksBatchedResponse.items;
-        for (var trackInBatch of tracksInBatch)
+        // Loop over all songs in the library in batches
+        while (existMoreBatchesToRetrieve)
         {
-            // Ensure that this track should go into the playlist based on the rules
-            var trackFollowsAllRules = true;
-            for (var rule of rules)
+            // Get all the tracks in this batch
+            var getAllTracksBatchedResponse = await spotifyClient.getAllTracks(req, res);
+
+            // Get data on the tracks processed
+            var tracksProcessed = getAllTracksBatchedResponse.offset + getAllTracksBatchedResponse.limit;
+            var totalTracks = getAllTracksBatchedResponse.total;
+
+            // Increment the page number to retrieve the next batch of tracks when ready
+            req.query.pageNumber++;
+
+            // If there are no more tracks to retrieve from the library after these ones, mark that so we do not continue endlessly
+            if (tracksProcessed >= totalTracks)
             {
-                console.log(rule);
-                if (!rule.function(trackInBatch, rule.data, rule.operator))
+                existMoreBatchesToRetrieve = false;
+            }
+
+            // Process each track in the batch
+            var tracksInBatch = getAllTracksBatchedResponse.items;
+            for (var trackInBatch of tracksInBatch)
+            {
+                // Ensure that this track should go into the playlist based on the rules
+                var trackFollowsAllRules = true;
+                for (var rule of rules)
                 {
-                    trackFollowsAllRules = false;
-                    break;
+                    // TODO - Figure out a way to make AND and OR rules work here
+                    if (!rule.function(trackInBatch, rule.data, rule.operator))
+                    {
+                        trackFollowsAllRules = false;
+                        break;
+                    }
                 }
-            }
 
-            // If the track breaks even one of the rules, skip it and move to the next track to check
-            if (!trackFollowsAllRules)
-            {
-                continue;
-            }
+                // If the track breaks even one of the rules, skip it and move to the next track to check
+                if (!trackFollowsAllRules)
+                {
+                    continue;
+                }
 
-            // TODO - Figure out a way to make AND and OR rules work here
-            tracksInPlaylist.push(trackInBatch);
-            var lastTrackAddedIndex = tracksInPlaylist.length - 1;
-            timeOfTracksInPlaylistInMsec += getDurationFromSavedTrack(trackInBatch);
+                // Put the track in the list of tracks to go in the playlist and keep a running tally of how long the playlist is
+                tracksInPlaylist.push(trackInBatch);
+                var lastTrackAddedIndex = tracksInPlaylist.length - 1;
+                timeOfTracksInPlaylistInMsec += getDurationFromSavedTrack(trackInBatch);
 
-            // Figure out where this track should be ordered in the playlist
-            if (isPlaylistOrderEnabled)
-            {
-                trackOrderingInPlaylist = getOrderForTracks(lastTrackAddedIndex, tracksInPlaylist, trackOrderingInPlaylist, orderComparisonFunction);
-            }
-            else
-            {
-                // If order does not matter, just add the track to the end of the list
-                trackOrderingInPlaylist.push(lastTrackAddedIndex);
+                // Figure out where this track should be ordered in the playlist
+                if (isPlaylistOrderEnabled)
+                {
+                    trackOrderingInPlaylist = getOrderForTracks(lastTrackAddedIndex, tracksInPlaylist, trackOrderingInPlaylist, orderComparisonFunction);
+                }
+                else
+                {
+                    // If order does not matter, just add the track to the end of the list
+                    trackOrderingInPlaylist.push(lastTrackAddedIndex);
+                }
             }
         }
 
