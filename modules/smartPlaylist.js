@@ -99,8 +99,38 @@ exports.createSmartPlaylist = async function(req, res, next)
             var orderComparisonFunction = getOrderingFunction(playlistOrderField, playlistOrderDirection);
         }
 
-        // TODO - Add functions of rules to this array to evaluate each one for a song
+        // Playlist Rules
         var rules = [];
+        var parsedRules = [];
+
+        for (var parameter in req.body)
+        {
+            if (parameter.startsWith("playlistRule"))
+            {
+                var parameterSplit = parameter.split("-");
+                var ruleNumber = parameterSplit[parameterSplit.length - 1];
+
+                if (!parsedRules.includes(ruleNumber))
+                {
+                    var ruleType = req.body["playlistRuleType-" + ruleNumber];
+                    var ruleOperator = req.body["playlistRuleOperator-" + ruleNumber];
+                    var ruleData = req.body["playlistRuleData-" + ruleNumber];
+
+                    var ruleOperatorFunction = getRuleOperatorFunction(ruleOperator);
+                    var ruleFunction = getRuleFunction(ruleType);
+
+                    var ruleFromParameters =
+                    {
+                        function: ruleFunction,
+                        operator: ruleOperatorFunction,
+                        data: ruleData
+                    };
+
+                    rules.push(ruleFromParameters);
+                    parsedRules.push(ruleNumber);
+                }
+            }
+        }
 
         var tracksInPlaylist = [];
         var trackOrderingInPlaylist = [];
@@ -119,13 +149,30 @@ exports.createSmartPlaylist = async function(req, res, next)
 
         var timeOfTracksInPlaylistInMsec = 0;
         var tracksInBatch = getAllTracksBatchedResponse.items;
-        tracksInBatch.forEach((trackInBatch) => {
+        for (var trackInBatch of tracksInBatch)
+        {
+            // Ensure that this track should go into the playlist based on the rules
+            var trackFollowsAllRules = true;
+            for (var rule of rules)
+            {
+                console.log(rule);
+                if (!rule.function(trackInBatch, rule.data, rule.operator))
+                {
+                    trackFollowsAllRules = false;
+                    break;
+                }
+            }
 
-            // TODO - Rule Checking
+            // If the track breaks even one of the rules, skip it and move to the next track to check
+            if (!trackFollowsAllRules)
+            {
+                continue;
+            }
+
             // TODO - Figure out a way to make AND and OR rules work here
             tracksInPlaylist.push(trackInBatch);
             var lastTrackAddedIndex = tracksInPlaylist.length - 1;
-            timeOfTracksInPlaylistInMsec += trackInBatch.track.duration_ms;
+            timeOfTracksInPlaylistInMsec += getDurationFromSavedTrack(trackInBatch);
 
             // Figure out where this track should be ordered in the playlist
             if (isPlaylistOrderEnabled)
@@ -137,7 +184,7 @@ exports.createSmartPlaylist = async function(req, res, next)
                 // If order does not matter, just add the track to the end of the list
                 trackOrderingInPlaylist.push(lastTrackAddedIndex);
             }
-        });
+        }
 
         // Filter the tracks in the playlist based on number of songs limit (if applicable)
         while (isPlaylistLimitEnabled && playlistLimitType === "songs" && trackOrderingInPlaylist.length > playlistLimitValue)
@@ -145,7 +192,7 @@ exports.createSmartPlaylist = async function(req, res, next)
             // If we have to remove something, it should be the last track in the list based on ordering
             var trackIndexToRemoveBySongLimit = trackOrderingInPlaylist.pop();
             var trackToRemoveBySongLimit = tracksInPlaylist[trackIndexToRemoveBySongLimit];
-            timeOfTracksInPlaylistInMsec -= trackToRemoveBySongLimit.track.duration_ms;
+            timeOfTracksInPlaylistInMsec -= getDurationFromSavedTrack(trackToRemoveBySongLimit);
             tracksInPlaylist[trackIndexToRemoveBySongLimit] = undefined;
         }
 
@@ -155,7 +202,7 @@ exports.createSmartPlaylist = async function(req, res, next)
             // If we have to remove something, it should be the last track in the list based on ordering
             var trackIndexToRemoveByTimeLimit = trackOrderingInPlaylist.pop();
             var trackToRemoveByTimeLimit = tracksInPlaylist[trackIndexToRemoveByTimeLimit];
-            timeOfTracksInPlaylistInMsec -= trackToRemoveByTimeLimit.track.duration_ms;
+            timeOfTracksInPlaylistInMsec -= getDurationFromSavedTrack(trackToRemoveByTimeLimit);
             tracksInPlaylist[trackIndexToRemoveByTimeLimit] = undefined;
         }
 
@@ -205,9 +252,60 @@ exports.createSmartPlaylist = async function(req, res, next)
 }
 
 // Local Helper Functions
+
+// Data Retrieval Functions
 getUriFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.uri;
+}
+
+getTrackNameFromSavedTrack = function(savedTrack)
+{
+    return savedTrack.track.name.toUpperCase();
+}
+
+getAlbumNameFromSavedTrack = function(savedTrack)
+{
+    return savedTrack.track.album.name.toUpperCase();
+}
+
+getArtistsFromSavedTrack = function(savedTrack)
+{
+    return savedTrack.track.artists;
+}
+
+getArtistNamesFromSavedTrack = function(savedTrack)
+{
+    // A track can have multiple artists and is usually in a particular order
+    // Take all the artists on a track and join them into a single comma separated string
+    return getArtistsFromSavedTrack(savedTrack).map(getArtistNameFromArtist).join(", ");
+}
+
+getReleaseDateFromSavedTrack = function(savedTrack)
+{
+    return savedTrack.track.album.release_date;
+}
+
+getReleaseYearFromSavedTrack = function(savedTrack)
+{
+    // The release year is usually YYYY-MM-DD but can optionally have month or day level precision
+    // Grab the first four characters present to get the year value only as it should always be present
+    return getReleaseDateFromSavedTrack(savedTrack).substr(0, 4);
+}
+
+getAddDateFromSavedTrack = function(savedTrack)
+{
+    return savedTrack.added_at;
+}
+
+getDurationFromSavedTrack = function(savedTrack)
+{
+    return savedTrack.track.duration_ms;
+}
+
+getPopularityFromSavedTrack = function(savedTrack)
+{
+    return savedTrack.track.popularity;
 }
 
 getArtistNameFromArtist = function(artist)
@@ -215,6 +313,127 @@ getArtistNameFromArtist = function(artist)
     return artist.name.toUpperCase();
 }
 
+// Operator Functions
+equals = function(target, existing)
+{
+    return target === existing;
+}
+
+notEquals = function(target, existing)
+{
+    return target !== existing;
+}
+
+greaterThan = function(target, existing)
+{
+    return target > existing;
+}
+
+greaterThanOrEqualTo = function(target, existing)
+{
+    return greaterThan(target, existing) || equals(target, existing);
+}
+
+lessThan = function(target, existing)
+{
+    return target < existing;
+}
+
+lessThanOrEqualTo = function(target, existing)
+{
+    return lessThan(target, existing) || equals(target, existing);
+}
+
+// TODO - Contains logic
+
+// Rule Functions
+ruleBySongName = function(track, songNameRuleData, operatorFunction)
+{
+    var trackSongName = getTrackNameFromSavedTrack(track);
+    return operatorFunction(trackSongName, songNameRuleData.toUpperCase());
+}
+
+ruleByAlbumName = function(track, albumNameRuleData, operatorFunction)
+{
+    var trackAlbumName = getAlbumNameFromSavedTrack(track);
+    return operatorFunction(trackAlbumName, albumNameRuleData.toUpperCase());
+}
+
+ruleByReleaseYear = function(track, releaseYearRuleData, operatorFunction)
+{
+    var trackReleaseYear = getReleaseYearFromSavedTrack(track);
+    return operatorFunction(trackReleaseYear, releaseYearRuleData);
+}
+
+ruleByArtistName = function(track, artistNameRuleData, operatorFunction)
+{
+    var trackArtistName = getArtistNamesFromSavedTrack(track);
+    return operatorFunction(trackArtistName, artistNameRuleData.toUpperCase());
+}
+
+// TODO - Rule for genre
+
+getRuleOperatorFunction = function(operator)
+{
+    var operatorFunction = () => {};
+
+    switch (operator)
+    {
+        case "notEqual":
+            operatorFunction = notEquals;
+            break;
+        case "greaterThan":
+            operatorFunction = greaterThan;
+            break;
+        case "greaterThanOrEqual":
+            operatorFunction = greaterThanOrEqualTo;
+            break;
+        case "lessThan":
+            operatorFunction = lessThan;
+            break;
+        case "lessThanOrEqual":
+            operatorFunction = lessThanOrEqualTo;
+            break;
+        case "contains":
+            // TODO - Create a contains function
+            break;
+        case "equal":
+        default:
+            operatorFunction = equals;
+            break;
+    }
+
+    return operatorFunction;
+}
+
+getRuleFunction = function(ruleType)
+{
+    var ruleFunction = () => {};
+
+    switch (ruleType)
+    {
+        case "artist":
+            ruleFunction = ruleByArtistName;
+            break;
+        case "album":
+            ruleFunction = ruleByAlbumName;
+            break;
+        case "genre":
+            // TODO - Rule by genre function
+            break;
+        case "year":
+            ruleFunction = ruleByReleaseYear;
+            break;
+        case "song":
+        default:
+            ruleFunction = ruleBySongName;
+            break;
+    }
+
+    return ruleFunction;
+}
+
+// Ordering Functions
 getOrderForTracks = function(targetTrackIndex, tracks, orderOfTracks, orderComparisonFunction)
 {
     if (orderOfTracks === undefined || orderOfTracks === null || !Array.isArray(orderOfTracks))
@@ -336,8 +555,8 @@ getOrderingFunctionByDirection = function(ascendingFunction, descendingFunction,
 // Comparison Functions
 compareBySongAscending = function(targetTrack, existingTrack)
 {
-    var targetTrackSongName = targetTrack.track.name.toUpperCase();
-    var existingTrackSongName = existingTrack.track.name.toUpperCase();
+    var targetTrackSongName = getTrackNameFromSavedTrack(targetTrack);
+    var existingTrackSongName = getTrackNameFromSavedTrack(existingTrack);
 
     if (targetTrackSongName < existingTrackSongName)
     {
@@ -354,8 +573,8 @@ compareBySongAscending = function(targetTrack, existingTrack)
 
 compareBySongDescending = function(targetTrack, existingTrack)
 {
-    var targetTrackSongName = targetTrack.track.name.toUpperCase();
-    var existingTrackSongName = existingTrack.track.name.toUpperCase();
+    var targetTrackSongName = getTrackNameFromSavedTrack(targetTrack);
+    var existingTrackSongName = getTrackNameFromSavedTrack(existingTrack);
 
     if (targetTrackSongName < existingTrackSongName)
     {
@@ -372,8 +591,8 @@ compareBySongDescending = function(targetTrack, existingTrack)
 
 compareByLibraryAscending = function(targetTrack, existingTrack)
 {
-    var targetTrackLibraryAddTimeStamp = targetTrack.added_at;
-    var existingTrackLibraryAddTimeStamp = existingTrack.added_at;
+    var targetTrackLibraryAddTimeStamp = getAddDateFromSavedTrack(targetTrack);
+    var existingTrackLibraryAddTimeStamp = getAddDateFromSavedTrack(existingTrack);
 
     if (targetTrackLibraryAddTimeStamp < existingTrackLibraryAddTimeStamp)
     {
@@ -390,8 +609,8 @@ compareByLibraryAscending = function(targetTrack, existingTrack)
 
 compareByLibraryDescending = function(targetTrack, existingTrack)
 {
-    var targetTrackLibraryAddTimeStamp = targetTrack.added_at;
-    var existingTrackLibraryAddTimeStamp = existingTrack.added_at;
+    var targetTrackLibraryAddTimeStamp = getAddDateFromSavedTrack(targetTrack);
+    var existingTrackLibraryAddTimeStamp = getAddDateFromSavedTrack(existingTrack);
 
     if (targetTrackLibraryAddTimeStamp < existingTrackLibraryAddTimeStamp)
     {
@@ -408,8 +627,8 @@ compareByLibraryDescending = function(targetTrack, existingTrack)
 
 compareByAlbumAscending = function(targetTrack, existingTrack)
 {
-    var targetTrackAlbumName = targetTrack.track.album.name.toUpperCase();
-    var existingTrackAlbumName = existingTrack.track.album.name.toUpperCase();
+    var targetTrackAlbumName = getAlbumNameFromSavedTrack(targetTrack);
+    var existingTrackAlbumName = getAlbumNameFromSavedTrack(existingTrack);
 
     if (targetTrackAlbumName < existingTrackAlbumName)
     {
@@ -426,8 +645,8 @@ compareByAlbumAscending = function(targetTrack, existingTrack)
 
 compareByAlbumDescending = function(targetTrack, existingTrack)
 {
-    var targetTrackAlbumName = targetTrack.track.album.name.toUpperCase();
-    var existingTrackAlbumName = existingTrack.track.album.name.toUpperCase();
+    var targetTrackAlbumName = getAlbumNameFromSavedTrack(targetTrack);
+    var existingTrackAlbumName = getAlbumNameFromSavedTrack(existingTrack);
 
     if (targetTrackAlbumName < existingTrackAlbumName)
     {
@@ -444,8 +663,8 @@ compareByAlbumDescending = function(targetTrack, existingTrack)
 
 compareByReleaseAscending = function(targetTrack, existingTrack)
 {
-    var targetTrackReleaseDate = targetTrack.track.album.release_date;
-    var existingTrackReleaseDate = existingTrack.track.album.release_date;
+    var targetTrackReleaseDate = getReleaseDateFromSavedTrack(targetTrack);
+    var existingTrackReleaseDate = getReleaseDateFromSavedTrack(existingTrack);
 
     if (targetTrackReleaseDate < existingTrackReleaseDate)
     {
@@ -462,8 +681,8 @@ compareByReleaseAscending = function(targetTrack, existingTrack)
 
 compareByReleaseDescending = function(targetTrack, existingTrack)
 {
-    var targetTrackReleaseDate = targetTrack.track.album.release_date;
-    var existingTrackReleaseDate = existingTrack.track.album.release_date;
+    var targetTrackReleaseDate = getReleaseDateFromSavedTrack(targetTrack);
+    var existingTrackReleaseDate = getReleaseDateFromSavedTrack(existingTrack);
 
     if (targetTrackReleaseDate < existingTrackReleaseDate)
     {
@@ -480,10 +699,8 @@ compareByReleaseDescending = function(targetTrack, existingTrack)
 
 compareByArtistAscending = function(targetTrack, existingTrack)
 {
-    // A track can have multiple artists and is usually in a particular order
-    // Take all the artists on a track and join them into a comma separated string for comparison
-    var targetTrackArtists = targetTrack.track.artists.map(getArtistNameFromArtist).join(", ");
-    var existingTrackArtists = existingTrack.track.artists.map(getArtistNameFromArtist).join(", ");
+    var targetTrackArtists = getArtistNamesFromSavedTrack(targetTrack);
+    var existingTrackArtists = getArtistNamesFromSavedTrack(existingTrack);
 
     if (targetTrackArtists < existingTrackArtists)
     {
@@ -500,10 +717,8 @@ compareByArtistAscending = function(targetTrack, existingTrack)
 
 compareByArtistDescending = function(targetTrack, existingTrack)
 {
-    // A track can have multiple artists and is usually in a particular order
-    // Take all the artists on a track and join them into a comma separated string for comparison
-    var targetTrackArtists = targetTrack.track.artists.map(getArtistNameFromArtist).join(", ");
-    var existingTrackArtists = existingTrack.track.artists.map(getArtistNameFromArtist).join(", ");
+    var targetTrackArtists = getArtistNamesFromSavedTrack(targetTrack);
+    var existingTrackArtists = getArtistNamesFromSavedTrack(existingTrack);
 
     if (targetTrackArtists < existingTrackArtists)
     {
@@ -520,8 +735,8 @@ compareByArtistDescending = function(targetTrack, existingTrack)
 
 compareByDurationAscending = function(targetTrack, existingTrack)
 {
-    var targetTrackDuration = targetTrack.track.duration_ms;
-    var existingTrackDuration = existingTrack.track.duration_ms;
+    var targetTrackDuration = getDurationFromSavedTrack(targetTrack);
+    var existingTrackDuration = getDurationFromSavedTrack(existingTrack);
 
     if (targetTrackDuration < existingTrackDuration)
     {
@@ -538,8 +753,8 @@ compareByDurationAscending = function(targetTrack, existingTrack)
 
 compareByDurationDescending = function(targetTrack, existingTrack)
 {
-    var targetTrackDuration = targetTrack.track.duration_ms;
-    var existingTrackDuration = existingTrack.track.duration_ms;
+    var targetTrackDuration = getDurationFromSavedTrack(targetTrack);
+    var existingTrackDuration = getDurationFromSavedTrack(existingTrack);
 
     if (targetTrackDuration < existingTrackDuration)
     {
@@ -556,8 +771,8 @@ compareByDurationDescending = function(targetTrack, existingTrack)
 
 compareByPopularityAscending = function(targetTrack, existingTrack)
 {
-    var targetTrackPopularity = targetTrack.track.popularity;
-    var existingTrackPopularity = existingTrack.track.popularity;
+    var targetTrackPopularity = getPopularityFromSavedTrack(targetTrack);
+    var existingTrackPopularity = getPopularityFromSavedTrack(existingTrack);
 
     if (targetTrackPopularity < existingTrackPopularity)
     {
@@ -574,8 +789,8 @@ compareByPopularityAscending = function(targetTrack, existingTrack)
 
 compareByPopularityDescending = function(targetTrack, existingTrack)
 {
-    var targetTrackPopularity = targetTrack.track.popularity;
-    var existingTrackPopularity = existingTrack.track.popularity;
+    var targetTrackPopularity = getPopularityFromSavedTrack(targetTrack);
+    var existingTrackPopularity = getPopularityFromSavedTrack(existingTrack);
 
     if (targetTrackPopularity < existingTrackPopularity)
     {

@@ -22,24 +22,26 @@
             <div class="form-row my-2" id="rule-0">
               <div class="col-3">
                 <select name="playlistRuleType-0" class="form-control" required >
-                  <option value="artist" selected>Artist Name</option>
-                  <option value="song">Song Name</option>
                   <option value="album">Album Name</option>
-                  <option value="year">Release Year</option>
+                  <option value="artist" selected>Artist Name</option>
                   <option value="genre">Genre</option>
+                  <option value="year">Release Year</option>
+                  <option value="song">Song Name</option>
                 </select>
               </div>
-              <div class="col-3">
+              <div class="col-4">
                 <select name="playlistRuleOperator-0" class="form-control" required>
                   <option value="equal" selected>is</option>
                   <option value="notEqual">is not</option>
                   <option value="greaterThan">is greater than</option>
+                  <option value="greaterThanOrEqual">is greater than or equal to</option>
                   <option value="lessThan">is less than</option>
+                  <option value="lessThanOrEqual">is less than or equal to</option>
                   <option value="contains">contains</option>
                 </select>
               </div>
-              <div class="col-4">
-                <input type="text" name="playlistRuleText-0" class="form-control" placeholder="Your Rule Data" required />
+              <div class="col-3">
+                <input type="text" name="playlistRuleData-0" class="form-control" placeholder="Your Rule Data" required />
               </div>
               <div class="col-2">
                 <button type="button" name="removeRuleButton" id="removeRuleButton-0" class="btn btn-outline-danger btn-sm form-control">Remove Rule</button>

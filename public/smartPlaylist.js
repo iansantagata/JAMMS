@@ -26,36 +26,36 @@ function addRuleFormFields()
 
     // Create pieces of the form row needed for the new rule
     // Rule Type Selection
+    var albumOptionRuleType = document.createElement("option");
+    albumOptionRuleType.setAttribute("value", "album");
+    albumOptionRuleType.innerText = "Album Name";
+
     var artistOptionRuleType = document.createElement("option");
     artistOptionRuleType.setAttribute("value", "artist");
     artistOptionRuleType.setAttribute("selected", "");
     artistOptionRuleType.innerText = "Artist Name";
 
-    var songOptionRuleType = document.createElement("option");
-    songOptionRuleType.setAttribute("value", "song");
-    songOptionRuleType.innerText = "Song Name";
-
-    var albumOptionRuleType = document.createElement("option");
-    albumOptionRuleType.setAttribute("value", "album");
-    albumOptionRuleType.innerText = "Album Name";
+    var genreOptionRuleType = document.createElement("option");
+    genreOptionRuleType.setAttribute("value", "genre");
+    genreOptionRuleType.innerText = "Genre";
 
     var yearOptionRuleType = document.createElement("option");
     yearOptionRuleType.setAttribute("value", "year");
     yearOptionRuleType.innerText = "Release Year";
 
-    var genreOptionRuleType = document.createElement("option");
-    genreOptionRuleType.setAttribute("value", "genre");
-    genreOptionRuleType.innerText = "Genre";
+    var songOptionRuleType = document.createElement("option");
+    songOptionRuleType.setAttribute("value", "song");
+    songOptionRuleType.innerText = "Song Name";
 
     var selectRuleType = document.createElement("select");
     selectRuleType.setAttribute("name", "playlistRuleType-" + ruleIndex);
     selectRuleType.setAttribute("class", "form-control");
     selectRuleType.setAttribute("required", "");
-    selectRuleType.appendChild(artistOptionRuleType);
-    selectRuleType.appendChild(songOptionRuleType);
     selectRuleType.appendChild(albumOptionRuleType);
-    selectRuleType.appendChild(yearOptionRuleType);
+    selectRuleType.appendChild(artistOptionRuleType);
     selectRuleType.appendChild(genreOptionRuleType);
+    selectRuleType.appendChild(yearOptionRuleType);
+    selectRuleType.appendChild(songOptionRuleType);
 
     var ruleTypeDiv = document.createElement("div");
     ruleTypeDiv.setAttribute("class", "col-3");
@@ -75,9 +75,17 @@ function addRuleFormFields()
     greaterThanOptionRuleOperator.setAttribute("value", "greaterThan");
     greaterThanOptionRuleOperator.innerText = "is greater than";
 
+    var greaterThanOrEqualToOptionRuleOperator = document.createElement("option");
+    greaterThanOrEqualToOptionRuleOperator.setAttribute("value", "greaterThanOrEqual");
+    greaterThanOrEqualToOptionRuleOperator.innerText = "is greater than or equal to";
+
     var lessThanOptionRuleOperator = document.createElement("option");
     lessThanOptionRuleOperator.setAttribute("value", "lessThan");
     lessThanOptionRuleOperator.innerText = "is less than";
+
+    var lessThanOrEqualToOptionRuleOperator = document.createElement("option");
+    lessThanOrEqualToOptionRuleOperator.setAttribute("value", "lessThanOrEqual");
+    lessThanOrEqualToOptionRuleOperator.innerText = "is less than or equal to";
 
     var containsOptionRuleOperator = document.createElement("option");
     containsOptionRuleOperator.setAttribute("value", "contains");
@@ -90,23 +98,25 @@ function addRuleFormFields()
     selectRuleOperator.appendChild(equalOptionRuleOperator);
     selectRuleOperator.appendChild(notEqualOptionRuleOperator);
     selectRuleOperator.appendChild(greaterThanOptionRuleOperator);
+    selectRuleOperator.appendChild(greaterThanOrEqualToOptionRuleOperator);
     selectRuleOperator.appendChild(lessThanOptionRuleOperator);
+    selectRuleOperator.appendChild(lessThanOrEqualToOptionRuleOperator);
     selectRuleOperator.appendChild(containsOptionRuleOperator);
 
     var ruleOperatorDiv = document.createElement("div");
-    ruleOperatorDiv.setAttribute("class", "col-3");
+    ruleOperatorDiv.setAttribute("class", "col-4");
     ruleOperatorDiv.appendChild(selectRuleOperator);
 
     // Rule Text Data
     var inputRuleTextData = document.createElement("input");
     inputRuleTextData.setAttribute("type", "text");
-    inputRuleTextData.setAttribute("name", "playlistRuleText-" + ruleIndex);
+    inputRuleTextData.setAttribute("name", "playlistRuleData-" + ruleIndex);
     inputRuleTextData.setAttribute("class", "form-control");
     inputRuleTextData.setAttribute("placeholder", "Your Rule Data");
     inputRuleTextData.setAttribute("required", "");
 
     var ruleTextDataDiv = document.createElement("div");
-    ruleTextDataDiv.setAttribute("class", "col-4");
+    ruleTextDataDiv.setAttribute("class", "col-3");
     ruleTextDataDiv.appendChild(inputRuleTextData);
 
     // Remove Rule Button
