@@ -142,6 +142,7 @@ exports.createSmartPlaylist = async function(req, res, next)
         req.query.tracksPerPage = 50; // Maximum value of tracks to retrieve per page
 
         // Loop over all songs in the library in batches
+        // TODO - Make the song retrieval area configurable (library, playlist, etc)
         while (existMoreBatchesToRetrieve)
         {
             // Get all the tracks in this batch
@@ -230,6 +231,9 @@ exports.createSmartPlaylist = async function(req, res, next)
         // Only thing we do not have supplied from the user is their user ID
         // The app has to get their user ID first to attach this new playlist to their profile
         req.body.userId = await spotifyClient.getCurrentUserId(req, res);
+
+        // For visibility purposes, prepend the name of the smart playlist with the app name
+        req.body.playlistName = "JAMM: " + req.body.playlistName;
         var createPlaylistResponse = await spotifyClient.createSinglePlaylist(req, res);
 
         // Now that we have created the playlist, we want to add the valid songs to it based on the smart playlist rules
@@ -239,6 +243,7 @@ exports.createSmartPlaylist = async function(req, res, next)
         var addTracksToPlaylistResponse = await spotifyClient.addTracksToPlaylist(req, res);
 
         // Finally, we want to show the user info about their new playlist, so retrieve that data after songs were inserted
+        // TODO - Consider the possibility of splitting up previewing the songs to be on a playlist (in a table) before creating it
         req.query.playlistId = playlistId;
         var getPlaylistResponse = await spotifyClient.getSinglePlaylist(req, res);
     }
