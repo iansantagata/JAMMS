@@ -1,6 +1,7 @@
 // Depedencies
 var fs = require('fs'); // File System
 var path = require('path'); // URL and local file paths
+var process = require('process'); // Process for environment variables
 
 // Secrets Logic
 const secretsPath = path.join(__dirname, '..', 'secrets');
