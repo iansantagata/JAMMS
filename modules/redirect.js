@@ -3,8 +3,8 @@ const validateLoginEndpoint = '/validateLogin';
 
 exports.getBaseUri = function(req)
 {
-    var hostName = req.hostName;
-    if (req.hostName === undefined)
+    var hostName = req.hostname;
+    if (req.hostname === undefined)
     {
         hostName = 'localhost';
     }
