@@ -1,0 +1,30 @@
+name: Build and Deploy via Sync
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    name: 'Build and Deploy'
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14.x'
+    - run: npm ci
+    - run: npm run build --if-present
+    - name: Sync Repository to Remote
+      uses: up9cloud/action-rsync@v1.3
+      env:
+        HOST: ${{ secrets.SYNC_SERVER }}
+        PORT: ${{ secrets.SYNC_PORT }}
+        USER: ${{ secrets.SYNC_USER }}
+        KEY:  ${{ secrets.SYNC_SSH_PRIVATE_KEY }}
+        TARGET: ${{ secrets.SYNC_TARGET_PATH }}
+        ARGS_MORE: '--exclude=/node_modules/ --exclude=/secrets/'
+        MODE: push
+        RUN_SCRIPT_ON: source
