@@ -24,7 +24,9 @@ This application will not run properly without specific secrets (not included in
 
 For more information on where these secrets come from, see [Spotify's documentation on Application Settings](https://developer.spotify.com/documentation/general/guides/app-settings/).
 
-To run this application:
+In a development (local) environment, these secrets come from files for easier testing and readability.  In a production environment, these secrets are injected via environment variables with the same names as the secret files.
+
+To run this application locally:
 
 1. In the `secrets/` folder, find a file ending extension `.secret.example`.
 2. Copy this example file to a new one with the same name, except it should no longer include `.example` in the extension.
@@ -39,6 +41,8 @@ As an example:
 3. Replace the contents of `client_id.secret` with the specific client ID needed for this application.
 4. Repeat this process for `client_secret.secret.example` file, this time using the specific client secret needed for this application.
 5. Now, there are just as many `.secret` files in the `secrets/` folder as `.secret.example` files, the job is complete!
+
+In a similar example for a production environment, `client_id` would be the name of the environment variable to be injected with its production value.  Note the lack of extension (`.secret`) on this environment variable for production environments.
 
 ### Start-Up
 
