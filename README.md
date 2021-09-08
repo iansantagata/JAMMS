@@ -6,7 +6,7 @@ JAMMS is Just A Music Maintainer for Spotify!
 
 It is meant to modify, manipulate, and maintain Spotify playlists and libraries in ways that are currently not supported natively or easily within Spotify today.
 
-At the moment, it is meant primarily to introduce "smart playlist" functionality similar to iTunes within Spotify.
+The application's primary motivation is to introduce "smart playlist" functionality within Spotify, similar to older versions of iTunes.
 
 The web application can be found here - https://jamms.app
 
