@@ -1,3 +1,5 @@
+[![Build and Deploy via Sync](https://github.com/iansantagata/jamms/actions/workflows/main.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/main.yml)
+
 ## Overview
 
 JAMMS is Just A Music Maintainer for Spotify!
