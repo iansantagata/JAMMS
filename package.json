@@ -1,11 +1,11 @@
 {
-  "name": "JAMM",
+  "name": "JAMMS",
   "author": "Ian Santagata",
-  "description": "JAMM is Just a Music Maintainer!  It is meant to modify, manipulate, and maintain Spotify playlists and libraries in ways that are currently not supported natively or easily within Spotify today.",
-  "version": "0.0.1",
+  "description": "JAMMS is Just a Music Maintainer for Spotify!  It is meant to modify, manipulate, and maintain Spotify playlists and libraries in ways that are currently not supported natively or easily within Spotify today.",
+  "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "repository": "github:iansantagata/jamm",
+  "repository": "github:iansantagata/jamms",
   "dependencies": {
     "axios": "^0.20.0",
     "cookie-parser": "^1.4.5",

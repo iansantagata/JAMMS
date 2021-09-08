@@ -1,5 +1,5 @@
 /*
- * Main Node Application and Event Handler for JAMM App
+ * Main Node Application and Event Handler for JAMMS App
  */
 
  console.log('Starting application');

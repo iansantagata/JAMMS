@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>JAMM - Just a Music Maintainer</title>
+  <title>JAMMS - Just a Music Maintainer for Spotify</title>
   <!-- Required meta tags for Bootstrap CSS -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -24,7 +24,7 @@
   <!-- TODO - Have to put a warning / acceptance alert about cookies eventually if they continue to be used -->
   <!-- TODO - Figure out how to automatically redirect someone to home if they are already logged in -->
   <header class="card-header text-center mb-2">
-    JAMM - Just a Music Maintainer
+    JAMMS - Just a Music Maintainer for Spotify
   </header>
   <div class="container text-center">
     @html.block('content')

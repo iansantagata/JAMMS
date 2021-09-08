@@ -233,7 +233,7 @@ exports.createSmartPlaylist = async function(req, res, next)
         req.body.userId = await spotifyClient.getCurrentUserId(req, res);
 
         // For visibility purposes, prepend the name of the smart playlist with the app name
-        req.body.playlistName = "JAMM: " + req.body.playlistName;
+        req.body.playlistName = "JAMMS: " + req.body.playlistName;
         var createPlaylistResponse = await spotifyClient.createSinglePlaylist(req, res);
 
         // Now that we have created the playlist, we want to add the valid songs to it based on the smart playlist rules

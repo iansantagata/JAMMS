@@ -30,7 +30,7 @@ const tracksPageNumberDefault = 1;
 const tracksTimeRangeDefault = 'long_term';
 const albumsRequestLimitDefault = 9;
 const albumsPageNumberDefault = 1;
-const createdPlaylistDescription = "Playlist created with JAMM!";
+const createdPlaylistDescription = "Playlist created with JAMMS!";
 
 // Spotify Client Logic
 exports.getCurrentUserId = async function(req, res)
