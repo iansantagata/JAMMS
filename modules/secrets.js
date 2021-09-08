@@ -12,7 +12,6 @@ exports.getClientId = function()
     try
     {
         // Try to read from environment variables first and fall back to fixed file secret if no environment variable exists
-        console.error(process.env.test);
         var clientIdEnvironmentVariable = process.env.client_id;
         if (clientIdEnvironmentVariable !== undefined && clientIdEnvironmentVariable !== null)
         {
@@ -33,7 +32,6 @@ exports.getClientSecret = function()
     try
     {
         // Try to read from environment variables first and fall back to fixed file secret if no environment variable exists
-        console.error(process.env.test);
         var clientSecretEnvironmentVariable = process.env.client_secret;
         if (clientSecretEnvironmentVariable !== undefined && clientSecretEnvironmentVariable !== null)
         {
