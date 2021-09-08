@@ -1,16 +1,18 @@
 ## Overview
 
-JAMM is Just A Music Maintainer!
+JAMMS is Just A Music Maintainer for Spotify!
 
 It is meant to modify, manipulate, and maintain Spotify playlists and libraries in ways that are currently not supported natively or easily within Spotify today.
 
 At the moment, it is meant primarily to introduce "smart playlist" functionality similar to iTunes within Spotify.
 
+The web application can be found here - https://jamms.app
+
 ## Inspiration
 
-JAMM was inspired by many applications like it, but in particular [PLYLST](https://plylst.app/) which has recently been taken offline.
+JAMMS was inspired by many applications like it, but in particular [PLYLST](https://plylst.app/) which has recently been taken offline.
 
-Although PLYLST is [open source](https://github.com/Shpigford/plylst), JAMM is meant to approach the same problem for individual users rather than as a service for all users.
+Although PLYLST is [open source](https://github.com/Shpigford/plylst), JAMMS is meant to approach the same problem for individual users rather than as a service for all users.
 
 ## Installation
 
