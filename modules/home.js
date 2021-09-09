@@ -8,9 +8,18 @@ var spotifyClient = require(path.join(customModulePath, 'spotifyClient.js'));
 // Home Logic
 exports.getLandingPage = async function(req, res, next)
 {
-    // TODO - Automatically redirect to home if the user is already logged in
-    res.location('/');
-    res.render('landing');
+    try
+    {
+        // Try to get the home page if the user is already logged in or can authenticate
+        await exports.getHomePage(req, res, next);
+    }
+    catch (error)
+    {
+        // If authentication fails or the user has not logged in yet, send them to the landing page
+        console.log(error.message);
+        res.location('/');
+        res.render('landing');
+    }
 }
 
 exports.getHomePage = async function(req, res, next)
