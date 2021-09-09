@@ -68,5 +68,5 @@ app.use(error.handlePageNotFound);
 app.use(error.handleUnexpectedError);
 
 // Listening Port
-console.log('Listening for requests on port 80');
-app.listen(80);
+console.log('Listening for requests on port ' + process.env.PORT);
+app.listen(process.env.PORT);
