@@ -1,5 +1,4 @@
 // Cookie Logic
-
 exports.getCookie = function(req, cookieName)
 {
     if (req === undefined || req === null)

@@ -4,6 +4,7 @@ var path = require('path'); // URI and local file paths
 // Custom Modules
 const customModulePath = __dirname;
 var spotifyClient = require(path.join(customModulePath, 'spotifyClient.js'));
+var authorize = require(path.join(customModulePath, 'authorize.js'));
 
 // Home Logic
 exports.getLandingPage = async function(req, res, next)
@@ -11,18 +12,41 @@ exports.getLandingPage = async function(req, res, next)
     try
     {
         // Try to get the home page if the user is already logged in or can authenticate
-        await exports.getHomePage(req, res, next);
+        await authorize.getAccessTokenFromCookies(req, res);
+        var homePageData = await exports.getHomePageData(req, res);
+        exports.renderHomePage(req, res, homePageData);
     }
     catch (error)
     {
         // If authentication fails or the user has not logged in yet, send them to the landing page
-        console.log(error.message);
         res.location('/');
         res.render('landing');
     }
 }
 
 exports.getHomePage = async function(req, res, next)
+{
+    try
+    {
+        var homePageData = await exports.getHomePageData(req, res);
+    }
+    catch (error)
+    {
+        next(error)
+        return;
+    }
+
+    exports.renderHomePage(req, res, homePageData);
+};
+
+exports.renderHomePage = function(req, res, homePageData)
+{
+    // Shove the playlist response data onto the home page for the user to interact with
+    res.location('/home');
+    res.render('home', homePageData);
+}
+
+exports.getHomePageData = async function(req, res)
 {
     // We want a broad overlook of data for the home page, showing users all of their data at a glance
     try
@@ -31,8 +55,8 @@ exports.getHomePage = async function(req, res, next)
     }
     catch (error)
     {
-        next(error);
-        return;
+        console.error('Home Page Data Error: ' + error.message);
+        return Promise.reject(error);
     }
 
     var homePageData = {
@@ -46,7 +70,5 @@ exports.getHomePage = async function(req, res, next)
         sampleAlbumData: spotifyResponse.sampleAlbumData
     };
 
-    // Shove the playlist response data onto the home page for the user to interact with
-    res.location('/home');
-    res.render('home', homePageData);
-};
+    return Promise.resolve(homePageData);
+}

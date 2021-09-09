@@ -63,10 +63,11 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
     // TODO - Access token is the only one that should be a cookie, figure out how to handle this more securely
     var refreshToken = cookie.getCookie(req, refreshKey);
 
-    if (refreshToken === null) {
-        var error = new Error('Refresh token not found, unable to get new access token to authorize Spotify usage.');
-        console.error(error);
-        return Promise.reject();
+    if (refreshToken === undefined || refreshToken === null) {
+        // This is specifically a warning because the user may legitimately never have logged in before at this point
+        var warning = new Error('Refresh token not found, unable to get new access token to authorize Spotify usage.');
+        console.warn('Failed to refresh authorization: ' + warning.message);
+        return Promise.reject(warning);
     }
 
     // Request the access token from the refresh token
@@ -89,7 +90,7 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
     catch (error)
     {
         // Failed to re-authorize, return failure
-        console.error(error.message);
+        console.error('Failed to refresh authorization: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -119,26 +120,25 @@ exports.getAccessTokenFromCookies = async function(req, res)
 {
     var accessToken = cookie.getCookie(req, accessKey);
 
-    // Make sure we actually have the cookie, but if it expired, try to refresh it
+    // Make sure we actually have the access token, but if it expired and we can refresh it, then try to refresh it
     if (accessToken === undefined || accessToken === null)
     {
         try
         {
             var response = await exports.getAuthorizationTokensViaRefresh(req, res);
+
+            // Since we are refreshing the cookie on this call, use the refreshed response data instead
+            accessToken = response.tokenType + ' ' + response.accessToken;
         }
         catch (error)
         {
             // Did not successfully set cookie
-            console.error(error.message);
-            res.redirect('/accessDenied');
-            return;
+            console.error('Failed to get access token: ' + error.message);
+            return Promise.reject(error);
         }
-
-        // Since we are refreshing the cookie on this call, use the refreshed response data instead
-        accessToken = response.tokenType + ' ' + response.accessToken;
     }
 
-    return accessToken;
+    return Promise.resolve(accessToken);
 }
 
 exports.setAuthorizationCookies = function(req, res, auth)

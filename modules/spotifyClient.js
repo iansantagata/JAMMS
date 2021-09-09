@@ -35,15 +35,15 @@ const createdPlaylistDescription = "Playlist created with JAMMS!";
 // Spotify Client Logic
 exports.getCurrentUserId = async function(req, res)
 {
-    var requestOptions = {
-        headers: {
-            'Authorization': await authorize.getAccessTokenFromCookies(req, res)
-        }
-    };
-
     // Make the request to get the current user's data
     try
     {
+        var requestOptions = {
+            headers: {
+                'Authorization': await authorize.getAccessTokenFromCookies(req, res)
+            }
+        };
+
         var spotifyGetCurrentUserUri = spotifyBaseUri + spotifyCurrentUserUriPath;
         var response = await axios.get(spotifyGetCurrentUserUri, requestOptions);
     }
@@ -97,7 +97,8 @@ exports.getUserData = async function(req, res)
     }
     catch (error)
     {
-        console.error(error.message);
+        // TODO - Prepend all logged errors with unique identifying strings for better tracing
+        console.error('Spotify Client Error: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -153,15 +154,15 @@ exports.getAllPlaylists = async function(req, res)
         offset: playlistRequestOffset
     };
 
-    var requestOptions = {
-        headers: {
-            'Authorization': await authorize.getAccessTokenFromCookies(req, res)
-        }
-    };
-
     // Trigger the request and handle possible responses
     try
     {
+        var requestOptions = {
+            headers: {
+                'Authorization': await authorize.getAccessTokenFromCookies(req, res)
+            }
+        };
+
         var spotifyGetAllPlaylistsUri = spotifyBaseUri + spotifyCurrentUserUriPath + spotifyPlaylistsUriPath;
         var response = await axios.get(spotifyGetAllPlaylistsUri + '?' + querystring.stringify(requestData), requestOptions);
     }
@@ -193,15 +194,15 @@ exports.getSinglePlaylist = async function(req, res)
         return Promise.reject(error);
     }
 
-    var requestOptions = {
-        headers: {
-            'Authorization': await authorize.getAccessTokenFromCookies(req, res)
-        }
-    };
-
     // Make the request to get the single playlist's data
     try
     {
+        var requestOptions = {
+            headers: {
+                'Authorization': await authorize.getAccessTokenFromCookies(req, res)
+            }
+        };
+
         var spotifyGetSinglePlaylistUri = spotifyBaseUri + spotifyPlaylistsUriPath + '/' + playlistId;
         var response = await axios.get(spotifyGetSinglePlaylistUri, requestOptions);
     }
@@ -287,16 +288,16 @@ exports.createSinglePlaylist = async function(req, res)
         collaborative: playlistIsCollaborative
     };
 
-    var requestOptions = {
-        headers: {
-            'Authorization': await authorize.getAccessTokenFromCookies(req, res),
-            'Content-Type': 'application/json'
-        }
-    };
-
     // Make the request to create a new playlist, albeit an empty one to start
     try
     {
+        var requestOptions = {
+            headers: {
+                'Authorization': await authorize.getAccessTokenFromCookies(req, res),
+                'Content-Type': 'application/json'
+            }
+        };
+
         var createSinglePlaylistUri = spotifyBaseUri + spotifyUsersUriPath + '/' + userId + spotifyPlaylistsUriPath;
         var response = await axios.post(createSinglePlaylistUri, requestData, requestOptions);
     }
@@ -332,15 +333,15 @@ exports.deleteSinglePlaylist = async function(req, res)
         return Promise.reject(error);
     }
 
-    var requestOptions = {
-        headers: {
-            'Authorization': await authorize.getAccessTokenFromCookies(req, res)
-        }
-    };
-
     // Make the request to "unfollow" the playlist, Spotify's way of deleting it from the user's library
     try
     {
+        var requestOptions = {
+            headers: {
+                'Authorization': await authorize.getAccessTokenFromCookies(req, res)
+            }
+        };
+
         var deleteSinglePlaylistUri = spotifyBaseUri + spotifyPlaylistsUriPath + '/' + playlistId + spotifyFollowersUriPath;
         var response = await axios.delete(deleteSinglePlaylistUri, requestOptions);
     }
@@ -369,16 +370,16 @@ exports.restoreSinglePlaylist = async function(req, res)
         public: true
     };
 
-    var requestOptions = {
-        headers: {
-            'Authorization': await authorize.getAccessTokenFromCookies(req, res),
-            'Content-Type': 'application/json'
-        }
-    };
-
     // Make the request to "re-follow" the playlist, Spotify's way of restoring a deleted playlist from the user's library
     try
     {
+        var requestOptions = {
+            headers: {
+                'Authorization': await authorize.getAccessTokenFromCookies(req, res),
+                'Content-Type': 'application/json'
+            }
+        };
+
         var restoreSinglePlaylistUri = spotifyBaseUri + spotifyPlaylistsUriPath + '/' + playlistId + spotifyFollowersUriPath;
         var response = await axios.put(restoreSinglePlaylistUri, requestData, requestOptions);
     }
@@ -416,16 +417,16 @@ exports.addTracksToPlaylist = async function(req, res)
         uris: trackUris
     };
 
-    var requestOptions = {
-        headers: {
-            'Authorization': await authorize.getAccessTokenFromCookies(req, res),
-            'Content-Type': 'application/json'
-        }
-    };
-
     // Make the request to add songs to the playlist
     try
     {
+        var requestOptions = {
+            headers: {
+                'Authorization': await authorize.getAccessTokenFromCookies(req, res),
+                'Content-Type': 'application/json'
+            }
+        };
+
         var addTracksToPlaylistUri = spotifyBaseUri + spotifyPlaylistsUriPath + '/' + playlistId + spotifyTracksUriPath;
         var response = await axios.post(addTracksToPlaylistUri, requestData, requestOptions);
     }
@@ -485,15 +486,16 @@ exports.getTopArtists = async function(req, res)
     };
 
     var requestType = 'artists';
-    var requestOptions = {
-        headers: {
-            'Authorization': await authorize.getAccessTokenFromCookies(req, res)
-        }
-    };
 
     // Make the request to get the artist data
     try
     {
+        var requestOptions = {
+            headers: {
+                'Authorization': await authorize.getAccessTokenFromCookies(req, res)
+            }
+        };
+
         var spotifyGetTopDataUri = spotifyBaseUri + spotifyCurrentUserUriPath + spotifyTopUriPath + '/' + requestType;
         var spotifyGetTopDataRequestQuery = '?' + querystring.stringify(requestData);
         var response = await axios.get(spotifyGetTopDataUri + spotifyGetTopDataRequestQuery, requestOptions);
@@ -540,15 +542,15 @@ exports.getAllArtists = async function(req, res)
         limit: artistRequestLimit
     };
 
-    var requestOptions = {
-        headers: {
-            'Authorization': await authorize.getAccessTokenFromCookies(req, res)
-        }
-    };
-
     // Make the request to get the artist data
     try
     {
+        var requestOptions = {
+            headers: {
+                'Authorization': await authorize.getAccessTokenFromCookies(req, res)
+            }
+        };
+
         var spotifyGetAllArtistsUri = spotifyBaseUri + spotifyCurrentUserUriPath + spotifyFollowingUriPath;
         var spotifyGetAllArtistsRequestQuery = '?' + querystring.stringify(requestData);
         var response = await axios.get(spotifyGetAllArtistsUri + spotifyGetAllArtistsRequestQuery, requestOptions);
@@ -604,15 +606,15 @@ exports.getAllAlbums = async function(req, res)
         offset: albumsRequestOffset
     };
 
-    var requestOptions = {
-        headers: {
-            'Authorization': await authorize.getAccessTokenFromCookies(req, res)
-        }
-    };
-
     // Make the request to get the album data
     try
     {
+        var requestOptions = {
+            headers: {
+                'Authorization': await authorize.getAccessTokenFromCookies(req, res)
+            }
+        };
+
         var spotifyGetAllAlbumsUri = spotifyBaseUri + spotifyCurrentUserUriPath + spotifyAlbumsUriPath;
         var spotifyGetAllAlbumsRequestQuery = '?' + querystring.stringify(requestData);
         var response = await axios.get(spotifyGetAllAlbumsUri + spotifyGetAllAlbumsRequestQuery, requestOptions);
@@ -669,15 +671,15 @@ exports.getAllTracks = async function(req, res)
         offset: tracksRequestOffset
     };
 
-    var requestOptions = {
-        headers: {
-            'Authorization': await authorize.getAccessTokenFromCookies(req, res)
-        }
-    };
-
     // Make the request to get the track data
     try
     {
+        var requestOptions = {
+            headers: {
+                'Authorization': await authorize.getAccessTokenFromCookies(req, res)
+            }
+        };
+
         var spotifyGetAllTracksUri = spotifyBaseUri + spotifyCurrentUserUriPath + spotifyTracksUriPath;
         var spotifyGetAllTracksRequestQuery = '?' + querystring.stringify(requestData);
         var response = await axios.get(spotifyGetAllTracksUri + spotifyGetAllTracksRequestQuery, requestOptions);
@@ -745,15 +747,16 @@ exports.getTopTracks = async function(req, res)
     };
 
     var requestType = 'tracks';
-    var requestOptions = {
-        headers: {
-            'Authorization': await authorize.getAccessTokenFromCookies(req, res)
-        }
-    };
 
     // Make the request to get the track data
     try
     {
+        var requestOptions = {
+            headers: {
+                'Authorization': await authorize.getAccessTokenFromCookies(req, res)
+            }
+        };
+
         var spotifyGetTopDataUri = spotifyBaseUri + spotifyCurrentUserUriPath + spotifyTopUriPath + '/' + requestType;
         var spotifyGetTopDataRequestQuery = '?' + querystring.stringify(requestData);
         var response = await axios.get(spotifyGetTopDataUri + spotifyGetTopDataRequestQuery, requestOptions);
