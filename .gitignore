@@ -1,5 +1,6 @@
 # Secrets (Files Only)
-*.secret
+*.secrets
+*.env
 
 # Node
 node_modules/

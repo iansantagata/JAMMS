@@ -24,25 +24,15 @@ This application will not run properly without specific secrets (not included in
 
 For more information on where these secrets come from, see [Spotify's documentation on Application Settings](https://developer.spotify.com/documentation/general/guides/app-settings/).
 
-In a development (local) environment, these secrets come from files for easier testing and readability.  In a production environment, these secrets are injected via environment variables with the same names as the secret files.
+In a development (local) environment, these secrets come from a `.env` file at the root directory and are hard-coded as key-value pairs.  Within the application, the keys and respective values are injected as environment variables.  In a production environment, these secrets are injected via environment variables with the same name as those present in the `.env` file.
+
+A `.env.example` file is shown at the root directory to provide a list of all secrets (environment variables) that are required for this application in both development and production.
 
 To run this application locally:
 
-1. In the `secrets/` folder, find a file ending extension `.secret.example`.
-2. Copy this example file to a new one with the same name, except it should no longer include `.example` in the extension.
-3. Replace the file contents of each `.secret` file locally with the value for that type of secret.
-4. Repeat this process for all secrets that have a file extension of `.secret.example`.
-5. When complete, there should be just as many `.secret` files as `.secret.example` files.
-
-As an example:
-
-1. Find file `client_id.secret.example` in the `secrets/` folder.
-2. Copy this file into `client_id.secret`, leaving `client_id.secret.example` intact and unchanged.
-3. Replace the contents of `client_id.secret` with the specific client ID needed for this application.
-4. Repeat this process for `client_secret.secret.example` file, this time using the specific client secret needed for this application.
-5. Now, there are just as many `.secret` files in the `secrets/` folder as `.secret.example` files, the job is complete!
-
-In a similar example for a production environment, `client_id` would be the name of the environment variable to be injected with its production value.  Note the lack of extension (`.secret`) on this environment variable for production environments.
+1. Copy the `.env.example` file in the root directory to a `.env` file.
+2. Replace one value with the appropriate value for each key.
+3. Repeat until all keys have their appropriate values in a development environment.
 
 ### Start-Up
 

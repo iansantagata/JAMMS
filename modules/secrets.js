@@ -1,24 +1,16 @@
-// Depedencies
-var fs = require('fs'); // File System
-var path = require('path'); // URL and local file paths
-
 // Secrets Logic
-const secretsPath = path.join(__dirname, '..', 'secrets');
-const clientIdPath = 'client_id.secret';
-const clientSecretPath = 'client_secret.secret';
-
 exports.getClientId = function()
 {
     try
     {
-        // Try to read from environment variables first and fall back to fixed file secret if no environment variable exists
+        // Try to read from environment variables
         var clientIdEnvironmentVariable = process.env.client_id;
         if (clientIdEnvironmentVariable !== undefined && clientIdEnvironmentVariable !== null)
         {
             return clientIdEnvironmentVariable.trim();
         }
 
-        return fs.readFileSync(path.join(secretsPath, clientIdPath), 'utf8').trim();
+        return undefined;
     }
     catch (err)
     {
@@ -38,7 +30,7 @@ exports.getClientSecret = function()
             return clientSecretEnvironmentVariable.trim();
         }
 
-        return fs.readFileSync(path.join(secretsPath, clientSecretPath), 'utf8').trim();
+        return undefined;
     }
     catch (err)
     {
