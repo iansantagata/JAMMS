@@ -61,10 +61,6 @@ app.get('/createSmartPlaylist', smartPlaylist.createSmartPlaylistPage);
 
 app.post('/createSmartPlaylist', smartPlaylist.createSmartPlaylist);
 
-// Authorization Logic
-// TODO - For testing only, this should be called by other middleware when the access token is expired, not triggered directly through an endpoint
-app.get('/authorize', authorize.getAuthorizationTokensViaRefresh)
-
 // Error Handling
 app.use('/accessDenied', error.handleAccessNotAllowed);
 app.use('/error', error.handleExpectedError);
