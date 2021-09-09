@@ -15,7 +15,7 @@ const spotifyAccessTokenUri = 'https://accounts.spotify.com/api/token';
 const accessKey = 'accessToken';
 const refreshKey = 'refreshToken';
 
-exports.getAuthorizationTokens = function(req, res)
+exports.getAuthorizationTokens = async function(req, res)
 {
     // Make the request to get access and refresh tokens
     var requestData = {
@@ -31,38 +31,29 @@ exports.getAuthorizationTokens = function(req, res)
         }
     };
 
-    // Trigger the request and handle possible responses
-    // TODO - Change this axios HTTP call to use promises
-    axios.post(spotifyAccessTokenUri, querystring.stringify(requestData), requestOptions)
-        .then(response =>
-            {
-                // Use the access token and refresh token to validate access to Spotify's API
-                // TODO - Remove most of these, saves as variables to show what the output could be, but don't need most of it
-                var accessToken = response.data.access_token;
-                var refreshToken = response.data.refresh_token;
-                var scopes = response.data.scope;
-                var tokenExpirationInMsec = response.data.expires_in * 1000;
-                var tokenType = response.data.token_type;
+    // Trigger the authorization request
+    try
+    {
+        var response = await axios.post(spotifyAccessTokenUri, querystring.stringify(requestData), requestOptions);
+    }
+    catch (error)
+    {
+        // Handle if there was an error for any reason
+        console.error('Failed to authorize: ' + error.message);
+        return Promise.reject(error);
+    }
 
-                var cookieOptions = {
-                    maxAge: tokenExpirationInMsec
-                };
+    // Extract only the data from the successful response that is needed
+    var authorizationResponse = {
+        accessToken: response.data.access_token,
+        refreshToken: response.data.refresh_token,
+        scopes: response.data.scope,
+        tokenExpirationInMsec: response.data.expires_in * 1000,
+        tokenType: response.data.token_type
+    };
 
-                // TODO - Figure out a better way to store this information than browser cookies (which is insecure, at least for refresh token)
-                // TODO - Look into signed cookies (see cookie-parser docs) to still use client cookies, but ensure tampering is accounted for (interception still an issue however)
-                res.cookie(accessKey, tokenType + ' ' + accessToken, cookieOptions);
-                res.cookie(refreshKey, refreshToken); // Session cookie since it has no timeout
-
-                // Once we have our tokens, redirect to the home page
-                // TODO - Depending on how and when we have to re-authenticate and refresh the keys, may need to make this redirect dynamic (a param))
-                res.redirect('/home');
-            })
-        .catch(error =>
-            {
-                // Handle if there was an error for any reason
-                console.log(error.message);
-                res.redirect('/accessDenied');
-            });
+    // Return authorization data to the caller
+    return Promise.resolve(authorizationResponse);
 };
 
 exports.getAuthorizationTokensViaRefresh = async function(req, res)
@@ -140,6 +131,7 @@ exports.getAccessTokenFromCookies = async function(req, res)
         catch (error)
         {
             // Did not successfully set cookie
+            console.error(error.message);
             res.redirect('/accessDenied');
             return;
         }
@@ -149,4 +141,55 @@ exports.getAccessTokenFromCookies = async function(req, res)
     }
 
     return accessToken;
+}
+
+exports.setAuthorizationCookies = function(req, res, auth)
+{
+    // Make sure that we have all the needed authorization data to set the cookies
+    if (auth === undefined || auth === null)
+    {
+        var error = new Error("Unable to set authorization cookies: Authorization data not provided");
+        console.error(error.message);
+        return Promise.reject(error);
+    }
+
+    if (auth.tokenExpirationInMsec === undefined || auth.tokenExpirationInMsec === null)
+    {
+        var error = new Error("Unable to set authorization cookies: Expiration time not found");
+        console.error(error.message);
+        return Promise.reject(error);
+    }
+
+    if (auth.tokenType === undefined || auth.tokenType === null)
+    {
+        var error = new Error("Unable to set authorization cookies: Token type not found");
+        console.error(error.message);
+        return Promise.reject(error);
+    }
+
+    if (auth.accessToken === undefined || auth.accessToken === null)
+    {
+        var error = new Error("Unable to set authorization cookies: Access token not found");
+        console.error(error.message);
+        return Promise.reject(error);
+    }
+
+    if (auth.refreshToken === undefined || auth.refreshToken === null)
+    {
+        var error = new Error("Unable to set authorization cookies: Refresh token not found");
+        console.error(error.message);
+        return Promise.reject(error);
+    }
+
+    // Set options for cookies, particularly how long they last for non-session cookies
+    var cookieOptions = {
+        maxAge: auth.tokenExpirationInMsec
+    };
+
+    // TODO - Figure out a better way to store this information than browser cookies (which is insecure, at least for refresh token)
+    // TODO - Look into signed cookies (see cookie-parser docs) to still use client cookies, but ensure tampering is accounted for (interception still an issue however)
+    res.cookie(accessKey, auth.tokenType + ' ' + auth.accessToken, cookieOptions);
+    res.cookie(refreshKey, auth.refreshToken); // Session cookie since it has no timeout
+
+    return Promise.resolve();
 }

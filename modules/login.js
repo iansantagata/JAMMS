@@ -35,7 +35,7 @@ exports.getLoginPage = function(req, res)
     res.redirect(spotifyAuthorizeUri + '?' + querystring.stringify(requestParameters));
 };
 
-exports.validateLogin = function(req, res)
+exports.validateLogin = async function(req, res)
 {
     // Check for errors after the response page from Spotify
     if (req.query.error !== undefined)
@@ -54,7 +54,7 @@ exports.validateLogin = function(req, res)
     {
         var error = new Error('State mismatch between browser state token and Spotify state token');
         console.error(error);
-        rs.redirect('/accessDenied');
+        res.redirect('/accessDenied');
         return;
     }
 
@@ -62,5 +62,30 @@ exports.validateLogin = function(req, res)
     res.clearCookie(stateKey);
 
     // Redirect to authorization handling
-    authorize.getAuthorizationTokens(req, res);
+    try
+    {
+        var authorizationResponse = await authorize.getAuthorizationTokens(req, res);
+    }
+    catch (error)
+    {
+        console.error(error);
+        res.redirect('/accessDenied');
+        return;
+    }
+
+    // Use the access token and refresh token to validate access to Spotify's API
+    try
+    {
+        var cookieResponse = authorize.setAuthorizationCookies(req, res, authorizationResponse);
+    }
+    catch (error)
+    {
+        console.error(error);
+        res.redirect('/accessDenied');
+        return;
+    }
+
+    // Once we have our tokens, redirect to the home page
+    // TODO - Depending on how and when we have to re-authenticate and refresh the keys, may need to make this redirect dynamic (a param))
+    res.redirect('/home');
 };
