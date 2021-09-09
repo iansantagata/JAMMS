@@ -90,28 +90,29 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
     {
         // Failed to re-authorize, return failure
         console.error(error.message);
-        return Promise.reject();
+        return Promise.reject(error);
     }
 
     // Got a new access token successfully
-    // TODO - Remove most of these, saves as variables to show what the output could be, but don't need most of it
-    var accessToken = response.data.access_token;
-    var updatedRefreshToken = response.data.refresh_token;
-    var tokenType = response.data.token_type;
-    var scopes = response.data.scope;
-    var tokenExpirationInMsec = response.data.expires_in * 1000;
+    var refreshAuthorizationResponse = {
+        accessToken: response.data.access_token,
+        refreshToken: response.data.refresh_token,
+        scopes: response.data.scope,
+        tokenExpirationInMsec: response.data.expires_in * 1000,
+        tokenType: response.data.token_type
+    };
 
     // Throw the new token back into a cookie for the user to use
-    cookie.setCookie(res, accessKey, tokenType + ' ' + accessToken, tokenExpirationInMsec);
+    cookie.setCookie(res, accessKey, refreshAuthorizationResponse.tokenType + ' ' + refreshAuthorizationResponse.accessToken, refreshAuthorizationResponse.tokenExpirationInMsec);
 
     // If the request did return a new refresh token, make sure we overwrite the old token
-    if (updatedRefreshToken !== undefined && updatedRefreshToken !== null)
+    if (refreshAuthorizationResponse.refreshToken !== undefined && refreshAuthorizationResponse.refreshToken !== null)
     {
-        cookie.setCookie(res, refreshKey, updatedRefreshToken); // Session cookie (no explicit expiration)
+        cookie.setCookie(res, refreshKey, refreshAuthorizationResponse.refreshToken); // Session cookie (no explicit expiration)
     }
 
     // Return success when re-authorization occurred
-    return Promise.resolve();
+    return Promise.resolve(refreshAuthorizationResponse);
 };
 
 exports.getAccessTokenFromCookies = async function(req, res)
@@ -123,7 +124,7 @@ exports.getAccessTokenFromCookies = async function(req, res)
     {
         try
         {
-            await exports.getAuthorizationTokensViaRefresh(req, res);
+            var response = await exports.getAuthorizationTokensViaRefresh(req, res);
         }
         catch (error)
         {
@@ -133,8 +134,8 @@ exports.getAccessTokenFromCookies = async function(req, res)
             return;
         }
 
-        // Since we refreshed the cookie, re-retrieve it
-        accessToken = cookie.getCookie(req, accessKey); // TODO - Not sure if this is right since we haven't changed requests yet?  Unsure, needs testing
+        // Since we are refreshing the cookie on this call, use the refreshed response data instead
+        accessToken = response.tokenType + ' ' + response.accessToken;
     }
 
     return accessToken;
