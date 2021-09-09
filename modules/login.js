@@ -8,6 +8,7 @@ var authorize = require(path.join(customModulePath, 'authorize.js'));
 var secrets = require(path.join(customModulePath, 'secrets.js'));
 var randomString = require(path.join(customModulePath, 'randomString.js'));
 var redirect = require(path.join(customModulePath, 'redirect.js'));
+var cookie = require(path.join(customModulePath, 'cookie.js'));
 
 // Login Logic
 const spotifyAuthorizeUri = 'https://accounts.spotify.com/authorize';
@@ -21,7 +22,7 @@ exports.getLoginPage = function(req, res)
 {
     // Set state token locally for logging in to be validated against Spotify returned state token
     var stateToken = randomString.generateRandomString(stateLength);
-    res.cookie(stateKey, stateToken);
+    cookie.setCookie(res, stateKey, stateToken); // Session cookie (no explicit expiration)
 
     var requestParameters = {
         response_type: 'code',
@@ -48,7 +49,7 @@ exports.validateLogin = async function(req, res)
 
     // Validate state token from Spotify callback request is the same from the request made locally
     var stateToken = req.query.state || null;
-    var storedStateToken = req.cookies ? req.cookies[stateKey] : null;
+    var storedStateToken = cookie.getCookie(req, stateKey);
 
     if (stateToken === null || storedStateToken === null || stateToken !== storedStateToken)
     {
@@ -59,7 +60,7 @@ exports.validateLogin = async function(req, res)
     }
 
     // State validated successfully, can clear the state cookie
-    res.clearCookie(stateKey);
+    cookie.clearCookie(res, stateKey);
 
     // Redirect to authorization handling
     try
@@ -76,7 +77,7 @@ exports.validateLogin = async function(req, res)
     // Use the access token and refresh token to validate access to Spotify's API
     try
     {
-        var cookieResponse = authorize.setAuthorizationCookies(req, res, authorizationResponse);
+        var cookieResponse = await authorize.setAuthorizationCookies(req, res, authorizationResponse);
     }
     catch (error)
     {
@@ -86,6 +87,6 @@ exports.validateLogin = async function(req, res)
     }
 
     // Once we have our tokens, redirect to the home page
-    // TODO - Depending on how and when we have to re-authenticate and refresh the keys, may need to make this redirect dynamic (a param))
+    // TODO - Depending on how and when we have to re-authenticate and refresh the keys, may need to make this redirect dynamic (a param)
     res.redirect('/home');
 };

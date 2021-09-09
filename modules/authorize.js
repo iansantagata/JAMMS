@@ -8,6 +8,7 @@ const customModulePath = __dirname;
 var home = require(path.join(customModulePath, 'home.js'));
 var redirect = require(path.join(customModulePath, 'redirect.js'));
 var secrets = require(path.join(customModulePath, 'secrets.js'));
+var cookie = require(path.join(customModulePath, 'cookie.js'));
 
 // Authorize Logic
 const spotifyAccessTokenUri = 'https://accounts.spotify.com/api/token';
@@ -60,7 +61,7 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
 {
     // Get the refresh token from cookies
     // TODO - Access token is the only one that should be a cookie, figure out how to handle this more securely
-    var refreshToken = req.cookies ? req.cookies[refreshKey] : null;
+    var refreshToken = cookie.getCookie(req, refreshKey);
 
     if (refreshToken === null) {
         var error = new Error('Refresh token not found, unable to get new access token to authorize Spotify usage.');
@@ -100,17 +101,13 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
     var scopes = response.data.scope;
     var tokenExpirationInMsec = response.data.expires_in * 1000;
 
-    var cookieOptions = {
-        maxAge: tokenExpirationInMsec
-    };
-
     // Throw the new token back into a cookie for the user to use
-    res.cookie(accessKey, tokenType + ' ' + accessToken, cookieOptions);
+    cookie.setCookie(res, accessKey, tokenType + ' ' + accessToken, tokenExpirationInMsec);
 
     // If the request did return a new refresh token, make sure we overwrite the old token
     if (updatedRefreshToken !== undefined && updatedRefreshToken !== null)
     {
-        res.cookie(refreshKey, updatedRefreshToken);
+        cookie.setCookie(res, refreshKey, updatedRefreshToken); // Session cookie (no explicit expiration)
     }
 
     // Return success when re-authorization occurred
@@ -119,7 +116,7 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
 
 exports.getAccessTokenFromCookies = async function(req, res)
 {
-    var accessToken = req.cookies ? req.cookies[accessKey] : null;
+    var accessToken = cookie.getCookie(req, accessKey);
 
     // Make sure we actually have the cookie, but if it expired, try to refresh it
     if (accessToken === undefined || accessToken === null)
@@ -137,7 +134,7 @@ exports.getAccessTokenFromCookies = async function(req, res)
         }
 
         // Since we refreshed the cookie, re-retrieve it
-        accessToken = req.cookies[accessKey]; // TODO - Not sure if this is right since we haven't changed requests yet?  Unsure, needs testing
+        accessToken = cookie.getCookie(req, accessKey); // TODO - Not sure if this is right since we haven't changed requests yet?  Unsure, needs testing
     }
 
     return accessToken;
@@ -181,15 +178,10 @@ exports.setAuthorizationCookies = function(req, res, auth)
         return Promise.reject(error);
     }
 
-    // Set options for cookies, particularly how long they last for non-session cookies
-    var cookieOptions = {
-        maxAge: auth.tokenExpirationInMsec
-    };
-
     // TODO - Figure out a better way to store this information than browser cookies (which is insecure, at least for refresh token)
     // TODO - Look into signed cookies (see cookie-parser docs) to still use client cookies, but ensure tampering is accounted for (interception still an issue however)
-    res.cookie(accessKey, auth.tokenType + ' ' + auth.accessToken, cookieOptions);
-    res.cookie(refreshKey, auth.refreshToken); // Session cookie since it has no timeout
+    cookie.setCookie(res, accessKey, auth.tokenType + ' ' + auth.accessToken, auth.tokenExpirationInMsec);
+    cookie.setCookie(res, refreshKey, auth.refreshToken); // Session cookie (no explicit expiration);
 
     return Promise.resolve();
 }

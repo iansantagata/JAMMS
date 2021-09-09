@@ -18,7 +18,6 @@ if (process.env.NODE_ENV !== 'production')
 
 // Custom Modules
 const customModulePath = path.join(__dirname, 'modules');
-var authorize = require(path.join(customModulePath, 'authorize.js'));
 var error = require(path.join(customModulePath, 'error.js'));
 var home = require(path.join(customModulePath, 'home.js'));
 var login = require(path.join(customModulePath, 'login.js'));
