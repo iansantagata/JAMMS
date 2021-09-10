@@ -22,7 +22,6 @@ exports.handleExpectedError = function(req, res)
 
 exports.handleUnexpectedError = function(err, req, res, next)
 {
-    // TODO - Eventually, log errors to a file on the server to have an error log
     res.location('error')
     res.status(500);
     res.render('error');
