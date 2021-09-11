@@ -90,3 +90,5 @@ exports.validateLogin = async function(req, res)
     // TODO - Depending on how and when we have to re-authenticate and refresh the keys, may need to make this redirect dynamic (a param)
     res.redirect('/home');
 };
+
+// TODO - Create logout functionality that redirects to landing page
