@@ -91,4 +91,5 @@ exports.validateLogin = async function(req, res)
     res.redirect('/home');
 };
 
+// TODO - Detect if someone is logged in rather than just trying to log them in
 // TODO - Create logout functionality that redirects to landing page
