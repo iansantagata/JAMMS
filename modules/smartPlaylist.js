@@ -46,15 +46,15 @@ exports.createSmartPlaylist = async function(req, res, next)
 
             if (playlistLimitValue <= 0)
             {
-                var error = new Error('Invalid playlist limit value; Value cannot zero or negative: ' + playlistLimitValue);
-                console.error(error.message);
+                var error = new Error('Playlist limit cannot be zero or negative: ' + playlistLimitValue);
+                console.error('Invalid playlist limit: ' + error.message);
                 return Promise.reject(error);
             }
 
             if (playlistLimitValue > 10000)
             {
-                var error = new Error('Invalid playlist limit value; Value cannot be greater than ten thousand: ' + playlistLimitValue);
-                console.error(error.message);
+                var error = new Error('Playlist limit cannot be greater than ten thousand: ' + playlistLimitValue);
+                console.error('Invalid playlist limit: ' + error.message);
                 return Promise.reject(error);
             }
 

@@ -41,8 +41,8 @@ exports.validateLogin = async function(req, res)
     // Check for errors after the response page from Spotify
     if (req.query.error !== undefined)
     {
-        var error = new Error('Failed to authorize user with Spotify: ' + req.query.error);
-        console.error(error.message);
+        var error = new Error(req.query.error);
+        console.error('Failed to authorize user with Spotify: ' + error.message);
         res.redirect('/accessDenied');
         return;
     }
@@ -54,7 +54,7 @@ exports.validateLogin = async function(req, res)
     if (stateToken === null || storedStateToken === undefined || storedStateToken === null || stateToken !== storedStateToken)
     {
         var error = new Error('State mismatch between browser state token and Spotify state token');
-        console.error(error);
+        console.error('Failed to validate state: ' + error.message);
         res.redirect('/accessDenied');
         return;
     }
@@ -69,7 +69,7 @@ exports.validateLogin = async function(req, res)
     }
     catch (error)
     {
-        console.error(error);
+        console.error('Failed to get authorization tokens: ' + error.message);
         res.redirect('/accessDenied');
         return;
     }
@@ -81,7 +81,7 @@ exports.validateLogin = async function(req, res)
     }
     catch (error)
     {
-        console.error(error);
+        console.error('Failed to set authorization cookies: ' + error.message);
         res.redirect('/accessDenied');
         return;
     }

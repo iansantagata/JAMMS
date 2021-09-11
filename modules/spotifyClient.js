@@ -49,7 +49,7 @@ exports.getCurrentUserId = async function(req, res)
     }
     catch (error)
     {
-        console.error(error.message);
+        console.error('Failed to get current user ID: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -97,8 +97,7 @@ exports.getUserData = async function(req, res)
     }
     catch (error)
     {
-        // TODO - Prepend all logged errors with unique identifying strings for better tracing
-        console.error('Spotify Client Error: ' + error.message);
+        console.error('Failed to get current user data: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -130,7 +129,7 @@ exports.getAllPlaylists = async function(req, res)
     {
         if (playlistRequestLimit !== undefined)
         {
-            console.log('User requested invalid playlist limit: ' + playlistRequestLimit);
+            console.warn('User requested invalid playlist limit: ' + playlistRequestLimit);
         }
         playlistRequestLimit = playlistRequestLimitDefault;
     }
@@ -141,7 +140,7 @@ exports.getAllPlaylists = async function(req, res)
     {
         if (playlistPageNumber !== undefined)
         {
-            console.log('User requested invalid playlist page: ' + playlistPageNumber);
+            console.warn('User requested invalid playlist page: ' + playlistPageNumber);
         }
         playlistPageNumber = playlistPageNumberDefault;
     }
@@ -168,7 +167,7 @@ exports.getAllPlaylists = async function(req, res)
     }
     catch (error)
     {
-        console.error(error.message);
+        console.error('Failed to get all playlists for user: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -189,8 +188,8 @@ exports.getSinglePlaylist = async function(req, res)
 
     if (playlistId === undefined || playlistId === null)
     {
-        var error = new Error('Invalid playlist ID requested to retrieve: ' + playlistId);
-        console.error(error.message);
+        var error = new Error('Invalid playlist ID of \"' + playlistId + '\" requested');
+        console.error('Failed to get playlist: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -208,7 +207,7 @@ exports.getSinglePlaylist = async function(req, res)
     }
     catch (error)
     {
-        console.error(error.message);
+        console.error('Failed to get playlist: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -233,16 +232,16 @@ exports.createSinglePlaylist = async function(req, res)
 
     if (userId === undefined || userId === null)
     {
-        var error = new Error('Invalid user ID to create new playlist: ' + userId);
-        console.error(error.message);
+        var error = new Error('Invalid user ID of \"' + userId + '\" attempted to create new playlist');
+        console.error('Failed to create playlist: ' + error.message);
         return Promise.reject(error);
     }
 
     var playlistName = req.body.playlistName || null;
     if (playlistName === undefined || playlistName === null)
     {
-        var error = new Error('Invalid playlist name to create new playlist: ' + playlistName);
-        console.error(error.message);
+        var error = new Error('Invalid playlist name of \"' + playlistName + '\" provided to create new playlist');
+        console.error('Failed to create playlist: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -303,7 +302,7 @@ exports.createSinglePlaylist = async function(req, res)
     }
     catch (error)
     {
-        console.error(error.message);
+        console.error('Failed to create playlist: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -328,8 +327,8 @@ exports.deleteSinglePlaylist = async function(req, res)
 
     if (playlistId === undefined || playlistId === null)
     {
-        var error = new Error('Invalid playlist ID requested to delete: ' + playlistId);
-        console.error(error.message);
+        var error = new Error('Invalid playlist ID of \"' + playlistId + '\" requested for deletion');
+        console.error('Failed to delete playlist: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -347,7 +346,7 @@ exports.deleteSinglePlaylist = async function(req, res)
     }
     catch (error)
     {
-        console.error(error.message);
+        console.error('Failed to delete playlist: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -361,8 +360,8 @@ exports.restoreSinglePlaylist = async function(req, res)
 
     if (playlistId === undefined || playlistId === null)
     {
-        var error = new Error('Invalid playlist ID requested to restore: ' + playlistId);
-        console.error(error.message);
+        var error = new Error('Invalid playlist ID of \"' + playlistId + '\" requested for restoration');
+        console.error('Failed to restore playlist: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -385,7 +384,7 @@ exports.restoreSinglePlaylist = async function(req, res)
     }
     catch (error)
     {
-        console.error(error.message);
+        console.error('Failed to restore playlist: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -399,8 +398,8 @@ exports.addTracksToPlaylist = async function(req, res)
 
     if (playlistId === undefined || playlistId === null)
     {
-        var error = new Error('Invalid playlist ID provided to add songs to: ' + playlistId);
-        console.error(error.message);
+        var error = new Error('Invalid playlist ID of \"' + playlistId + '\" to add songs to');
+        console.error('Failed to add tracks to playlist: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -408,8 +407,8 @@ exports.addTracksToPlaylist = async function(req, res)
 
     if (trackUris === undefined || trackUris === null)
     {
-        var error = new Error('Invalid track URIs to add to playlist: ' + trackUris);
-        console.error(error.message);
+        var error = new Error('Invalid track URIs of \"' + trackUris + '\" to add to playlist');
+        console.error('Failed to add tracks to playlist: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -432,7 +431,7 @@ exports.addTracksToPlaylist = async function(req, res)
     }
     catch (error)
     {
-        console.error(error.message);
+        console.error('Failed to add tracks to playlist: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -454,7 +453,7 @@ exports.getTopArtists = async function(req, res)
     {
         if (artistRequestLimit !== undefined)
         {
-            console.log('User requested invalid artist limit: ' + artistRequestLimit);
+            console.warn('User requested invalid artist limit: ' + artistRequestLimit);
         }
         artistRequestLimit = artistRequestLimitDefault;
     }
@@ -465,7 +464,7 @@ exports.getTopArtists = async function(req, res)
     {
         if (artistPageNumber !== undefined)
         {
-            console.log('User requested invalid artist page: ' + artistPageNumber);
+            console.warn('User requested invalid artist page: ' + artistPageNumber);
         }
         artistPageNumber = artistPageNumberDefault;
     }
@@ -474,7 +473,7 @@ exports.getTopArtists = async function(req, res)
         artistTimeRange !== 'medium_term' &&
         artistTimeRange !== 'long_term')
     {
-        console.log('User requested invalid artist time range: ' + artistTimeRange);
+        console.warn('User requested invalid artist time range: ' + artistTimeRange);
         artistTimeRange = artistTimeRangeDefault;
     }
 
@@ -502,7 +501,7 @@ exports.getTopArtists = async function(req, res)
     }
     catch (error)
     {
-        console.error(error.message);
+        console.error('Failed to get top artists: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -531,7 +530,7 @@ exports.getAllArtists = async function(req, res)
     {
         if (artistRequestLimit !== undefined)
         {
-            console.log('User requested invalid artist limit: ' + artistRequestLimit);
+            console.warn('User requested invalid artist limit: ' + artistRequestLimit);
         }
         artistRequestLimit = artistRequestLimitDefault;
     }
@@ -557,7 +556,7 @@ exports.getAllArtists = async function(req, res)
     }
     catch (error)
     {
-        console.error(error.message);
+        console.error('Failed to get all artists: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -584,7 +583,7 @@ exports.getAllAlbums = async function(req, res)
     {
         if (albumsRequestLimit !== undefined)
         {
-            console.log('User requested invalid albums limit: ' + albumsRequestLimit);
+            console.warn('User requested invalid albums limit: ' + albumsRequestLimit);
         }
         albumsRequestLimit = albumsRequestLimitDefault;
     }
@@ -595,7 +594,7 @@ exports.getAllAlbums = async function(req, res)
     {
         if (albumsPageNumber !== undefined)
         {
-            console.log('User requested invalid albums page: ' + albumsPageNumber);
+            console.warn('User requested invalid albums page: ' + albumsPageNumber);
         }
         albumsPageNumber = albumsPageNumberDefault;
     }
@@ -621,7 +620,7 @@ exports.getAllAlbums = async function(req, res)
     }
     catch (error)
     {
-        console.error(error.message);
+        console.error('Failed to get all albums: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -649,7 +648,7 @@ exports.getAllTracks = async function(req, res)
     {
         if (tracksRequestLimit !== undefined)
         {
-            console.log('User requested invalid tracks limit: ' + tracksRequestLimit);
+            console.warn('User requested invalid tracks limit: ' + tracksRequestLimit);
         }
         tracksRequestLimit = tracksRequestLimitDefault;
     }
@@ -660,7 +659,7 @@ exports.getAllTracks = async function(req, res)
     {
         if (tracksPageNumber !== undefined)
         {
-            console.log('User requested invalid tracks page: ' + tracksPageNumber);
+            console.warn('User requested invalid tracks page: ' + tracksPageNumber);
         }
         tracksPageNumber = tracksPageNumberDefault;
     }
@@ -686,7 +685,7 @@ exports.getAllTracks = async function(req, res)
     }
     catch (error)
     {
-        console.error(error.message);
+        console.error('Failed to get all tracks: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -715,7 +714,7 @@ exports.getTopTracks = async function(req, res)
     {
         if (tracksRequestLimit !== undefined)
         {
-            console.log('User requested invalid tracks limit: ' + tracksRequestLimit);
+            console.warn('User requested invalid tracks limit: ' + tracksRequestLimit);
         }
         tracksRequestLimit = tracksRequestLimitDefault;
     }
@@ -726,7 +725,7 @@ exports.getTopTracks = async function(req, res)
     {
         if (tracksPageNumber !== undefined)
         {
-            console.log('User requested invalid tracks page: ' + tracksPageNumber);
+            console.warn('User requested invalid tracks page: ' + tracksPageNumber);
         }
         tracksPageNumber = tracksPageNumberDefault;
     }
@@ -735,7 +734,7 @@ exports.getTopTracks = async function(req, res)
         tracksTimeRange !== 'medium_term' &&
         tracksTimeRange !== 'long_term')
     {
-        console.log('User requested invalid tracks time range: ' + tracksTimeRange);
+        console.warn('User requested invalid tracks time range: ' + tracksTimeRange);
         tracksTimeRange = tracksTimeRangeDefault;
     }
 
@@ -763,7 +762,7 @@ exports.getTopTracks = async function(req, res)
     }
     catch (error)
     {
-        console.error(error.message);
+        console.error('Failed to get top tracks: ' + error.message);
         return Promise.reject(error);
     }
 

@@ -25,9 +25,17 @@ exports.getAuthorizationTokens = async function(req, res)
         grant_type: 'authorization_code'
     };
 
+    var authToken = var secrets.getBase64EncodedAuthorizationToken();
+    if (authToken === undefined)
+    {
+        var error = new Error('Authorization token undefined');
+        console.error('Failed to get base 64 encoded authorization token: ' + error.message);
+        return Promise.reject(error);
+    }
+
     var requestOptions = {
         headers: {
-            'Authorization': 'Basic ' + secrets.getBase64EncodedAuthorizationToken(),
+            'Authorization': 'Basic ' + authToken,
             'Content-Type': 'application/x-www-form-urlencoded'
         }
     };
@@ -40,7 +48,7 @@ exports.getAuthorizationTokens = async function(req, res)
     catch (error)
     {
         // Handle if there was an error for any reason
-        console.error('Failed to authorize: ' + error.message);
+        console.error('Failed to get authorization tokens: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -65,8 +73,9 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
 
     if (refreshToken === undefined || refreshToken === null) {
         // This is specifically a warning because the user may legitimately never have logged in before at this point
-        var warning = new Error('Refresh token not found, unable to get new access token to authorize Spotify usage.');
-        console.warn('Failed to refresh authorization: ' + warning.message);
+        // TODO - Change this workflow so that if we get here, it's an actual error and not a warning (check if the user is logged in without actually just trying it)
+        var warning = new Error('Refresh token not found');
+        console.warn('Failed to refresh authorization tokens: ' + warning.message);
         return Promise.reject(warning);
     }
 
@@ -76,9 +85,17 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
         refresh_token: refreshToken
     };
 
+    var authToken = var secrets.getBase64EncodedAuthorizationToken();
+    if (authToken === undefined)
+    {
+        var error = new Error('Authorization token undefined');
+        console.error('Failed to get base 64 encoded authorization token for refresh: ' + error.message);
+        return Promise.reject(error);
+    }
+
     var requestOptions = {
         headers: {
-            'Authorization': 'Basic ' + secrets.getBase64EncodedAuthorizationToken()
+            'Authorization': 'Basic ' + authToken
         }
     };
 
@@ -90,7 +107,7 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
     catch (error)
     {
         // Failed to re-authorize, return failure
-        console.error('Failed to refresh authorization: ' + error.message);
+        console.error('Failed to refresh authorization tokens: ' + error.message);
         return Promise.reject(error);
     }
 
@@ -146,36 +163,36 @@ exports.setAuthorizationCookies = function(req, res, auth)
     // Make sure that we have all the needed authorization data to set the cookies
     if (auth === undefined || auth === null)
     {
-        var error = new Error("Unable to set authorization cookies: Authorization data not provided");
-        console.error(error.message);
+        var error = new Error("Authorization data not provided");
+        console.error('Failed to set authorization cookie: ' + error.message);
         return Promise.reject(error);
     }
 
     if (auth.tokenExpirationInMsec === undefined || auth.tokenExpirationInMsec === null)
     {
-        var error = new Error("Unable to set authorization cookies: Expiration time not found");
-        console.error(error.message);
+        var error = new Error("Expiration time not found");
+        console.error('Failed to set authorization cookie: ' + error.message);
         return Promise.reject(error);
     }
 
     if (auth.tokenType === undefined || auth.tokenType === null)
     {
-        var error = new Error("Unable to set authorization cookies: Token type not found");
-        console.error(error.message);
+        var error = new Error("Token type not found");
+        console.error('Failed to set authorization cookie: ' + error.message);
         return Promise.reject(error);
     }
 
     if (auth.accessToken === undefined || auth.accessToken === null)
     {
-        var error = new Error("Unable to set authorization cookies: Access token not found");
-        console.error(error.message);
+        var error = new Error("Access token not found");
+        console.error('Failed to set authorization cookie: ' + error.message);
         return Promise.reject(error);
     }
 
     if (auth.refreshToken === undefined || auth.refreshToken === null)
     {
-        var error = new Error("Unable to set authorization cookies: Refresh token not found");
-        console.error(error.message);
+        var error = new Error("Refresh token not found");
+        console.error('Failed to set authorization cookie: ' + error.message);
         return Promise.reject(error);
     }
 

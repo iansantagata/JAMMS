@@ -12,10 +12,10 @@ exports.getClientId = function()
 
         return undefined;
     }
-    catch (err)
+    catch (error)
     {
-        // TODO - Make this error more apparent and friendly to the user (like when the secret doesn't exist)
-        console.error(err);
+        console.error('Failed to get client ID: ' + error.message);
+        return undefined;
     }
 }
 
@@ -32,10 +32,10 @@ exports.getClientSecret = function()
 
         return undefined;
     }
-    catch (err)
+    catch (error)
     {
-        // TODO - Make this error more apparent and friendly to the user (like when the secret doesn't exist)
-        console.error(err);
+        console.error('Failed to get client secret: ' + error.message);
+        return undefined;
     }
 }
 
@@ -43,6 +43,19 @@ exports.getBase64EncodedAuthorizationToken = function()
 {
     var clientId = this.getClientId();
     var clientSecret = this.getClientSecret();
+
+    if (clientId === undefined)
+    {
+        console.error('Failed to get base 64 encoded authorization token: Client ID not defined');
+        return undefined;
+    }
+
+    if (clientSecret === undefined)
+    {
+        console.error('Failed to get base 64 encoded authorization token: Client secret not defined');
+        return undefined;
+    }
+
     var authorizationString = clientId + ":" + clientSecret;
     return Buffer.from(authorizationString, 'utf8').toString('base64');
 }

@@ -55,7 +55,7 @@ exports.getHomePageData = async function(req, res)
     }
     catch (error)
     {
-        console.error('Home Page Data Error: ' + error.message);
+        console.error('Failed to get home page data: ' + error.message);
         return Promise.reject(error);
     }
 
