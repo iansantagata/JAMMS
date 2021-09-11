@@ -11,8 +11,6 @@ exports.getBaseUri = function(req)
 
     // Build the full Uri to work both in production and while developing via localhost
     // TODO - Make this https when in production and http when in development
-    console.error('THIS IS THE PROTOCOL: ' + req.protocol);
-    console.error('THIS IS THE HOST NAME:' + req.hostname);
     return req.protocol + '://' + hostName;
 }
 
