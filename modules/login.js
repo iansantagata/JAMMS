@@ -87,9 +87,24 @@ exports.validateLogin = async function(req, res)
     }
 
     // Once we have our tokens, redirect to the home page
-    // TODO - Depending on how and when we have to re-authenticate and refresh the keys, may need to make this redirect dynamic (a param)
     res.redirect('/home');
 };
 
-// TODO - Detect if someone is logged in rather than just trying to log them in
+exports.isUserLoggedIn = async function(req, res)
+{
+    try
+    {
+        var refreshToken = await authorize.getRefreshTokenFromCookies(req, res);
+        var accessToken = await authorize.getAccessToken(req, res);
+
+        // If we have a valid refresh and access token, then a user can be considered logged in
+        return Promise.resolve();
+    }
+    catch
+    {
+        // User is not logged in
+        return Promise.reject();
+    }
+}
+
 // TODO - Create logout functionality that redirects to landing page

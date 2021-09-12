@@ -25,7 +25,7 @@ exports.getAuthorizationTokens = async function(req, res)
         grant_type: 'authorization_code'
     };
 
-    var authToken = var secrets.getBase64EncodedAuthorizationToken();
+    var authToken = secrets.getBase64EncodedAuthorizationToken();
     if (authToken === undefined)
     {
         var error = new Error('Authorization token undefined');
@@ -72,11 +72,9 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
     var refreshToken = cookie.getCookie(req, refreshKey);
 
     if (refreshToken === undefined || refreshToken === null) {
-        // This is specifically a warning because the user may legitimately never have logged in before at this point
-        // TODO - Change this workflow so that if we get here, it's an actual error and not a warning (check if the user is logged in without actually just trying it)
-        var warning = new Error('Refresh token not found');
-        console.warn('Failed to refresh authorization tokens: ' + warning.message);
-        return Promise.reject(warning);
+        var error = new Error('Refresh token not found');
+        console.error('Failed to refresh authorization tokens: ' + error.message);
+        return Promise.reject(error);
     }
 
     // Request the access token from the refresh token
@@ -85,7 +83,7 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
         refresh_token: refreshToken
     };
 
-    var authToken = var secrets.getBase64EncodedAuthorizationToken();
+    var authToken = secrets.getBase64EncodedAuthorizationToken();
     if (authToken === undefined)
     {
         var error = new Error('Authorization token undefined');
@@ -133,19 +131,24 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
     return Promise.resolve(refreshAuthorizationResponse);
 };
 
-exports.getAccessTokenFromCookies = async function(req, res)
+exports.getAccessToken = async function(req, res)
 {
-    var accessToken = cookie.getCookie(req, accessKey);
-
-    // Make sure we actually have the access token, but if it expired and we can refresh it, then try to refresh it
-    if (accessToken === undefined || accessToken === null)
+    try
     {
+        // Try to get a valid access token from cookies if it exists and has not expired
+        var accessToken = exports.getAccessTokenFromCookies(req, res);
+        return Promise.resolve(accessToken);
+    }
+    catch
+    {
+        // If a valid access token cookie does not exist, then try to refresh to get a valid one
         try
         {
             var response = await exports.getAuthorizationTokensViaRefresh(req, res);
 
             // Since we are refreshing the cookie on this call, use the refreshed response data instead
             accessToken = response.tokenType + ' ' + response.accessToken;
+            return Promise.resolve(accessToken);
         }
         catch (error)
         {
@@ -154,8 +157,34 @@ exports.getAccessTokenFromCookies = async function(req, res)
             return Promise.reject(error);
         }
     }
+}
+
+exports.getAccessTokenFromCookies = function(req, res)
+{
+    var accessToken = cookie.getCookie(req, accessKey);
+
+    if (accessToken === undefined || accessToken === null)
+    {
+        // Do not log an error to console here because it is potentially legitimate that a cookie expired or does not yet exist
+        var error = new Error('No unexpired access token cookie found');
+        return Promise.reject(error);
+    }
 
     return Promise.resolve(accessToken);
+}
+
+exports.getRefreshTokenFromCookies = function(req, res)
+{
+    var refreshToken = cookie.getCookie(req, refreshKey);
+
+    if (refreshToken === undefined || refreshToken === null)
+    {
+        // Do not log an error to console here because it is potentially legitimate that a cookie expired or does not yet exist
+        var error = new Error('No unexpired refresh token cookie found');
+        return Promise.reject(error);
+    }
+
+    return Promise.resolve(refreshToken);
 }
 
 exports.setAuthorizationCookies = function(req, res, auth)

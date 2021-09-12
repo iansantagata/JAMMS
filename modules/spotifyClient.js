@@ -40,7 +40,7 @@ exports.getCurrentUserId = async function(req, res)
     {
         var requestOptions = {
             headers: {
-                'Authorization': await authorize.getAccessTokenFromCookies(req, res)
+                'Authorization': await authorize.getAccessToken(req, res)
             }
         };
 
@@ -158,7 +158,7 @@ exports.getAllPlaylists = async function(req, res)
     {
         var requestOptions = {
             headers: {
-                'Authorization': await authorize.getAccessTokenFromCookies(req, res)
+                'Authorization': await authorize.getAccessToken(req, res)
             }
         };
 
@@ -198,7 +198,7 @@ exports.getSinglePlaylist = async function(req, res)
     {
         var requestOptions = {
             headers: {
-                'Authorization': await authorize.getAccessTokenFromCookies(req, res)
+                'Authorization': await authorize.getAccessToken(req, res)
             }
         };
 
@@ -292,7 +292,7 @@ exports.createSinglePlaylist = async function(req, res)
     {
         var requestOptions = {
             headers: {
-                'Authorization': await authorize.getAccessTokenFromCookies(req, res),
+                'Authorization': await authorize.getAccessToken(req, res),
                 'Content-Type': 'application/json'
             }
         };
@@ -337,7 +337,7 @@ exports.deleteSinglePlaylist = async function(req, res)
     {
         var requestOptions = {
             headers: {
-                'Authorization': await authorize.getAccessTokenFromCookies(req, res)
+                'Authorization': await authorize.getAccessToken(req, res)
             }
         };
 
@@ -374,7 +374,7 @@ exports.restoreSinglePlaylist = async function(req, res)
     {
         var requestOptions = {
             headers: {
-                'Authorization': await authorize.getAccessTokenFromCookies(req, res),
+                'Authorization': await authorize.getAccessToken(req, res),
                 'Content-Type': 'application/json'
             }
         };
@@ -421,7 +421,7 @@ exports.addTracksToPlaylist = async function(req, res)
     {
         var requestOptions = {
             headers: {
-                'Authorization': await authorize.getAccessTokenFromCookies(req, res),
+                'Authorization': await authorize.getAccessToken(req, res),
                 'Content-Type': 'application/json'
             }
         };
@@ -491,7 +491,7 @@ exports.getTopArtists = async function(req, res)
     {
         var requestOptions = {
             headers: {
-                'Authorization': await authorize.getAccessTokenFromCookies(req, res)
+                'Authorization': await authorize.getAccessToken(req, res)
             }
         };
 
@@ -546,7 +546,7 @@ exports.getAllArtists = async function(req, res)
     {
         var requestOptions = {
             headers: {
-                'Authorization': await authorize.getAccessTokenFromCookies(req, res)
+                'Authorization': await authorize.getAccessToken(req, res)
             }
         };
 
@@ -610,7 +610,7 @@ exports.getAllAlbums = async function(req, res)
     {
         var requestOptions = {
             headers: {
-                'Authorization': await authorize.getAccessTokenFromCookies(req, res)
+                'Authorization': await authorize.getAccessToken(req, res)
             }
         };
 
@@ -675,7 +675,7 @@ exports.getAllTracks = async function(req, res)
     {
         var requestOptions = {
             headers: {
-                'Authorization': await authorize.getAccessTokenFromCookies(req, res)
+                'Authorization': await authorize.getAccessToken(req, res)
             }
         };
 
@@ -752,7 +752,7 @@ exports.getTopTracks = async function(req, res)
     {
         var requestOptions = {
             headers: {
-                'Authorization': await authorize.getAccessTokenFromCookies(req, res)
+                'Authorization': await authorize.getAccessToken(req, res)
             }
         };
 
