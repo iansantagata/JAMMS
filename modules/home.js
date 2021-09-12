@@ -4,7 +4,7 @@ var path = require('path'); // URI and local file paths
 // Custom Modules
 const customModulePath = __dirname;
 var spotifyClient = require(path.join(customModulePath, 'spotifyClient.js'));
-var authorize = require(path.join(customModulePath, 'authorize.js'));
+var login = require(path.join(customModulePath, 'login.js'));
 
 // Home Logic
 exports.getLandingPage = async function(req, res, next)
@@ -16,7 +16,7 @@ exports.getLandingPage = async function(req, res, next)
         var homePageData = await exports.getHomePageData(req, res);
         exports.renderHomePage(req, res, homePageData);
     }
-    catch (error)
+    catch
     {
         // If authentication fails or the user has not logged in yet, send them to the landing page
         res.location('/');
