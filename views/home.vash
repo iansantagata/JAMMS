@@ -3,7 +3,6 @@
 
 		<h3 class="my-3">Your Playlists</h3>
 		<p>You currently have <b>@model.numberOfPlaylists</b> playlists saved in Spotify!</p>
-    <p><i>Note</i> - This includes playlists created by you and playlists created by others and saved by you.</p>
 
     @if(model.samplePlaylistData.length > 0)
 		{
@@ -67,16 +66,16 @@
       </div>
 		}
 
-    <div id="interact" class="row align-items-center justify-content-center mb-5">
-      <div class="col-2">
+    <div id="interact" class="row align-middle mt-3 mb-5">
+      <div class="col">
         <a href="/playlists"
             role="button" class="btn btn-info btn-sm">See All Playlists</a>
       </div>
-      <div class="col-2">
+      <div class="col">
         <a href="/createPlaylist"
             role="button" class="btn btn-info btn-sm">Create Playlist</a>
       </div>
-      <div class="col-2">
+      <div class="col">
         <a href="/createSmartPlaylist"
             role="button" class="btn btn-info btn-sm">Create Smart Playlist</a>
       </div>

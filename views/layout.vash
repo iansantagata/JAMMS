@@ -29,19 +29,19 @@
     <div class="row">
       @if(model.isAwaitingLogin)
       {
-        <div class="col-12">
+        <div class="col">
           <p class="my-0">JAMMS - Just a Music Maintainer for Spotify</p>
         </div>
       }
       else
       {
-        <div class="col-1">
+        <div class="col">
           <a href="/home" role="button" class="btn btn-info btn-sm stretched-link">Home</a>
         </div>
-        <div class="col-10">
+        <div class="col">
           <p class="my-0">JAMMS - Just a Music Maintainer for Spotify</p>
         </div>
-        <div class="col-1">
+        <div class="col">
             <a href="/logout" role="button" class="btn btn-info btn-sm stretched-link">Log Out</a>
         </div>
       }
