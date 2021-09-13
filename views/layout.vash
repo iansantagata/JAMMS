@@ -24,7 +24,17 @@
   <!-- TODO - Have to put a warning / acceptance alert about cookies eventually if they continue to be used -->
   <!-- TODO - Create button to go back to home page that will exist on every page -->
   <header class="card-header text-center mb-2">
-    JAMMS - Just a Music Maintainer for Spotify
+    <div class="row">
+      <div class="col-2">
+          TODO - HOME BUTTON
+      </div>
+      <div class="col-8">
+        JAMMS - Just a Music Maintainer for Spotify
+      </div>
+      <div class="col-2">
+          TODO - LOGOUT BUTTON
+      </div>
+    </div>
   </header>
   <div class="container text-center">
     @html.block('content')
