@@ -66,7 +66,7 @@ exports.getUserData = async function(req, res)
         var playlistResponse = await exports.getAllPlaylists(req, res);
 
         // Get sample top artists from the user
-        req.query.artistsPerPage = 3;
+        req.query.artistsPerPage = 10;
         req.query.pageNumber = 1;
         req.query.timeRange = 'long_term';
         var topArtistsResponse = await exports.getTopArtists(req, res);

@@ -1,7 +1,9 @@
 @html.extend('layout', function(model) {
 	@html.block('content', function(model) {
-		<h3>Your Playlists</h3>
+
+		<h3 class="my-3">Your Playlists</h3>
 		<p>You currently have <b>@model.numberOfPlaylists</b> playlists saved in Spotify!</p>
+    <p><i>Note</i> - This includes playlists created by you and ones created by others and saved by you.</p>
 
     @if(model.samplePlaylistData.length > 0)
 		{
@@ -47,7 +49,7 @@
       <h6 class="my-4">Your Top Tracks</h6>
 
       <div id="songs" class="table-responsive">
-        <table class="table table-striped table-sm">
+        <table class="table table-striped table-sm table-hover">
           <thead>
             <tr>
               <th scope="col" class="align-middle">Track #</th>
@@ -64,11 +66,35 @@
             @model.sampleTrackData.forEach(function(item) {
               <tr>
                 <th scope="row" class="align-middle">@trackCount</th>
-                <td class="align-middle">@item.name</td>
-                <td class="align-middle">@item.artists[0].name</td>
-                <td class="align-middle">@item.album.name</td>
+                <td class="align-middle text-capitalize">@item.name</td>
+                @{
+                  var artistNames = "";
+
+                  // Smush all the artists of a track together into a comma separated string
+                  for (var artist of item.artists)
+                  {
+                    artistNames = artistNames + artist.name + ", ";
+                  }
+
+                  // Remove the trailing comma and space
+                  artistNames = artistNames.substring(0, artistNames.length - 2);
+                }
+                <td class="align-middle text-capitalize">@artistNames</td>
+                <td class="align-middle text-capitalize">@item.album.name</td>
                 <td class="align-middle">
-                  <img src="@item.album.images[item.album.images.length - 1].url" class="img-fluid" alt="Album Named @item.album.name" />
+                  @{
+                    // Images are ordered from widest to smallest width, so start at the end to keep images small-ish yet reasonably visible
+                    var trackImageIndex = item.album.images.length - 1;
+                    // We want images that are at least over 64 pixels in both dimensions for the user to see them
+                    // If there are none, we will end up using the first and biggest image
+                    while (trackImageIndex > 0 &&
+                      (item.album.images[trackImageIndex].width < 64 ||
+                      item.album.images[trackImageIndex].height < 64))
+                    {
+                      trackImageIndex = trackImageIndex - 1;
+                    }
+                  }
+                  <img src="@item.album.images[trackImageIndex].url" class="img-fluid" alt="Album Named @item.album.name" />
                 </td>
               </tr>
               @{
@@ -83,20 +109,58 @@
     <h3 class="my-3">Your Artists</h3>
     <p>You currently have <b>@model.numberOfArtists</b> artists saved in Spotify!</p>
 
-    // TODO - Consider replacing the sample artist data with a table of top followed artists
-    // TODO - Remove dead links to specific artist pages that do not exist
-
     @if(model.sampleArtistData.length > 0)
 		{
-			<div id="artists" class="row row-cols-3 align-items-center justify-content-center">
-				@model.sampleArtistData.forEach(function(item){
-					<div class="col px-5 py-3">
-            <img src="@item.images[0].url" class="img-fluid" alt="Artist Named @item.name">
-            <a href="/artist?artistId=@item.id" role="button"
-              class="btn btn-outline-info btn-sm stretched-link my-2">@item.name</a>
-					</div>
-				})
-			</div>
+      <h6 class="my-4">Your Top Artists</h6>
+
+      <div id="artists" class="table-responsive">
+        <table class="table table-striped table-sm table-hover">
+          <thead>
+            <tr>
+              <th scope="col" class="align-middle">Artist #</th>
+              <th scope="col" class="align-middle">Artist Name</th>
+              <th scope="col" class="align-middle">Genres</th>
+              <th scope="col" class="align-middle">Image</th>
+            </tr>
+          </thead>
+          <tbody>
+            @{
+              var artistCount = 1;
+            }
+            @model.sampleArtistData.forEach(function(item) {
+              <tr>
+                <th scope="row" class="align-middle">@artistCount</th>
+                <td class="align-middle text-capitalize">@item.name</td>
+                <td class="align-middle text-capitalize">
+                  @item.genres.forEach(function(genre)
+                  {
+                    @html.raw(genre)
+                    <br/>
+                  })
+                </td>
+                <td class="align-middle col-md-2">
+                  @{
+                    // Images are ordered from widest to smallest width, so start at the end to keep images small-ish yet reasonably visible
+                    var artistImageIndex = item.images.length - 1;
+                    // We want images that are at least over 100 pixels in both dimensions for the user to see them
+                    // If there are none, we will end up using the first and biggest image
+                    while (artistImageIndex > 0 &&
+                      (item.images[artistImageIndex].width < 100 ||
+                      item.images[artistImageIndex].height < 100))
+                    {
+                      artistImageIndex = artistImageIndex - 1;
+                    }
+                  }
+                  <img src="@item.images[artistImageIndex].url" class="img-fluid" alt="Artist Named @item.name" />
+                </td>
+              </tr>
+              @{
+                artistCount++;
+              }
+            })
+          </tbody>
+        </table>
+      </div>
 		}
   })
 })
