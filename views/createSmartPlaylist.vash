@@ -12,11 +12,6 @@
             <label for="playlistNameInput">Playlist Name</label>
             <input type="text" name="playlistName" class="form-control" id="playlistNameInput" placeholder="Your Playlist" required />
           </div>
-          <div class="form-group">
-            <!-- TODO - Remove description and make it automatically generated based on rules and settings provided -->
-            <label for="playlistDescriptionInput">Playlist Description</label>
-            <textarea class="form-control" name="playlistDescription" id="playlistDescriptionInput" placeholder="An optional short description of this playlist!"></textarea>
-          </div>
 
           <h4 class="my-3">Rules</h4>
           <div id="rulesContainer">
@@ -86,8 +81,8 @@
               <select name="playlistOrderField" class="form-control" id="playlistOrderFieldInput" disabled>
                 <option value="album">Album Name</option>
                 <option value="artist" selected>Artist Name</option>
-                <option value="library">Library Add Date</option>
-                <option value="release">Release Date</option>
+                <option value="library add date">Library Add Date</option>
+                <option value="release date">Release Date</option>
                 <option value="duration">Song Length</option>
                 <option value="song">Song Name</option>
                 <option value="popularity">Song Popularity</option>
@@ -115,6 +110,7 @@
             </div>
           </div>
 
+          <!-- TODO - Buttons should become disabled on click and be replaced with a spinner icon to indicate to the user that there is processing happening -->
           <div class="mt-3">
             <button type="submit" formaction="/createSmartPlaylist" formmethod="post" class="btn btn-info">Create Smart Playlist</button>
           </div>
