@@ -20,7 +20,8 @@
                 <select name="playlistRuleType-0" class="form-control" required >
                   <option value="album">Album Name</option>
                   <option value="artist" selected>Artist Name</option>
-                  <option value="genre">Genre</option>
+                  <!-- TODO - Add genre back in when it is ready to be used (developed) -->
+                  <!-- <option value="genre">Genre</option> -->
                   <option value="year">Release Year</option>
                   <option value="song">Song Name</option>
                 </select>
@@ -33,7 +34,8 @@
                   <option value="greaterThanOrEqual">is greater than or equal to</option>
                   <option value="lessThan">is less than</option>
                   <option value="lessThanOrEqual">is less than or equal to</option>
-                  <option value="contains">contains</option>
+                  <!-- TODO - Add contains back in when it is ready to be used (developed) -->
+                  <!-- <option value="contains">contains</option> -->
                 </select>
               </div>
               <div class="col-3">
