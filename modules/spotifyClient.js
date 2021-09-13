@@ -16,7 +16,6 @@ const spotifyTopUriPath = '/top';
 const spotifyTracksUriPath = '/tracks';
 const spotifyFollowingUriPath = '/following';
 const spotifyFollowersUriPath = '/followers';
-const spotifyAlbumsUriPath = '/albums';
 const spotifyPlaylistsUriPath = '/playlists';
 
 // Default Constant Values
@@ -28,8 +27,6 @@ const artistTimeRangeDefault = 'long_term';
 const tracksRequestLimitDefault = 25;
 const tracksPageNumberDefault = 1;
 const tracksTimeRangeDefault = 'long_term';
-const albumsRequestLimitDefault = 9;
-const albumsPageNumberDefault = 1;
 const createdPlaylistDescription = "Playlist created with JAMMS.app!";
 
 // Spotify Client Logic
@@ -79,11 +76,6 @@ exports.getUserData = async function(req, res)
         req.query.pageNumber = 1;
         var artistsResponse = await exports.getAllArtists(req, res);
 
-        // Get number of albums and sample albums from the user
-        req.query.albumsPerPage = 3;
-        req.query.pageNumber = 1;
-        var albumsResponse = await exports.getAllAlbums(req, res);
-
         // Get sample top tracks from the user
         req.query.tracksPerPage = 10;
         req.query.pageNumber = 1;
@@ -108,9 +100,7 @@ exports.getUserData = async function(req, res)
         numberOfArtists: artistsResponse.total,
         sampleArtistData: topArtistsResponse.items,
         numberOfTracks: tracksResponse.total,
-        sampleTrackData: topTracksResponse.items,
-        numberOfAlbums: albumsResponse.total,
-        sampleAlbumData: albumsResponse.items
+        sampleTrackData: topTracksResponse.items
     };
 
     return Promise.resolve(fullSpotifyResponse);
@@ -565,71 +555,6 @@ exports.getAllArtists = async function(req, res)
         items: response.data.artists.items,
         limit: response.data.artists.limit,
         total: response.data.artists.total
-    };
-
-    return Promise.resolve(spotifyPagedResponse);
-}
-
-exports.getAllAlbums = async function(req, res)
-{
-    var albumsRequestLimit = req.query.albumsPerPage;
-    var albumsPageNumber = req.query.pageNumber;
-
-    // Handle the case where the invalid parameters were passed
-    if (albumsRequestLimit === undefined ||
-        albumsRequestLimit === null ||
-        albumsRequestLimit <= 0 ||
-        albumsRequestLimit > 50)
-    {
-        if (albumsRequestLimit !== undefined)
-        {
-            console.warn('User requested invalid albums limit: ' + albumsRequestLimit);
-        }
-        albumsRequestLimit = albumsRequestLimitDefault;
-    }
-
-    if (albumsPageNumber === undefined ||
-        albumsPageNumber === null ||
-        albumsPageNumber <= 0)
-    {
-        if (albumsPageNumber !== undefined)
-        {
-            console.warn('User requested invalid albums page: ' + albumsPageNumber);
-        }
-        albumsPageNumber = albumsPageNumberDefault;
-    }
-
-    var albumsRequestOffset = (albumsPageNumber - 1) * albumsRequestLimit;
-    var requestData = {
-        limit: albumsRequestLimit,
-        offset: albumsRequestOffset
-    };
-
-    // Make the request to get the album data
-    try
-    {
-        var requestOptions = {
-            headers: {
-                'Authorization': await authorize.getAccessToken(req, res)
-            }
-        };
-
-        var spotifyGetAllAlbumsUri = spotifyBaseUri + spotifyCurrentUserUriPath + spotifyAlbumsUriPath;
-        var spotifyGetAllAlbumsRequestQuery = '?' + querystring.stringify(requestData);
-        var response = await axios.get(spotifyGetAllAlbumsUri + spotifyGetAllAlbumsRequestQuery, requestOptions);
-    }
-    catch (error)
-    {
-        console.error('Failed to get all albums: ' + error.message);
-        return Promise.reject(error);
-    }
-
-    // Extract only the data from the successful response that the user will care to see
-    var spotifyPagedResponse = {
-        items: response.data.items,
-        limit: response.data.limit,
-        offset: response.data.offset,
-        total: response.data.total
     };
 
     return Promise.resolve(spotifyPagedResponse);

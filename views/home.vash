@@ -1,7 +1,5 @@
 @html.extend('layout', function(model) {
 	@html.block('content', function(model) {
-    <h2 class="mb-3">Welcome!</h2>
-
 		<h3>Your Playlists</h3>
 		<p>You currently have <b>@model.numberOfPlaylists</b> playlists saved in Spotify!</p>
 
@@ -85,6 +83,9 @@
     <h3 class="my-3">Your Artists</h3>
     <p>You currently have <b>@model.numberOfArtists</b> artists saved in Spotify!</p>
 
+    // TODO - Consider replacing the sample artist data with a table of top followed artists
+    // TODO - Remove dead links to specific artist pages that do not exist
+
     @if(model.sampleArtistData.length > 0)
 		{
 			<div id="artists" class="row row-cols-3 align-items-center justify-content-center">
@@ -93,24 +94,6 @@
             <img src="@item.images[0].url" class="img-fluid" alt="Artist Named @item.name">
             <a href="/artist?artistId=@item.id" role="button"
               class="btn btn-outline-info btn-sm stretched-link my-2">@item.name</a>
-					</div>
-				})
-			</div>
-		}
-
-    <h3>Your Albums</h3>
-    <p>You currently have <b>@model.numberOfAlbums</b> albums saved in Spotify!</p>
-
-    // TODO - Consider replacing the sample album data and sample artist data with a table of all / top followed artists / albums
-    // TODO - Remove dead links to specific album pages that do not exist and specific artist pages that do not exist
-    @if(model.sampleAlbumData.length > 0)
-		{
-			<div id="artists" class="row row-cols-3 align-items-center justify-content-center">
-				@model.sampleAlbumData.forEach(function(item){
-					<div class="col px-5 py-3">
-            <img src="@item.album.images[0].url" class="img-fluid" alt="Album Named @item.album.name">
-            <a href="/album?albumId=@item.album.id" role="button"
-              class="btn btn-outline-info btn-sm stretched-link my-2">@item.album.name</a>
 					</div>
 				})
 			</div>

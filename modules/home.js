@@ -69,9 +69,7 @@ exports.getHomePageData = async function(req, res)
         numberOfArtists: spotifyResponse.numberOfArtists,
         sampleArtistData: spotifyResponse.sampleArtistData,
         numberOfTracks: spotifyResponse.numberOfTracks,
-        sampleTrackData: spotifyResponse.sampleTrackData,
-        numberOfAlbums: spotifyResponse.numberOfAlbums,
-        sampleAlbumData: spotifyResponse.sampleAlbumData
+        sampleTrackData: spotifyResponse.sampleTrackData
     };
 
     return Promise.resolve(homePageData);
