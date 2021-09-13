@@ -8,7 +8,8 @@
 		@if(model.playlists.length > 0)
 		{
 			<div id="playlists" class="row row-cols-3 align-items-center justify-content-center">
-				@model.playlists.forEach(function(item){
+				@model.playlists.forEach(function(item)
+        {
 					<div class="col px-5 py-3">
             @if(item.images[0] !== undefined)
             {

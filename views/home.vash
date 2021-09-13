@@ -3,26 +3,68 @@
 
 		<h3 class="my-3">Your Playlists</h3>
 		<p>You currently have <b>@model.numberOfPlaylists</b> playlists saved in Spotify!</p>
-    <p><i>Note</i> - This includes playlists created by you and ones created by others and saved by you.</p>
+    <p><i>Note</i> - This includes playlists created by you and playlists created by others and saved by you.</p>
 
     @if(model.samplePlaylistData.length > 0)
 		{
-			<div id="playlists" class="row row-cols-3 align-items-center justify-content-center">
-				@model.samplePlaylistData.forEach(function(item){
-					<div class="col px-5 py-3">
-            @if(item.images[0] !== undefined)
-            {
-              <img src="@item.images[0].url" class="img-fluid" alt="Playlist Named @item.playlistName" />
+      <p>Some of your playlists are listed below!</p>
+
+      <div id="playlists" class="table-responsive">
+        <table class="table table-striped table-sm table-hover">
+          <thead>
+            <tr>
+              <th scope="col" class="align-middle">Playlist #</th>
+              <th scope="col" class="align-middle">Name</th>
+              <th scope="col" class="align-middle">Owner</th>
+              <th scope="col" class="align-middle">Link</th>
+              <th scope="col" class="align-middle">Image</th>
+            </tr>
+          </thead>
+          <tbody>
+            @{
+              var playlistCount = 1;
             }
-            else
+
+            @model.samplePlaylistData.forEach(function(item)
             {
-              <img src="images/question.png" class="img-fluid" alt="Playlist Named @model.playlistName" />
-            }
-            <a href="/playlist?playlistId=@item.id" role="button"
-              class="btn btn-outline-info btn-sm stretched-link my-2">@item.name</a>
-					</div>
-				})
-			</div>
+              <tr>
+                <th scope="row" class="align-middle">@playlistCount</th>
+                <td class="align-middle text-capitalize">@item.name</td>
+                <td class="align-middle">@item.owner.display_name</td>
+                <td class="align-middle col-md-2">
+                  <a href="/playlist?playlistId=@item.id" role="button" class="btn btn-outline-info btn-sm">View Playlist</a>
+                </td>
+                <td class="align-middle col-md-2">
+                  @{
+                    // Images are ordered from widest to smallest width, so start at the end to keep images small-ish yet reasonably visible
+                    var playlistImageIndex = item.images.length - 1;
+                    // We want images that are at least over 50 pixels in both dimensions for the user to see them
+                    // If there are none, we will end up using the first and biggest image
+                    while (playlistImageIndex > 0 &&
+                      (item.images[playlistImageIndex].width < 50 ||
+                      item.images[playlistImageIndex].height < 50))
+                    {
+                      playlistImageIndex = playlistImageIndex - 1;
+                    }
+                  }
+
+                  @if(item.images[playlistImageIndex] !== undefined)
+                  {
+                    <img src="@item.images[playlistImageIndex].url" class="img-fluid" alt="Playlist Named @item.name" />
+                  }
+                  else
+                  {
+                    <img src="images/question.png" class="img-fluid" alt="Playlist Named @item.name" />
+                  }
+                </td>
+              </tr>
+              @{
+                playlistCount++;
+              }
+            })
+          </tbody>
+        </table>
+      </div>
 		}
 
     <div id="interact" class="row align-items-center justify-content-center mb-5">
@@ -62,7 +104,8 @@
             @{
               var trackCount = 1;
             }
-            @model.sampleTrackData.forEach(function(item) {
+            @model.sampleTrackData.forEach(function(item)
+            {
               <tr>
                 <th scope="row" class="align-middle">@trackCount</th>
                 <td class="align-middle text-capitalize">@item.name</td>
@@ -80,7 +123,7 @@
                 }
                 <td class="align-middle text-capitalize">@artistNames</td>
                 <td class="align-middle text-capitalize">@item.album.name</td>
-                <td class="align-middle">
+                <td class="align-middle col-md-2">
                   @{
                     // Images are ordered from widest to smallest width, so start at the end to keep images small-ish yet reasonably visible
                     var trackImageIndex = item.album.images.length - 1;
@@ -134,7 +177,8 @@
             @{
               var artistCount = 1;
             }
-            @model.sampleArtistData.forEach(function(item) {
+            @model.sampleArtistData.forEach(function(item)
+            {
               <tr>
                 <th scope="row" class="align-middle">@artistCount</th>
                 <td class="align-middle text-capitalize">@item.name</td>

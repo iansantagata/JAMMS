@@ -61,7 +61,7 @@ exports.getUserData = async function(req, res)
     try
     {
         // Get number of playlists and sample playlists from the user
-        req.query.playlistsPerPage = 3;
+        req.query.playlistsPerPage = 10;
         req.query.pageNumber = 1;
         var playlistResponse = await exports.getAllPlaylists(req, res);
 
