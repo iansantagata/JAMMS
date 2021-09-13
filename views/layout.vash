@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
+
 <head>
   <title>JAMMS - Just a Music Maintainer for Spotify</title>
   <!-- Required meta tags for Bootstrap CSS -->
@@ -20,7 +21,9 @@
   integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
   crossorigin="anonymous"></script>
 </head>
-<body>
+
+<body class="d-flex flex-column h-100">
+
   <!-- TODO - Have to put a warning / acceptance alert about cookies eventually if they continue to be used -->
   <header class="card-header text-center mb-2">
     <div class="row">
@@ -44,11 +47,20 @@
       }
     </div>
   </header>
-  <div class="container text-center">
-    @html.block('content')
-  </div>
-  <footer class="card-footer text-center mt-2">
-    Created by Ian Santagata
+
+  <main role="main" class="flex-shrink-0">
+    <div class="container text-center">
+      @html.block('content')
+    </div>
+  </main>
+
+  <footer class="footer mt-auto">
+    <div class="container">
+      <div class="card-footer text-center mt-2">
+        Created by Ian Santagata
+      </div>
+    </div>
   </footer>
+
 </body>
 </html>
