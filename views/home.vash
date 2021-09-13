@@ -41,14 +41,15 @@
       </div>
     </div>
 
-    <h3>Your Library</h3>
+    <h3 class="my-3">Your Library</h3>
     <p>You currently have <b>@model.numberOfTracks</b> songs saved in Spotify!</p>
 
     @if(model.sampleTrackData.length > 0)
     {
+      <h6 class="my-4">Your Top Tracks</h6>
+
       <div id="songs" class="table-responsive">
         <table class="table table-striped table-sm">
-          <caption class="text-center">Your Top Tracks</caption>
           <thead>
             <tr>
               <th scope="col" class="align-middle">Track #</th>
@@ -81,16 +82,7 @@
       </div>
     }
 
-    <!-- TODO - Create the tracks page -->
-
-    <div id="interact" class="row align-items-center justify-content-center mb-5">
-      <div class="col-2">
-        <a href="/tracks"
-            role="button" class="btn btn-info btn-sm">See All Tracks</a>
-      </div>
-    </div>
-
-    <h3>Your Artists</h3>
+    <h3 class="my-3">Your Artists</h3>
     <p>You currently have <b>@model.numberOfArtists</b> artists saved in Spotify!</p>
 
     @if(model.sampleArtistData.length > 0)
@@ -106,19 +98,11 @@
 			</div>
 		}
 
-    <!-- TODO - Create the artists page -->
-    <!-- TODO - Create the singular artist page -->
-
-    <div id="interact" class="row align-items-center justify-content-center mb-5">
-      <div class="col-2">
-        <a href="/artists"
-            role="button" class="btn btn-info btn-sm">See All Artists</a>
-      </div>
-    </div>
-
     <h3>Your Albums</h3>
     <p>You currently have <b>@model.numberOfAlbums</b> albums saved in Spotify!</p>
 
+    // TODO - Consider replacing the sample album data and sample artist data with a table of all / top followed artists / albums
+    // TODO - Remove dead links to specific album pages that do not exist and specific artist pages that do not exist
     @if(model.sampleAlbumData.length > 0)
 		{
 			<div id="artists" class="row row-cols-3 align-items-center justify-content-center">
@@ -131,15 +115,5 @@
 				})
 			</div>
 		}
-
-    <!-- TODO - Create the albums page -->
-    <!-- TODO - Create a singular album page -->
-
-    <div id="interact" class="row align-items-center justify-content-center mb-5">
-      <div class="col-2">
-        <a href="/albums"
-            role="button" class="btn btn-info btn-sm">See All Albums</a>
-      </div>
-    </div>
   })
 })

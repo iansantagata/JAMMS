@@ -38,10 +38,12 @@
     </div>
 
     <div id="interact" class="row align-items-center justify-content-center mb-5">
+      <!-- TODO - Add endpoint for playlist detail editing -->
       <div class="col-2">
         <a href="/editPlaylist?playlistId=@model.playlistId"
             role="button" class="btn btn-info btn-sm">Edit Playlist Details</a>
       </div>
+      <!-- TODO - Add endpoint for updating playlist image -->
       <div class="col-2">
         <a href="/editPlaylistImage?playlistId=@model.playlistId"
             role="button" class="btn btn-info btn-sm">Change Playlist Image</a>
