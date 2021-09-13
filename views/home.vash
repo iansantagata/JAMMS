@@ -39,7 +39,9 @@
                     var playlistImageIndex = item.images.length - 1;
                     // We want images that are at least over 50 pixels in both dimensions for the user to see them
                     // If there are none, we will end up using the first and biggest image
+
                     while (playlistImageIndex > 0 &&
+                      item.images[playlistImageIndex] !== undefined &&
                       (item.images[playlistImageIndex].width < 50 ||
                       item.images[playlistImageIndex].height < 50))
                     {
@@ -53,7 +55,7 @@
                   }
                   else
                   {
-                    <img src="images/question.png" class="img-fluid" alt="Playlist Named @item.name" />
+                    <img src="images/question_small.png" class="img-fluid" alt="Playlist Named @item.name" />
                   }
                 </td>
               </tr>
@@ -129,6 +131,7 @@
                     // We want images that are at least over 64 pixels in both dimensions for the user to see them
                     // If there are none, we will end up using the first and biggest image
                     while (trackImageIndex > 0 &&
+                      item.album.images[trackImageIndex] !== undefined &&
                       (item.album.images[trackImageIndex].width < 64 ||
                       item.album.images[trackImageIndex].height < 64))
                     {
@@ -195,6 +198,7 @@
                     // We want images that are at least over 100 pixels in both dimensions for the user to see them
                     // If there are none, we will end up using the first and biggest image
                     while (artistImageIndex > 0 &&
+                      item.images[artistImageIndex] !== undefined &&
                       (item.images[artistImageIndex].width < 100 ||
                       item.images[artistImageIndex].height < 100))
                     {

@@ -9,10 +9,23 @@
     }
 
     <div id="playlist" class="row align-items-center justify-content-around">
-      <div class="col-4 my-5">
-        @if(model.images[0] !== undefined)
+      <div class="col my-5">
+        @{
+          // Images are ordered from widest to smallest width, so start at the beginning to keep images large-ish for single playlist view
+          var playlistImageIndex = 0;
+          // We want images that are at most less than 400 pixels in both dimensions for the image to not take up too much screen space
+          // If there are none, we will end up using the first and biggest image
+          while (playlistImageIndex <= model.images.length &&
+            model.images[playlistImageIndex] !== undefined &&
+            (model.images[playlistImageIndex].width > 400 ||
+            model.images[playlistImageIndex].height > 400))
+          {
+            playlistImageIndex = playlistImageIndex + 1;
+          }
+        }
+        @if(model.images[playlistImageIndex] !== undefined)
         {
-          <img src="@model.images[0].url" class="img-fluid" alt="Playlist Named @model.playlistName" />
+          <img src="@model.images[playlistImageIndex].url" class="img-fluid" alt="Playlist Named @model.playlistName" />
         }
         else
         {
@@ -20,8 +33,8 @@
         }
       </div>
 
-      <div class="col-4 text-wrap">
-        <h3 class="text-capitalize mb-3">@model.playlistName</h3>
+      <div class="col text-wrap">
+        <h4 class="text-capitalize mb-3">@model.playlistName</h4>
         @if(model.playlistDescription !== null)
         {
           <p class="mb-3">@html.raw(model.playlistDescription)</p>
@@ -44,25 +57,25 @@
 
     <div id="interact" class="row align-items-center justify-content-center mb-5">
       <!-- TODO - Add endpoint for playlist detail editing -->
-      <div class="col-2">
+      <div class="col">
         <a href="/editPlaylist?playlistId=@model.playlistId"
-            role="button" class="btn btn-info btn-sm">Edit Playlist Details</a>
+            role="button" class="btn btn-info btn-sm disabled">Edit Playlist Details - Coming Soon!</a>
       </div>
       <!-- TODO - Add endpoint for updating playlist image -->
-      <div class="col-2">
+      <div class="col">
         <a href="/editPlaylistImage?playlistId=@model.playlistId"
-            role="button" class="btn btn-info btn-sm">Change Playlist Image</a>
+            role="button" class="btn btn-info btn-sm disabled">Change Playlist Image - Coming Soon!</a>
       </div>
       @if(model.deleted)
       {
-        <div class="col-2">
+        <div class="col">
           <a href="/restorePlaylist?playlistId=@model.playlistId"
               role="button" class="btn btn-info btn-sm">Restore Playlist</a>
         </div>
       }
       else
       {
-        <div class="col-2">
+        <div class="col">
           <a href="/deletePlaylist?playlistId=@model.playlistId"
               role="button" class="btn btn-info btn-sm">Delete Playlist</a>
         </div>

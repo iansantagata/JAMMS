@@ -5,7 +5,7 @@
     <p>You currently have <b>@model.totalNumberOfPlaylists</b> playlists saved in Spotify!</p>
 
     <div id="playlistsPerPageSelector" class="row align-items-center justify-content-center mb-4">
-      <div class="col-3 dropdown">
+      <div class="col dropdown">
         <button class="btn btn-outline-info btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Playlists Per Page</button>
         <div class="dropdown-menu">
           <a class="dropdown-item" href="/playlists?playlistsPerPage=10">10</a>
@@ -51,6 +51,7 @@
                     // We want images that are at least over 100 pixels in both dimensions for the user to see them
                     // If there are none, we will end up using the first and biggest image
                     while (playlistImageIndex > 0 &&
+                      item.images[playlistImageIndex] !== undefined &&
                       (item.images[playlistImageIndex].width < 100 ||
                       item.images[playlistImageIndex].height < 100))
                     {
