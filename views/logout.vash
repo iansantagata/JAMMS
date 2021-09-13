@@ -1,0 +1,12 @@
+@html.extend('layout', function(model) {
+	@html.block('content', function(model) {
+    <div id="logout" class="my-3">
+      <h6>Successfully logged out.</h6>
+    </div>
+    <div id="login">
+        <h3 class="my-3">Want to log back in again?</h3>
+        <!-- TODO - Put some kind of cool placeholder image here -->
+        <a href="/login" role="button" class="my-3 btn btn-primary">Log in with Spotify</a>
+    </div>
+  })
+})

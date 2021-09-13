@@ -107,15 +107,4 @@ exports.isUserLoggedIn = async function(req, res)
     }
 }
 
-exports.logout = function(req, res)
-{
-    // Logging out just consists of removing cookies and redirecting to the landing page
-    authorize.deleteAuthorizationCookies(req, res);
-
-    var landingPageData = {
-        isAwaitingLogin: true
-    };
-
-    res.location('/');
-    res.render('landing', landingPageData);
-}
+// TODO - Figure out how to make it so that user can login with different Spotify account from login screen

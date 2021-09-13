@@ -21,6 +21,7 @@ const customModulePath = path.join(__dirname, 'modules');
 var error = require(path.join(customModulePath, 'error.js'));
 var home = require(path.join(customModulePath, 'home.js'));
 var login = require(path.join(customModulePath, 'login.js'));
+var logout = require(path.join(customModulePath, 'logout.js'));
 var playlist = require(path.join(customModulePath, 'playlist.js'));
 var smartPlaylist = require(path.join(customModulePath, 'smartPlaylist.js'));
 
@@ -45,8 +46,7 @@ app.get('/home', home.getHomePage);
 // Login Logic
 app.get('/login', login.getLoginPage);
 app.get('/validateLogin', login.validateLogin);
-app.get('/logout', login.logout);
-// TODO - Maybe have an indicator of some kind for when a user logs out or a specific page for it?
+app.get('/logout', logout.getLogoutPage);
 
 // Playlist Logic
 app.get('/playlists', playlist.getAllPlaylistPage);
