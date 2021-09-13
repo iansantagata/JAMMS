@@ -2,6 +2,11 @@
 	@html.block('content', function(model) {
     <h2>Your Playlist</h2>
 
+    @if(model.deleted)
+    {
+      <p class="my-3">This playlist has been deleted. The playlist can be restored below if desired.</p>
+    }
+
     <div id="playlist" class="row align-items-center justify-content-around">
       <div class="col-4 my-5">
         @if(model.images[0] !== undefined)
