@@ -55,10 +55,8 @@
   </main>
 
   <footer class="footer mt-auto">
-    <div class="container">
-      <div class="card-footer text-center mt-2">
-        Created by Ian Santagata
-      </div>
+    <div class="card-footer text-center mt-2">
+      Created by Ian Santagata
     </div>
   </footer>
 

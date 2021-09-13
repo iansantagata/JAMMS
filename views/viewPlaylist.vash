@@ -6,11 +6,11 @@
       <div class="col-4 my-5">
         @if(model.images[0] !== undefined)
         {
-          <img src="@model.images[0].url" class="img-fluid" alt="Playlist Named @model.playlistName">
+          <img src="@model.images[0].url" class="img-fluid" alt="Playlist Named @model.playlistName" />
         }
         else
         {
-          <img src="images/question.png" class="img-fluid" alt="Playlist Named @model.playlistName">
+          <img src="images/question.png" class="img-fluid" alt="Playlist Named @model.playlistName" />
         }
       </div>
 
