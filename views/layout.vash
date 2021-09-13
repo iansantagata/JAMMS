@@ -30,7 +30,7 @@
       @if(model.isAwaitingLogin)
       {
         <div class="col-12">
-          JAMMS - Just a Music Maintainer for Spotify
+          <p class="my-0">JAMMS - Just a Music Maintainer for Spotify</p>
         </div>
       }
       else
@@ -39,7 +39,7 @@
           <a href="/home" role="button" class="btn btn-info btn-sm stretched-link">Home</a>
         </div>
         <div class="col-10">
-          JAMMS - Just a Music Maintainer for Spotify
+          <p class="my-0">JAMMS - Just a Music Maintainer for Spotify</p>
         </div>
         <div class="col-1">
             <a href="/logout" role="button" class="btn btn-info btn-sm stretched-link">Log Out</a>
@@ -55,8 +55,18 @@
   </main>
 
   <footer class="footer mt-auto">
-    <div class="card-footer text-center mt-2">
-      Created by Ian Santagata
+    <div class="card-footer text-center">
+      <div class="row">
+        <div class="col">
+          <p class="my-0">JAMMS is <a href="https://github.com/iansantagata/jamms">open source</a>!</p>
+        </div>
+        <div class="col">
+          <p class="my-0">Created by <a href="http://iansantagata.com">Ian Santagata</a></p>
+        </div>
+        <div class="col">
+          <p class="my-0"><a href="@html.raw("mailto:admin@jamms.app")">Contact E-Mail</a></p>
+        </div>
+      </div>
     </div>
   </footer>
 
