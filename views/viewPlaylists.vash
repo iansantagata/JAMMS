@@ -10,8 +10,15 @@
 			<div id="playlists" class="row row-cols-3 align-items-center justify-content-center">
 				@model.playlists.forEach(function(item){
 					<div class="col px-5 py-3">
-            <img src="@item.images[0].url" class="img-fluid" alt="Playlist Named @item.name">
-            <!-- TODO - This is a problem if there are no images (it crashes), need to fix! -->
+            @if(item.images[0] !== undefined)
+            {
+              <img src="@item.images[0].url" class="img-fluid" alt="Playlist Named @item.name" />
+            }
+            else
+            {
+              <img src="images/question.png" class="img-fluid" alt="Playlist Named @item.name" />
+            }
+
             <a href="/playlist?playlistId=@item.id" role="button"
               class="btn btn-outline-info btn-sm stretched-link my-2">@item.name</a>
 					</div>

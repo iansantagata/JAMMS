@@ -12,12 +12,11 @@
 					<div class="col px-5 py-3">
             @if(item.images[0] !== undefined)
             {
-              <img src="@item.images[0].url" class="img-fluid" alt="Playlist Named @item.playlistName">
+              <img src="@item.images[0].url" class="img-fluid" alt="Playlist Named @item.playlistName" />
             }
             else
             {
-              <!-- TODO - Add placeholder image here -->
-              <img src="" class="img-fluid" alt="Playlist Named @model.playlistName">
+              <img src="images/question.png" class="img-fluid" alt="Playlist Named @model.playlistName" />
             }
             <a href="/playlist?playlistId=@item.id" role="button"
               class="btn btn-outline-info btn-sm stretched-link my-2">@item.name</a>
@@ -94,7 +93,15 @@
                       trackImageIndex = trackImageIndex - 1;
                     }
                   }
-                  <img src="@item.album.images[trackImageIndex].url" class="img-fluid" alt="Album Named @item.album.name" />
+
+                  @if(item.album.images[trackImageIndex] !== undefined)
+                  {
+                    <img src="@item.album.images[trackImageIndex].url" class="img-fluid" alt="Album Named @item.album.name" />
+                  }
+                  else
+                  {
+                    <img src="images/question.png" class="img-fluid" alt="Album Named @item.album.name" />
+                  }
                 </td>
               </tr>
               @{
@@ -151,7 +158,15 @@
                       artistImageIndex = artistImageIndex - 1;
                     }
                   }
-                  <img src="@item.images[artistImageIndex].url" class="img-fluid" alt="Artist Named @item.name" />
+
+                  @if(item.images[artistImageIndex] !== undefined)
+                  {
+                    <img src="@item.images[artistImageIndex].url" class="img-fluid" alt="Artist Named @item.name" />
+                  }
+                  else
+                  {
+                    <img src="images/question.png" class="img-fluid" alt="Artist Named @item.name" />
+                  }
                 </td>
               </tr>
               @{
