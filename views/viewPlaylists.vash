@@ -4,6 +4,19 @@
     <h2 class="mb-3">Your Playlists</h2>
     <p>You currently have <b>@model.totalNumberOfPlaylists</b> playlists saved in Spotify!</p>
 
+    <div id="playlistsPerPageSelector" class="row align-items-center justify-content-center mb-4">
+      <div class="col-3 dropdown">
+        <button class="btn btn-outline-info btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Playlists Per Page</button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/playlists?playlistsPerPage=10">10</a>
+          <a class="dropdown-item" href="/playlists?playlistsPerPage=20">20</a>
+          <a class="dropdown-item" href="/playlists?playlistsPerPage=30">30</a>
+          <a class="dropdown-item" href="/playlists?playlistsPerPage=40">40</a>
+          <a class="dropdown-item" href="/playlists?playlistsPerPage=50">50</a>
+        </div>
+      </div>
+    </div>
+
     @if(model.playlists.length > 0)
     {
       <div id="playlists" class="table-responsive">
@@ -64,60 +77,80 @@
       </div>
     }
 
-    // TODO - Replace below buttons with pagination functionality from Bootstrap
+    <nav id="pages" class="my-5">
+      <ul class="pagination justify-content-center">
+        @{
+          var isPreviousPageDisabled = model.currentPage <= 1;
+          var previousPageDisabledClass = "disabled";
+          var previousPageUrl = "#";
 
-		<div id="pages" class="row align-items-center justify-content-center mb-4">
-			<div id="firstPage" class="col-1">
-				@{
-					var disabledClass = model.currentPage - 2 > 0 ? "" : "disabled";
-				}
-				<a href="/playlists?pageNumber=1&playlistsPerPage=@model.numberOfPlaylistsPerPage"
-					role="button" class="btn btn-info btn-sm @disabledClass">&lt;&lt;</a>
-			</div>
+          if (!isPreviousPageDisabled)
+          {
+            previousPageDisabledClass = "";
 
-			<div id="backOnePage" class="col-1">
-				@{
-					var disabledClass = model.currentPage - 1 > 0 ? "" : "disabled";
-					var onePageBack = model.currentPage - 1;
-				}
-				<a href="/playlists?pageNumber=@onePageBack&playlistsPerPage=@model.numberOfPlaylistsPerPage"
-					role="button" class="btn btn-info btn-sm @disabledClass">&lt;</a>
-			</div>
+            var previousPageNumber = model.currentPage - 1;
+            previousPageUrl = "/playlists?pageNumber=" + previousPageNumber + "&playlistsPerPage=" + model.numberOfPlaylistsPerPage;
+          }
+        }
+        <li class="page-item @previousPageDisabledClass">
+          <a class="page-link" href="@previousPageUrl">Previous</a>
+        </li>
 
-			<div id="currentPage" class="col-1">
-				<a href="/playlists?pageNumber=@model.currentPage&playlistsPerPage=@model.numberOfPlaylistsPerPage"
-					role="button" class="btn btn-info btn-sm disabled">@model.currentPage</a>
-			</div>
+        @if(model.currentPage - 2 >= 1)
+        {
+          @{
+            var twoPagesBack = model.currentPage - 2;
+            var twoPagesBackUrl = "/playlists?pageNumber=" + twoPagesBack + "&playlistsPerPage=" + model.numberOfPlaylistsPerPage;
+          }
+          <li class="page-item"><a class="page-link" href="@twoPagesBackUrl">@twoPagesBack</a></li>
+        }
 
-			<div id="forwardOnePage" class="col-1">
-				@{
-					var disabledClass = model.currentPage + 1 <= model.numberOfPages ? "" : "disabled";
-					var onePageForward = model.currentPage + 1;
-				}
-				<a href="/playlists?pageNumber=@onePageForward&playlistsPerPage=@model.numberOfPlaylistsPerPage"
-					role="button" class="btn btn-info btn-sm @disabledClass">&gt;</a>
-			</div>
+        @if(model.currentPage - 1 >= 1)
+        {
+          @{
+            var onePageBack = model.currentPage - 1;
+            var onePageBackUrl = "/playlists?pageNumber=" + onePageBack + "&playlistsPerPage=" + model.numberOfPlaylistsPerPage;
+          }
+          <li class="page-item"><a class="page-link" href="@onePageBackUrl">@onePageBack</a></li>
+        }
 
-			<div id="lastPage" class="col-1">
-				@{
-					var disabledClass = model.currentPage + 2 <= model.numberOfPages ? "" : "disabled";
-				}
-				<a href="/playlists?pageNumber=@model.numberOfPages&playlistsPerPage=@model.numberOfPlaylistsPerPage"
-					role="button" class="btn btn-info btn-sm @disabledClass">&gt;&gt;</a>
-			</div>
-		</div>
+        <li class="page-item"><a class="page-link" href="#"><b>@model.currentPage</b></a></li>
 
-    <div id="playlistsPerPageSelector" class="row align-items-center justify-content-center mb-4">
-      <div class="col-3 dropdown">
-        <button class="btn btn-outline-info btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Playlists Per Page</button>
-        <div class="dropdown-menu">
-          <a class="dropdown-item" href="/playlists?playlistsPerPage=10">10</a>
-          <a class="dropdown-item" href="/playlists?playlistsPerPage=20">20</a>
-          <a class="dropdown-item" href="/playlists?playlistsPerPage=30">30</a>
-          <a class="dropdown-item" href="/playlists?playlistsPerPage=40">40</a>
-          <a class="dropdown-item" href="/playlists?playlistsPerPage=50">50</a>
-        </div>
-      </div>
-    </div>
+        @if(model.currentPage + 1 <= model.numberOfPages)
+        {
+          @{
+            var onePageForward = model.currentPage + 1;
+            var onePageForwardUrl = "/playlists?pageNumber=" + onePageForward + "&playlistsPerPage=" + model.numberOfPlaylistsPerPage;
+          }
+          <li class="page-item"><a class="page-link" href="@onePageForwardUrl">@onePageForward</a></li>
+        }
+
+        @if(model.currentPage + 2 <= model.numberOfPages)
+        {
+          @{
+            var twoPagesForward = model.currentPage + 2;
+            var twoPagesForwardUrl = "/playlists?pageNumber=" + twoPagesForward + "&playlistsPerPage=" + model.numberOfPlaylistsPerPage;
+          }
+          <li class="page-item"><a class="page-link" href="@twoPagesForwardUrl">@twoPagesForward</a></li>
+        }
+
+        @{
+          var isNextPageDisabled = model.currentPage >= model.numberOfPages;
+          var nextPageDisabledClass = "disabled";
+          var nextPageUrl = "#";
+
+          if (!isNextPageDisabled)
+          {
+            nextPageDisabledClass = "";
+
+            var nextPageNumber = model.currentPage + 1;
+            nextPageUrl = "/playlists?pageNumber=" + nextPageNumber + "&playlistsPerPage=" + model.numberOfPlaylistsPerPage;
+          }
+        }
+        <li class="page-item @nextPageDisabledClass">
+          <a class="page-link" href="@nextPageUrl">Next</a>
+        </li>
+      </ul>
+    </nav>
 	})
 })
