@@ -19,8 +19,12 @@ exports.getLandingPage = async function(req, res, next)
     catch
     {
         // If authentication fails or the user has not logged in yet, send them to the landing page
+        var landingPageData = {
+            isAwaitingLogin: true
+        };
+
         res.location('/');
-        res.render('landing');
+        res.render('landing', landingPageData);
     }
 }
 

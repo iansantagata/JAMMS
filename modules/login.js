@@ -107,4 +107,15 @@ exports.isUserLoggedIn = async function(req, res)
     }
 }
 
-// TODO - Create logout functionality that redirects to landing page
+exports.logout = function(req, res)
+{
+    // Logging out just consists of removing cookies and redirecting to the landing page
+    authorize.deleteAuthorizationCookies(req, res);
+
+    var landingPageData = {
+        isAwaitingLogin: true
+    };
+
+    res.location('/');
+    res.render('landing', landingPageData);
+}

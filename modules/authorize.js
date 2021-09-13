@@ -136,7 +136,7 @@ exports.getAccessToken = async function(req, res)
     try
     {
         // Try to get a valid access token from cookies if it exists and has not expired
-        var accessToken = exports.getAccessTokenFromCookies(req, res);
+        var accessToken = await exports.getAccessTokenFromCookies(req, res);
         return Promise.resolve(accessToken);
     }
     catch
@@ -231,4 +231,10 @@ exports.setAuthorizationCookies = function(req, res, auth)
     cookie.setCookie(res, refreshKey, auth.refreshToken); // Session cookie (no explicit expiration);
 
     return Promise.resolve();
+}
+
+exports.deleteAuthorizationCookies = function(req, res)
+{
+    cookie.clearCookie(res, accessKey);
+    cookie.clearCookie(res, refreshKey);
 }

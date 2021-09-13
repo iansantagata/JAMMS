@@ -22,18 +22,26 @@
 </head>
 <body>
   <!-- TODO - Have to put a warning / acceptance alert about cookies eventually if they continue to be used -->
-  <!-- TODO - Create button to go back to home page that will exist on every page -->
   <header class="card-header text-center mb-2">
     <div class="row">
-      <div class="col-2">
-          TODO - HOME BUTTON
-      </div>
-      <div class="col-8">
-        JAMMS - Just a Music Maintainer for Spotify
-      </div>
-      <div class="col-2">
-          TODO - LOGOUT BUTTON
-      </div>
+      @if(model.isAwaitingLogin)
+      {
+        <div class="col-12">
+          JAMMS - Just a Music Maintainer for Spotify
+        </div>
+      }
+      else
+      {
+        <div class="col-1">
+          <a href="/home" role="button" class="btn btn-info btn-sm stretched-link">Home</a>
+        </div>
+        <div class="col-10">
+          JAMMS - Just a Music Maintainer for Spotify
+        </div>
+        <div class="col-1">
+            <a href="/logout" role="button" class="btn btn-info btn-sm stretched-link">Log Out</a>
+        </div>
+      }
     </div>
   </header>
   <div class="container text-center">

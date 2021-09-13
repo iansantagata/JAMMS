@@ -45,6 +45,8 @@ app.get('/home', home.getHomePage);
 // Login Logic
 app.get('/login', login.getLoginPage);
 app.get('/validateLogin', login.validateLogin);
+app.get('/logout', login.logout);
+// TODO - Maybe have an indicator of some kind for when a user logs out or a specific page for it?
 
 // Playlist Logic
 app.get('/playlists', playlist.getAllPlaylistPage);
