@@ -39,7 +39,7 @@
           <a href="/home" role="button" class="btn btn-info btn-sm stretched-link">Home</a>
         </div>
         <div class="col">
-          <p class="my-0">JAMMS - Just a Music Maintainer for Spotify</p>
+          <p class="my-0"><b>JAMMS</b> - Just a Music Maintainer for Spotify</p>
         </div>
         <div class="col">
             <a href="/logout" role="button" class="btn btn-info btn-sm stretched-link">Log Out</a>
