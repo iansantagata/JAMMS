@@ -49,8 +49,8 @@ app.get('/validateLogin', login.validateLogin);
 app.get('/logout', logout.getLogoutPage);
 
 // Playlist Logic
-app.get('/playlists', playlist.getAllPlaylistPage);
 app.get('/playlist', playlist.getPlaylistPage);
+app.get('/playlists', playlist.getAllPlaylistPage);
 app.get('/createPlaylist', playlist.createPlaylistPage);
 app.get('/deletePlaylist', playlist.deletePlaylistPage);
 app.get('/restorePlaylist', playlist.restorePlaylistPage);

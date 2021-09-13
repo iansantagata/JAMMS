@@ -1,6 +1,7 @@
 @html.extend('layout', function(model) {
 	@html.block('content', function(model) {
-    <h2>Your Playlist</h2>
+
+    <h2 class="mb-3">Your Playlist</h2>
 
     @if(model.deleted)
     {

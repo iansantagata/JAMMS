@@ -19,12 +19,12 @@ const spotifyFollowersUriPath = '/followers';
 const spotifyPlaylistsUriPath = '/playlists';
 
 // Default Constant Values
-const playlistRequestLimitDefault = 9;
+const playlistRequestLimitDefault = 10;
 const playlistPageNumberDefault = 1;
-const artistRequestLimitDefault = 9;
+const artistRequestLimitDefault = 10;
 const artistPageNumberDefault = 1;
 const artistTimeRangeDefault = 'long_term';
-const tracksRequestLimitDefault = 25;
+const tracksRequestLimitDefault = 10;
 const tracksPageNumberDefault = 1;
 const tracksTimeRangeDefault = 'long_term';
 const createdPlaylistDescription = "Playlist created with JAMMS.app!";

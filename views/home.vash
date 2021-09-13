@@ -1,7 +1,7 @@
 @html.extend('layout', function(model) {
 	@html.block('content', function(model) {
 
-		<h3 class="my-3">Your Playlists</h3>
+		<h3 class="mb-3">Your Playlists</h3>
 		<p>You currently have <b>@model.numberOfPlaylists</b> playlists saved in Spotify!</p>
 
     @if(model.samplePlaylistData.length > 0)
