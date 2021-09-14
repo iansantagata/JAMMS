@@ -2,9 +2,11 @@
 	@html.block('content', function(model) {
     <h2>Create Playlist</h2>
 
+    <script defer src="createPlaylist.js"></script>
+
     <div id="playlist" class="align-items-center justify-content-around">
       <div class="text-wrap my-3">
-        <form>
+        <form id="createPlaylistForm" method="post" action="/createPlaylist">
           <div class="form-group">
             <label for="playlistNameInput">Playlist Name</label>
             <input type="text" name="playlistName" class="form-control" id="playlistNameInput" placeholder="Your Playlist" required />
@@ -26,7 +28,7 @@
             </div>
           </div>
           <div class="my-4">
-            <button type="submit" formaction="/createPlaylist" formmethod="post" class="btn btn-info btn-sm">Create Playlist</button>
+            <button id="createPlaylistButton" type="submit" class="btn btn-info btn-sm">Create Playlist</button>
           </div>
         </form>
       </div>

@@ -1,9 +1,12 @@
 @html.extend('layout', function(model) {
 	@html.block('content', function(model) {
+
+    <script defer src="landing.js"></script>
+
     <div id="login">
         <h1 class="my-3">Welcome to JAMMS!</h1>
         <!-- TODO - Put some kind of cool placeholder image here -->
-        <a href="/login" role="button" class="my-3 btn btn-primary">Log in with Spotify</a>
+        <a id="loginToSpotifyButton" href="/login" role="button" class="my-3 btn btn-primary">Log in with Spotify</a>
     </div>
   })
 })

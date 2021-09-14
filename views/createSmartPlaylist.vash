@@ -6,7 +6,7 @@
 
     <div id="smartPlaylist" class="row align-items-center justify-content-around">
       <div class="col-9 text-wrap my-3">
-        <form id="smartPlaylistForm" action="/createSmartPlaylist" method="post" name="createSmartPlaylist">
+        <form id="createSmartPlaylistForm" action="/createSmartPlaylist" method="post" name="createSmartPlaylist">
 
           <div class="form-group">
             <label for="playlistNameInput">Playlist Name</label>
@@ -112,7 +112,6 @@
             </div>
           </div>
 
-          <!-- TODO - Buttons should become disabled on click and be replaced with a spinner icon to indicate to the user that there is processing happening -->
           <div class="mt-3">
             <button id="createSmartPlaylistButton" type="submit" class="btn btn-info">Create Smart Playlist</button>
           </div>

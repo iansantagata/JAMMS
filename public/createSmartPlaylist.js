@@ -7,7 +7,7 @@ addOnClickEventListenerToElementById("playlistOrderEnabledInput", controlEnablem
 addOnClickEventListenerToElementById("removeRuleButton-" + lastActiveRuleIndex, removeRuleFormFields);
 addOnClickEventListenerToElementById("addRuleButton", addRuleFormFields);
 
-addOnClickEventListenerToElementById("createSmartPlaylistButton", controlLoadingOfSubmitButton)
+addOnClickEventListenerToElementById("createSmartPlaylistButton", controlLoadingOfSubmitButton);
 
 // DOM Specific Functions
 function controlEnablementOfLimitElements()
@@ -24,7 +24,7 @@ function controlEnablementOfOrderElements()
 
 function controlLoadingOfSubmitButton()
 {
-    var formElementId = "smartPlaylistForm";
+    var formElementId = "createSmartPlaylistForm";
     var isFormValid = validateFormById(formElementId);
 
     if (isFormValid)
