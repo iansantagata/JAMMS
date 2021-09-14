@@ -2,8 +2,8 @@
 	@html.block('content', function(model) {
     <h2>Create Playlist</h2>
 
-    <div id="playlist" class="form-row align-items-center justify-content-around">
-      <div class="col-9 text-wrap my-3">
+    <div id="playlist" class="align-items-center justify-content-around">
+      <div class="text-wrap my-3">
         <form>
           <div class="form-group">
             <label for="playlistNameInput">Playlist Name</label>
