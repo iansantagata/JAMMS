@@ -7,6 +7,8 @@ addOnClickEventListenerToElementById("playlistOrderEnabledInput", controlEnablem
 addOnClickEventListenerToElementById("removeRuleButton-" + lastActiveRuleIndex, removeRuleFormFields);
 addOnClickEventListenerToElementById("addRuleButton", addRuleFormFields);
 
+addOnClickEventListenerToElementById("createSmartPlaylistButton", controlLoadingOfSubmitButton)
+
 // DOM Specific Functions
 function controlEnablementOfLimitElements()
 {
@@ -18,6 +20,21 @@ function controlEnablementOfOrderElements()
 {
     controlEnablementOfElementById("playlistOrderDirectionInput");
     controlEnablementOfElementById("playlistOrderFieldInput");
+}
+
+function controlLoadingOfSubmitButton()
+{
+    var formElementId = "smartPlaylistForm";
+    var isFormValid = validateFormById(formElementId);
+
+    if (isFormValid)
+    {
+        var buttonElementId = "createSmartPlaylistButton";
+        controlEnablementOfElementById(buttonElementId);
+        replaceElementContentsWithLoadingSpinnerById(buttonElementId);
+        
+        submitFormById(formElementId);
+    }
 }
 
 function addRuleFormFields()
@@ -185,4 +202,37 @@ function controlEnablementOfElementById(id)
     var element = document.getElementById(id);
     var isDisabled = element.disabled;
     element.disabled = !isDisabled;
+}
+
+function validateFormById(id)
+{
+    var element = document.getElementById(id);
+    var isValid = element.checkValidity();
+    return isValid;
+}
+
+function submitFormById(id)
+{
+    var element = document.getElementById(id);
+    element.submit();
+}
+
+function replaceElementContentsWithLoadingSpinnerById(id)
+{
+    var element = document.getElementById(id);
+    // Clear out all nesting of nodes within the node
+    while (element.hasChildNodes())
+    {
+        element.removeChild(element.firstChild);
+    }
+
+    var spanSpinner = document.createElement("span");
+    spanSpinner.setAttribute("class", "spinner-border spinner-border-sm");
+    spanSpinner.setAttribute("role", "status");
+
+    var textNode = document.createTextNode(" Loading... ");
+
+    // Put the loading spinner and loading text into the node
+    element.appendChild(spanSpinner);
+    element.appendChild(textNode);
 }

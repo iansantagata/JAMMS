@@ -508,8 +508,6 @@ exports.getTopArtists = async function(req, res)
 
 exports.getAllArtists = async function(req, res)
 {
-    // TODO - Since this particular endpoint is cursor based rather than page based,
-    // TODO - Will need to setup "after" parameter to point to last ID retrieved
     var artistRequestLimit = req.query.artistsPerPage;
 
     // Handle the case where the invalid parameters were passed

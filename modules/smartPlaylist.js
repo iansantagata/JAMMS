@@ -216,6 +216,7 @@ getPlaylistLimits = function(req)
         }
 
         // Make sure that the user specified playlist limit is a valid one that the app knows how to handle
+        var playlistLimitType = undefined;
         switch (userSpecifiedPlaylistLimitType) {
             // Convert the value from its time unit to milliseconds to be easier to work with (if applicable)
             case "minutes":
