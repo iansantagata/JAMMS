@@ -29,3 +29,5 @@ function controlLoadingIndicatorWithTextOfPlaylistsPerPageDropDown()
     controlEnablementOfElementById(elementId);
     replaceElementContentsWithLoadingIndicatorById(elementId, true);
 }
+
+// TODO - Add loading indicator on click event handlers (no text) for the page buttons (next, previous, page #, etc);

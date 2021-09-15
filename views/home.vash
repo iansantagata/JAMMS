@@ -1,6 +1,8 @@
 @html.extend('layout', function(model) {
 	@html.block('content', function(model) {
 
+    <script defer src="scripts/home.js"></script>
+
 		<h3 class="mb-3">Your Playlists</h3>
 		<p>You currently have <b>@model.numberOfPlaylists</b> playlists saved in Spotify!</p>
 
@@ -31,7 +33,10 @@
                 <td class="align-middle text-capitalize">@item.name</td>
                 <td class="align-middle">@item.owner.display_name</td>
                 <td class="align-middle col-md-2">
-                  <a href="/playlist?playlistId=@item.id" role="button" class="btn btn-outline-info btn-sm">View Playlist</a>
+                  @{
+                    var viewPlaylistLinkId = "viewPlaylistLink-" + playlistCount;
+                  }
+                  <a id="@viewPlaylistLinkId" href="/playlist?playlistId=@item.id" role="button" class="btn btn-outline-info btn-sm">View Playlist</a>
                 </td>
                 <td class="align-middle col-md-2">
                   @{
@@ -70,15 +75,15 @@
 
     <div id="interact" class="row align-middle mt-3 mb-5">
       <div class="col">
-        <a href="/playlists"
+        <a id="seeAllPlaylistsButton" href="/playlists"
             role="button" class="btn btn-info btn-sm">See All Playlists</a>
       </div>
       <div class="col">
-        <a href="/createPlaylist"
+        <a id="createPlaylistButton" href="/createPlaylist"
             role="button" class="btn btn-info btn-sm">Create Playlist</a>
       </div>
       <div class="col">
-        <a href="/createSmartPlaylist"
+        <a id="createSmartPlaylistButton" href="/createSmartPlaylist"
             role="button" class="btn btn-info btn-sm">Create Smart Playlist</a>
       </div>
     </div>
