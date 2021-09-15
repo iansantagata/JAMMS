@@ -10,6 +10,10 @@ The application's primary motivation is to introduce "smart playlist" functional
 
 The web application can be found here - https://jamms.app
 
+### The Future
+
+For bugs, issues, and features to be developed, see the [TRACKER.md](TRACKER.md) file.
+
 ## Inspiration
 
 JAMMS was inspired by many applications like it, but in particular [PLYLST](https://plylst.app/) which has recently been taken offline.
