@@ -43,6 +43,37 @@ function controlEnablementOfElementById(id)
     }
 }
 
+function controlLoadingIndicator()
+{
+    var elementId = event.target.id;
+    controlEnablementOfElementById(elementId);
+    replaceElementContentsWithLoadingSpinnerById(elementId);
+}
+
+function controlLoadingIndicatorWithText()
+{
+    var elementId = event.target.id;
+    controlEnablementOfElementById(elementId);
+    replaceElementContentsWithLoadingSpinnerAndTextById(elementId);
+}
+
+function controlLoadingOfFormSubmitAction()
+{
+    var eventElementId = event.target.id;
+    var eventElement = document.getElementById(eventElementId);
+
+    var formElementId = eventElement.closest("form").id;
+    var isFormValid = validateFormById(formElementId);
+
+    if (isFormValid)
+    {
+        controlEnablementOfElementById(eventElementId);
+        replaceElementContentsWithLoadingSpinnerAndTextById(eventElementId);
+
+        submitFormById(formElementId);
+    }
+}
+
 function validateFormById(id)
 {
     var element = document.getElementById(id);
@@ -57,6 +88,23 @@ function submitFormById(id)
 }
 
 function replaceElementContentsWithLoadingSpinnerById(id)
+{
+    var element = document.getElementById(id);
+    // Clear out all nesting of nodes within the node
+    while (element.hasChildNodes())
+    {
+        element.removeChild(element.firstChild);
+    }
+
+    var spanSpinner = document.createElement("span");
+    spanSpinner.setAttribute("class", "spinner-border spinner-border-sm");
+    spanSpinner.setAttribute("role", "status");
+
+    // Put the loading spinner into the node
+    element.appendChild(spanSpinner);
+}
+
+function replaceElementContentsWithLoadingSpinnerAndTextById(id)
 {
     var element = document.getElementById(id);
     // Clear out all nesting of nodes within the node

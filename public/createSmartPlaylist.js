@@ -7,7 +7,7 @@ addOnClickEventListenerToElementById("playlistOrderEnabledInput", controlEnablem
 addOnClickEventListenerToElementById("removeRuleButton-" + lastActiveRuleIndex, removeRuleFormFields);
 addOnClickEventListenerToElementById("addRuleButton", addRuleFormFields);
 
-addOnClickEventListenerToElementById("createSmartPlaylistButton", controlLoadingOfSubmitButton);
+addOnClickEventListenerToElementById("createSmartPlaylistButton", controlLoadingOfFormSubmitAction);
 
 // DOM Specific Functions
 function controlEnablementOfLimitElements()
@@ -20,21 +20,6 @@ function controlEnablementOfOrderElements()
 {
     controlEnablementOfElementById("playlistOrderDirectionInput");
     controlEnablementOfElementById("playlistOrderFieldInput");
-}
-
-function controlLoadingOfSubmitButton()
-{
-    var formElementId = "createSmartPlaylistForm";
-    var isFormValid = validateFormById(formElementId);
-
-    if (isFormValid)
-    {
-        var buttonElementId = "createSmartPlaylistButton";
-        controlEnablementOfElementById(buttonElementId);
-        replaceElementContentsWithLoadingSpinnerById(buttonElementId);
-
-        submitFormById(formElementId);
-    }
 }
 
 function addRuleFormFields()
@@ -171,7 +156,7 @@ function addRuleFormFields()
 function removeRuleFormFields()
 {
     // There may be multiple buttons for removal, see which one this is by ID
-    var eventElementId = event.currentTarget.id;
+    var eventElementId = event.target.id;
     var index = eventElementId.lastIndexOf("-");
     if (index === -1)
     {
