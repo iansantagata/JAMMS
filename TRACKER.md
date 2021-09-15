@@ -29,7 +29,6 @@ Feel free to add issues to the repository or open a pull request to address anyt
 - Not using latest Node.js version available
 - Site does not warn users of cookie usage (GDPR)
 - Smart playlist page is not mobile friendly
-- Error handling does not have time stamps or additional metadata to log files for easier debugging
 
 ### Brainstorm
 
