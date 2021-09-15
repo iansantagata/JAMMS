@@ -35,3 +35,4 @@ Feel free to add issues to the repository or open a pull request to address anyt
 - Header using BootStrap's navbar or equivalent
 - Footer data consolidated with header
 - In-line search for rule selectors (album, artist, song name, etc.)
+- Quick adding songs to liked songs (top songs by artist, all songs by artist, all songs by album, all songs by playlist, etc)
