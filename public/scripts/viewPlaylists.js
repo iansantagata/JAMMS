@@ -1,6 +1,7 @@
 // Script Logic
 addOnClickListenersForPlaylistPerPageLinks();
 addOnClickListenersForViewPlaylistLinks();
+addOnClickListenersForPlaylistsPageNavigationLinks();
 
 // DOM Specific Logic
 function addOnClickListenersForViewPlaylistLinks()
@@ -9,6 +10,16 @@ function addOnClickListenersForViewPlaylistLinks()
     for (var playlistLinkNode of playlistLinkNodes)
     {
         addOnClickEventListenerToElement(playlistLinkNode, controlLoadingIndicatorWithText);
+    }
+}
+
+function addOnClickListenersForPlaylistsPageNavigationLinks()
+{
+    var playlistsPageNavigationLinkNodes = document.querySelectorAll('[id^="playlistsPageNavigation-"]');
+    for (var playlistsPageNavigationLink of playlistsPageNavigationLinkNodes)
+    {
+        // Do not want the text of these nodes to be replaced with loading text, so just use the spinner
+        addOnClickEventListenerToElement(playlistsPageNavigationLink, controlLoadingIndicator);
     }
 }
 
@@ -29,5 +40,3 @@ function controlLoadingIndicatorWithTextOfPlaylistsPerPageDropDown()
     controlEnablementOfElementById(elementId);
     replaceElementContentsWithLoadingIndicatorById(elementId, true);
 }
-
-// TODO - Add loading indicator on click event handlers (no text) for the page buttons (next, previous, page #, etc);

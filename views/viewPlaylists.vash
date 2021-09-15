@@ -143,7 +143,7 @@
           }
         }
         <li class="page-item @previousPageDisabledClass">
-          <a class="page-link" href="@previousPageUrl">Previous</a>
+          <a id="playlistsPageNavigation-previous" class="page-link" href="@previousPageUrl">Previous</a>
         </li>
 
         @if(model.currentPage - 2 >= 1)
@@ -152,7 +152,9 @@
             var twoPagesBack = model.currentPage - 2;
             var twoPagesBackUrl = "/playlists?pageNumber=" + twoPagesBack + "&playlistsPerPage=" + model.numberOfPlaylistsPerPage;
           }
-          <li class="page-item"><a class="page-link" href="@twoPagesBackUrl">@twoPagesBack</a></li>
+          <li class="page-item">
+            <a id="playlistsPageNavigation-backTwo" class="page-link" href="@twoPagesBackUrl">@twoPagesBack</a>
+          </li>
         }
 
         @if(model.currentPage - 1 >= 1)
@@ -161,10 +163,14 @@
             var onePageBack = model.currentPage - 1;
             var onePageBackUrl = "/playlists?pageNumber=" + onePageBack + "&playlistsPerPage=" + model.numberOfPlaylistsPerPage;
           }
-          <li class="page-item"><a class="page-link" href="@onePageBackUrl">@onePageBack</a></li>
+          <li class="page-item">
+            <a id="playlistsPageNavigation-backOne" class="page-link" href="@onePageBackUrl">@onePageBack</a>
+          </li>
         }
 
-        <li class="page-item"><a class="page-link" href="#"><b>@model.currentPage</b></a></li>
+        <li class="page-item">
+          <a class="page-link" href="#"><b>@model.currentPage</b></a>
+        </li>
 
         @if(model.currentPage + 1 <= model.numberOfPages)
         {
@@ -172,7 +178,9 @@
             var onePageForward = model.currentPage + 1;
             var onePageForwardUrl = "/playlists?pageNumber=" + onePageForward + "&playlistsPerPage=" + model.numberOfPlaylistsPerPage;
           }
-          <li class="page-item"><a class="page-link" href="@onePageForwardUrl">@onePageForward</a></li>
+          <li class="page-item">
+            <a id="playlistsPageNavigation-forwardOne" class="page-link" href="@onePageForwardUrl">@onePageForward</a>
+          </li>
         }
 
         @if(model.currentPage + 2 <= model.numberOfPages)
@@ -181,7 +189,9 @@
             var twoPagesForward = model.currentPage + 2;
             var twoPagesForwardUrl = "/playlists?pageNumber=" + twoPagesForward + "&playlistsPerPage=" + model.numberOfPlaylistsPerPage;
           }
-          <li class="page-item"><a class="page-link" href="@twoPagesForwardUrl">@twoPagesForward</a></li>
+          <li class="page-item">
+            <a id="playlistsPageNavigation-forwardTwo" class="page-link" href="@twoPagesForwardUrl">@twoPagesForward</a>
+          </li>
         }
 
         @{
@@ -198,7 +208,7 @@
           }
         }
         <li class="page-item @nextPageDisabledClass">
-          <a class="page-link" href="@nextPageUrl">Next</a>
+          <a id="playlistsPageNavigation-next" class="page-link" href="@nextPageUrl">Next</a>
         </li>
       </ul>
     </nav>
