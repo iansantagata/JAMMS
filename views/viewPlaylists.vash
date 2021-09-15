@@ -1,7 +1,7 @@
 @html.extend('layout', function(model) {
 	@html.block('content', function(model) {
 
-    <script defer src="viewPlaylists.js"></script>
+    <script defer src="scripts/viewPlaylists.js"></script>
 
     <h2 class="mb-3">Your Playlists</h2>
     <p>You currently have <b>@model.totalNumberOfPlaylists</b> playlists saved in Spotify!</p>

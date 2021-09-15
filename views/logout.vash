@@ -1,7 +1,7 @@
 @html.extend('layout', function(model) {
 	@html.block('content', function(model) {
 
-    <script defer src="logout.js"></script>
+    <script defer src="scripts/logout.js"></script>
 
     <div id="logout" class="my-3">
       <h6>Successfully logged out.</h6>

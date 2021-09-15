@@ -2,7 +2,7 @@
 	@html.block('content', function(model) {
     <h2>Create Smart Playlist</h2>
 
-    <script defer src="createSmartPlaylist.js"></script>
+    <script defer src="scripts/createSmartPlaylist.js"></script>
 
     <div id="smartPlaylist" class="row align-items-center justify-content-around">
       <div class="col-9 text-wrap my-3">

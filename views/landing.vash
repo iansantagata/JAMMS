@@ -1,7 +1,7 @@
 @html.extend('layout', function(model) {
 	@html.block('content', function(model) {
 
-    <script defer src="landing.js"></script>
+    <script defer src="scripts/landing.js"></script>
 
     <div id="login">
         <h1 class="my-3">Welcome to JAMMS!</h1>

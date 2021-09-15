@@ -1,7 +1,7 @@
 @html.extend('layout', function(model) {
 	@html.block('content', function(model) {
 
-    <script defer src="viewPlaylist.js"></script>
+    <script defer src="scripts/viewPlaylist.js"></script>
 
     <h2 class="mb-3">Your Playlist</h2>
 

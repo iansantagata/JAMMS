@@ -21,12 +21,12 @@
   integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
   crossorigin="anonymous"></script>
   <!-- Helper Functions Used Across the App -->
-  <script src="helperFunctions.js"></script>
+  <script src="scripts/helperFunctions.js"></script>
 </head>
 
 <body class="d-flex flex-column h-100">
 
-  <script defer src="layout.js"></script>
+  <script defer src="scripts/layout.js"></script>
 
   <!-- TODO - Have to put a warning / acceptance alert about cookies eventually if they continue to be used -->
   <header class="card-header text-center mb-2">
