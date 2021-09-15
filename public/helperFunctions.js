@@ -2,7 +2,11 @@
 function addOnClickEventListenerToElementById(id, callback)
 {
     var element = document.getElementById(id);
+    addOnClickEventListenerToElement(element, callback);
+}
 
+function addOnClickEventListenerToElement(element, callback)
+{
     // Only try to add event listeners when we actually find the target element
     if (element !== undefined && element !== null)
     {
@@ -12,8 +16,13 @@ function addOnClickEventListenerToElementById(id, callback)
 
 function controlEnablementOfElementById(id)
 {
-    // First, handle the disabled attribute (generally for buttons)
     var element = document.getElementById(id);
+    controlEnablementOfElement(element);
+}
+
+function controlEnablementOfElement(element)
+{
+    // First, handle the disabled attribute (generally for buttons)
     var isDisabled = element.disabled;
     element.disabled = !isDisabled;
 
@@ -46,15 +55,17 @@ function controlEnablementOfElementById(id)
 function controlLoadingIndicator()
 {
     var elementId = event.target.id;
-    controlEnablementOfElementById(elementId);
-    replaceElementContentsWithLoadingSpinnerById(elementId);
+    var element = document.getElementById(elementId);
+    controlEnablementOfElement(element);
+    replaceElementContentsWithLoadingIndicator(element, false);
 }
 
 function controlLoadingIndicatorWithText()
 {
     var elementId = event.target.id;
-    controlEnablementOfElementById(elementId);
-    replaceElementContentsWithLoadingSpinnerAndTextById(elementId);
+    var element = document.getElementById(elementId);
+    controlEnablementOfElement(element);
+    replaceElementContentsWithLoadingIndicator(element, true);
 }
 
 function controlLoadingOfFormSubmitAction()
@@ -62,34 +73,32 @@ function controlLoadingOfFormSubmitAction()
     var eventElementId = event.target.id;
     var eventElement = document.getElementById(eventElementId);
 
-    var formElementId = eventElement.closest("form").id;
-    var isFormValid = validateFormById(formElementId);
-
-    if (isFormValid)
+    var formElement = eventElement.closest("form");
+    if (formElement === null)
     {
-        controlEnablementOfElementById(eventElementId);
-        replaceElementContentsWithLoadingSpinnerAndTextById(eventElementId);
-
-        submitFormById(formElementId);
+        return;
     }
+
+    var isFormValid = formElement.checkValidity();
+    if (!isFormValid)
+    {
+        return;
+    }
+
+    controlEnablementOfElement(eventElement);
+    replaceElementContentsWithLoadingIndicator(eventElement, true);
+
+    formElement.submit();
 }
 
-function validateFormById(id)
+function replaceElementContentsWithLoadingIndicatorById(id, showLoadingText)
 {
     var element = document.getElementById(id);
-    var isValid = element.checkValidity();
-    return isValid;
+    replaceElementContentsWithLoadingIndicator(element, showLoadingText);
 }
 
-function submitFormById(id)
+function replaceElementContentsWithLoadingIndicator(element, showLoadingText)
 {
-    var element = document.getElementById(id);
-    element.submit();
-}
-
-function replaceElementContentsWithLoadingSpinnerById(id)
-{
-    var element = document.getElementById(id);
     // Clear out all nesting of nodes within the node
     while (element.hasChildNodes())
     {
@@ -100,26 +109,15 @@ function replaceElementContentsWithLoadingSpinnerById(id)
     spanSpinner.setAttribute("class", "spinner-border spinner-border-sm");
     spanSpinner.setAttribute("role", "status");
 
-    // Put the loading spinner into the node
-    element.appendChild(spanSpinner);
-}
-
-function replaceElementContentsWithLoadingSpinnerAndTextById(id)
-{
-    var element = document.getElementById(id);
-    // Clear out all nesting of nodes within the node
-    while (element.hasChildNodes())
+    if (showLoadingText)
     {
-        element.removeChild(element.firstChild);
+        var textNode = document.createTextNode(" Loading... ");
     }
 
-    var spanSpinner = document.createElement("span");
-    spanSpinner.setAttribute("class", "spinner-border spinner-border-sm");
-    spanSpinner.setAttribute("role", "status");
-
-    var textNode = document.createTextNode(" Loading... ");
-
-    // Put the loading spinner and loading text into the node
+    // Put the loading spinner and loading text (if required) into the node
     element.appendChild(spanSpinner);
-    element.appendChild(textNode);
+    if (showLoadingText)
+    {
+        element.appendChild(textNode);
+    }
 }

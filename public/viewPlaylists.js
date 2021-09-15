@@ -8,8 +8,7 @@ function addOnClickListenersForViewPlaylistLinks()
     var playlistLinkNodes = document.querySelectorAll('[id^="viewPlaylistLink-"]');
     for (var playlistLinkNode of playlistLinkNodes)
     {
-        var elementId = playlistLinkNode.id;
-        addOnClickEventListenerToElementById(elementId, controlLoadingIndicatorWithText);
+        addOnClickEventListenerToElement(playlistLinkNode, controlLoadingIndicatorWithText);
     }
 }
 
@@ -18,8 +17,9 @@ function addOnClickListenersForPlaylistPerPageLinks()
     var playlistsPerPageLinkNodes = document.querySelectorAll('[id^="playlistsPerPageLink-"]');
     for (var playlistsPerPageLink of playlistsPerPageLinkNodes)
     {
-        var elementId = playlistsPerPageLink.id;
-        addOnClickEventListenerToElementById(elementId, controlLoadingIndicatorWithTextOfPlaylistsPerPageDropDown);
+        // Seems somewhat strange, but with a dropdown of links, the desired behavior is for the
+        // Parent element (button) to show a loading indicator, not each option (link) in the dropdown
+        addOnClickEventListenerToElement(playlistsPerPageLink, controlLoadingIndicatorWithTextOfPlaylistsPerPageDropDown);
     }
 }
 
@@ -27,5 +27,5 @@ function controlLoadingIndicatorWithTextOfPlaylistsPerPageDropDown()
 {
     var elementId = "playlistsPerPageDropdown";
     controlEnablementOfElementById(elementId);
-    replaceElementContentsWithLoadingSpinnerAndTextById(elementId);
+    replaceElementContentsWithLoadingIndicatorById(elementId, true);
 }

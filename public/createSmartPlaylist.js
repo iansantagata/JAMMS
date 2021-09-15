@@ -37,9 +37,10 @@ function addRuleFormFields()
     artistOptionRuleType.setAttribute("selected", "");
     artistOptionRuleType.innerText = "Artist Name";
 
-    var genreOptionRuleType = document.createElement("option");
-    genreOptionRuleType.setAttribute("value", "genre");
-    genreOptionRuleType.innerText = "Genre";
+    // TODO - Add Genre back in when it is fully developed
+    // var genreOptionRuleType = document.createElement("option");
+    // genreOptionRuleType.setAttribute("value", "genre");
+    // genreOptionRuleType.innerText = "Genre";
 
     var yearOptionRuleType = document.createElement("option");
     yearOptionRuleType.setAttribute("value", "year");
@@ -55,7 +56,8 @@ function addRuleFormFields()
     selectRuleType.setAttribute("required", "");
     selectRuleType.appendChild(albumOptionRuleType);
     selectRuleType.appendChild(artistOptionRuleType);
-    selectRuleType.appendChild(genreOptionRuleType);
+    // TODO - Add Genre back in when it is fully developed
+    // selectRuleType.appendChild(genreOptionRuleType);
     selectRuleType.appendChild(yearOptionRuleType);
     selectRuleType.appendChild(songOptionRuleType);
 
@@ -89,9 +91,10 @@ function addRuleFormFields()
     lessThanOrEqualToOptionRuleOperator.setAttribute("value", "lessThanOrEqual");
     lessThanOrEqualToOptionRuleOperator.innerText = "is less than or equal to";
 
-    var containsOptionRuleOperator = document.createElement("option");
-    containsOptionRuleOperator.setAttribute("value", "contains");
-    containsOptionRuleOperator.innerText = "contains";
+    // TODO - Add contains back in when it is fully developed
+    // var containsOptionRuleOperator = document.createElement("option");
+    // containsOptionRuleOperator.setAttribute("value", "contains");
+    // containsOptionRuleOperator.innerText = "contains";
 
     var selectRuleOperator = document.createElement("select");
     selectRuleOperator.setAttribute("name", "playlistRuleOperator-" + ruleIndex);
@@ -103,7 +106,8 @@ function addRuleFormFields()
     selectRuleOperator.appendChild(greaterThanOrEqualToOptionRuleOperator);
     selectRuleOperator.appendChild(lessThanOptionRuleOperator);
     selectRuleOperator.appendChild(lessThanOrEqualToOptionRuleOperator);
-    selectRuleOperator.appendChild(containsOptionRuleOperator);
+    // TODO - Add contains back in when it is fully developed
+    // selectRuleOperator.appendChild(containsOptionRuleOperator);
 
     var ruleOperatorDiv = document.createElement("div");
     ruleOperatorDiv.setAttribute("class", "col-4");
@@ -147,7 +151,7 @@ function addRuleFormFields()
     rulesContainerElement.appendChild(ruleDiv);
 
     // Add an event listener to the remove rule button that has been added
-    addOnClickEventListenerToElementById("removeRuleButton-" + ruleIndex, removeRuleFormFields);
+    addOnClickEventListenerToElement(removeRuleButton, removeRuleFormFields);
 
     // Finally, update the index of the last rule in case more are created
     lastActiveRuleIndex = ruleIndex;
@@ -170,6 +174,7 @@ function removeRuleFormFields()
     }
 
     // With the rule number, delete the entire rule from the DOM
+    // This deletes multiple child nodes, including the event target node
     var targetRuleId = "rule-" + targetRuleNumber;
     var targetRuleElement = document.getElementById(targetRuleId);
     targetRuleElement.remove();
