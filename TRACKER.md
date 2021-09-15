@@ -25,7 +25,7 @@ Feel free to add issues to the repository or open a pull request to address anyt
 - JAMMS.app logo not yet created
 - Cookie use for tokens are insecure
 - Smart playlist retrieves only from liked songs library
-- Smart playlist rules are always "AND"-ed together
+- Smart playlist rules are always "AND"-ed together, implement "OR" option
 - Not using latest Node.js version available
 - Site does not warn users of cookie usage (GDPR)
 - Smart playlist page is not mobile friendly

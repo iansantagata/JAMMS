@@ -4,6 +4,7 @@ var path = require('path'); // URI and local file paths
 // Custom Modules
 const customModulePath = __dirname;
 var spotifyClient = require(path.join(customModulePath, 'spotifyClient.js'));
+var logger = require(path.join(customModulePath, 'logger.js'));
 
 // Default Constant Values
 const playlistNamePrefix = "JAMMS: ";
@@ -16,11 +17,20 @@ const playlistDescriptionSpace = " ";
 const playlistDescriptionPeriod = "."
 
 // Smart Playlist Logic
-exports.createSmartPlaylistPage = async function(req, res, next)
+exports.createSmartPlaylistPage = function(req, res, next)
 {
-    // Simply show the user the page to create a new smart playlist
-    res.location('/createSmartPlaylist');
-    res.render('createSmartPlaylist');
+    try
+    {
+        // Simply show the user the page to create a new smart playlist
+        res.location('/createSmartPlaylist');
+        res.render('createSmartPlaylist');
+    }
+    catch (error)
+    {
+        logger.logError('Failed to get create smart playlist page: ' + error.message);
+        next(error);
+        return;
+    }
 }
 
 exports.createSmartPlaylist = async function(req, res, next)
@@ -29,9 +39,9 @@ exports.createSmartPlaylist = async function(req, res, next)
     try
     {
         // First, process all of the rules and optional settings from the request
-        var playlistLimitData = await getPlaylistLimits(req);
-        var playlistOrderData = await getPlaylistOrdering(req);
-        var playlistRules = await getPlaylistRules(req);
+        var playlistLimitData = getPlaylistLimits(req);
+        var playlistOrderData = getPlaylistOrdering(req);
+        var playlistRules = getPlaylistRules(req);
 
         // Keep track of the tracks to be in the playlist and the order of them as well
         var tracksInPlaylist = [];
@@ -148,28 +158,29 @@ exports.createSmartPlaylist = async function(req, res, next)
         // TODO - Consider the possibility of splitting up previewing the songs to be on a playlist (in a table) before creating it
         req.query.playlistId = playlistId;
         var getPlaylistResponse = await spotifyClient.getSinglePlaylist(req, res);
+
+        var playlistData = {
+            playlistId: getPlaylistResponse.id,
+            playlistName: getPlaylistResponse.name,
+            playlistDescription: getPlaylistResponse.description,
+            isCollaborative: getPlaylistResponse.collaborative,
+            isPublic: getPlaylistResponse.public,
+            followersCount: getPlaylistResponse.followers.total,
+            trackCount: getPlaylistResponse.tracks.total,
+            images: getPlaylistResponse.images,
+            deleted: false
+        };
+
+        // Shove the playlist response data onto the playlist page for the user to interact with
+        res.location('/playlist');
+        res.render('viewPlaylist', playlistData);
     }
     catch (error)
     {
+        logger.logError('Failed to create smart playlist: ' + error.message);
         next(error);
         return;
     }
-
-    var playlistData = {
-        playlistId: getPlaylistResponse.id,
-        playlistName: getPlaylistResponse.name,
-        playlistDescription: getPlaylistResponse.description,
-        isCollaborative: getPlaylistResponse.collaborative,
-        isPublic: getPlaylistResponse.public,
-        followersCount: getPlaylistResponse.followers.total,
-        trackCount: getPlaylistResponse.tracks.total,
-        images: getPlaylistResponse.images,
-        deleted: false
-    };
-
-    // Shove the playlist response data onto the playlist page for the user to interact with
-    res.location('/playlist');
-    res.render('viewPlaylist', playlistData);
 }
 
 // Local Helper Functions
@@ -203,16 +214,15 @@ getPlaylistLimits = function(req)
 
         if (playlistLimitValue <= 0)
         {
-            var error = new Error('Playlist limit cannot be zero or negative: ' + playlistLimitValue);
-            console.error('Invalid playlist limit: ' + error.message);
-            return Promise.reject(error);
+            logger.logWarn('Playlist limit value entered is zero or negative: \"' + playlistLimitValue + '\".  Overwriting to disable limit.');
+            playlistLimitValue = undefined;
+            isPlaylistLimitEnabled = false;
         }
 
         if (playlistLimitValue > 10000)
         {
-            var error = new Error('Playlist limit cannot be greater than ten thousand: ' + playlistLimitValue);
-            console.error('Invalid playlist limit: ' + error.message);
-            return Promise.reject(error);
+            logger.logWarn('Playlist limit value entered is greater than ten thosand: \"' + playlistLimitValue + '\".  Overwriting value to 10000.');
+            playlistLimitValue = 10000;
         }
 
         // Make sure that the user specified playlist limit is a valid one that the app knows how to handle

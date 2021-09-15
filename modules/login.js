@@ -9,6 +9,7 @@ var secrets = require(path.join(customModulePath, 'secrets.js'));
 var randomString = require(path.join(customModulePath, 'randomString.js'));
 var redirect = require(path.join(customModulePath, 'redirect.js'));
 var cookie = require(path.join(customModulePath, 'cookie.js'));
+var logger = require(path.join(customModulePath, 'logger.js'));
 
 // Login Logic
 const spotifyAuthorizeUri = 'https://accounts.spotify.com/authorize';
@@ -18,76 +19,78 @@ const scopes = 'playlist-read-private playlist-read-collaborative user-top-read 
 const stateKey = 'SpotifyAuthorizationState';
 const stateLength = 16;
 
-exports.getLoginPage = function(req, res)
+exports.getLoginPage = async function(req, res, next)
 {
-    // Set state token locally for logging in to be validated against Spotify returned state token
-    var stateToken = randomString.generateRandomString(stateLength);
-    cookie.setCookie(res, stateKey, stateToken); // Session cookie (no explicit expiration)
+    try
+    {
+        // Set state token locally for logging in to be validated against Spotify returned state token
+        var stateToken = randomString.generateRandomString(stateLength);
+        await cookie.setCookie(req, res, stateKey, stateToken); // Session cookie (no explicit expiration)
 
-    var requestParameters = {
-        response_type: 'code',
-        client_id: secrets.getClientId(),
-        scope: scopes,
-        redirect_uri: redirect.getValidateLoginRedirectUri(req),
-        state: stateToken
-    };
+        var clientId = await secrets.getClientId();
+        var redirectUri = redirect.getValidateLoginRedirectUri(req);
 
-    // Request authorization for this application via a Spotify login page
-    res.redirect(spotifyAuthorizeUri + '?' + querystring.stringify(requestParameters));
+        var requestParameters = {
+            response_type: 'code',
+            client_id: clientId,
+            scope: scopes,
+            redirect_uri: redirectUri,
+            state: stateToken
+        };
+
+        // Request authorization for this application via a Spotify login page
+        var redirectUri = spotifyAuthorizeUri + '?' + querystring.stringify(requestParameters);
+        res.redirect(redirectUri);
+    }
+    catch (error)
+    {
+        logger.logError('Failed to get login page: ' + error.message);
+        next(error);
+        return;
+    }
 };
 
 exports.validateLogin = async function(req, res)
 {
-    // Check for errors after the response page from Spotify
-    if (req.query.error !== undefined)
-    {
-        var error = new Error(req.query.error);
-        console.error('Failed to authorize user with Spotify: ' + error.message);
-        res.redirect('/accessDenied');
-        return;
-    }
-
-    // Validate state token from Spotify callback request is the same from the request made locally
-    var stateToken = req.query.state || null;
-    var storedStateToken = cookie.getCookie(req, stateKey);
-
-    if (stateToken === null || storedStateToken === undefined || storedStateToken === null || stateToken !== storedStateToken)
-    {
-        var error = new Error('State mismatch between browser state token and Spotify state token');
-        console.error('Failed to validate state: ' + error.message);
-        res.redirect('/accessDenied');
-        return;
-    }
-
-    // State validated successfully, can clear the state cookie
-    cookie.clearCookie(res, stateKey);
-
-    // Redirect to authorization handling
     try
     {
+        // Check for errors after the response page from Spotify
+        if (req.query.error !== undefined)
+        {
+            throw new Error(req.query.error);
+        }
+
+        // Validate state token from Spotify callback request is the same from the request made locally
+        var stateToken = req.query.state || null;
+        if (stateToken === undefined || stateToken === null)
+        {
+            throw new Error('Failed to find state token in request object');
+        }
+
+        var storedStateToken = await cookie.getCookie(req, stateKey);
+        if (stateToken !== storedStateToken)
+        {
+            throw new Error('State mismatch between browser state token and Spotify state token');
+        }
+
+        // State validated successfully, can clear the state cookie
+        await cookie.clearCookie(res, stateKey);
+
+        // Redirect to authorization handling
         var authorizationResponse = await authorize.getAuthorizationTokens(req, res);
-    }
-    catch (error)
-    {
-        console.error('Failed to get authorization tokens: ' + error.message);
-        res.redirect('/accessDenied');
-        return;
-    }
 
-    // Use the access token and refresh token to validate access to Spotify's API
-    try
-    {
+        // Use the access token and refresh token to validate access to Spotify's API
         var cookieResponse = await authorize.setAuthorizationCookies(req, res, authorizationResponse);
+
+        // Once we have our tokens, redirect to the home page
+        res.redirect('/home');
     }
     catch (error)
     {
-        console.error('Failed to set authorization cookies: ' + error.message);
+        logger.logError('Failed to authorize user with Spotify: ' + error.message);
         res.redirect('/accessDenied');
         return;
     }
-
-    // Once we have our tokens, redirect to the home page
-    res.redirect('/home');
 };
 
 exports.isUserLoggedIn = async function(req, res)
@@ -100,10 +103,10 @@ exports.isUserLoggedIn = async function(req, res)
         // If we have a valid refresh and access token, then a user can be considered logged in
         return Promise.resolve();
     }
-    catch
+    catch (error)
     {
         // User is not logged in
-        return Promise.reject();
+        return Promise.reject(error);
     }
 }
 

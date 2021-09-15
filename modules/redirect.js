@@ -1,7 +1,13 @@
 // Redirect Logic
 const validateLoginEndpoint = '/validateLogin';
 
-exports.getBaseUri = function(req)
+exports.getValidateLoginRedirectUri = function(req)
+{
+    return getBaseUri(req) + validateLoginEndpoint;
+};
+
+// Local Helper Functions
+getBaseUri = function(req)
 {
     var hostName = req.hostname;
     if (req.hostname === undefined)
@@ -13,8 +19,3 @@ exports.getBaseUri = function(req)
     // TODO - Make this https when in production and http when in development
     return req.protocol + '://' + hostName;
 }
-
-exports.getValidateLoginRedirectUri = function(req)
-{
-    return this.getBaseUri(req) + validateLoginEndpoint;
-};

@@ -24,6 +24,7 @@ var login = require(path.join(customModulePath, 'login.js'));
 var logout = require(path.join(customModulePath, 'logout.js'));
 var playlist = require(path.join(customModulePath, 'playlist.js'));
 var smartPlaylist = require(path.join(customModulePath, 'smartPlaylist.js'));
+var logger = require(path.join(customModulePath, 'logger.js'));
 
 // Setup Page Handling
 const staticFilesPath = path.join(__dirname, 'public');
@@ -69,5 +70,5 @@ app.use(error.handlePageNotFound);
 app.use(error.handleUnexpectedError);
 
 // Listening Port
-console.log('Listening for requests on port ' + process.env.PORT);
+logger.logInfo('Listening for requests on port ' + process.env.PORT);
 app.listen(process.env.PORT);

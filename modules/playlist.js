@@ -4,6 +4,7 @@ var path = require('path'); // URI and local file paths
 // Custom Modules
 const customModulePath = __dirname;
 var spotifyClient = require(path.join(customModulePath, 'spotifyClient.js'));
+var logger = require(path.join(customModulePath, 'logger.js'));
 
 // Playlist Logic
 exports.getPlaylistPage = async function(req, res, next)
@@ -12,28 +13,29 @@ exports.getPlaylistPage = async function(req, res, next)
     try
     {
         var spotifyResponse = await spotifyClient.getSinglePlaylist(req, res);
+
+        var playlistData = {
+            playlistId: spotifyResponse.id,
+            playlistName: spotifyResponse.name,
+            playlistDescription: spotifyResponse.description,
+            isCollaborative: spotifyResponse.collaborative,
+            isPublic: spotifyResponse.public,
+            followersCount: spotifyResponse.followers.total,
+            trackCount: spotifyResponse.tracks.total,
+            images: spotifyResponse.images,
+            deleted: false
+        };
+
+        // Shove the playlist response data onto the playlist page for the user to interact with
+        res.location('/playlist');
+        res.render('viewPlaylist', playlistData);
     }
     catch (error)
     {
+        logger.logError('Failed to get playlist page: ' + error.message);
         next(error);
         return;
     }
-
-    var playlistData = {
-        playlistId: spotifyResponse.id,
-        playlistName: spotifyResponse.name,
-        playlistDescription: spotifyResponse.description,
-        isCollaborative: spotifyResponse.collaborative,
-        isPublic: spotifyResponse.public,
-        followersCount: spotifyResponse.followers.total,
-        trackCount: spotifyResponse.tracks.total,
-        images: spotifyResponse.images,
-        deleted: false
-    };
-
-    // Shove the playlist response data onto the playlist page for the user to interact with
-    res.location('/playlist');
-    res.render('viewPlaylist', playlistData);
 };
 
 exports.getAllPlaylistPage = async function(req, res, next)
@@ -42,26 +44,27 @@ exports.getAllPlaylistPage = async function(req, res, next)
     try
     {
         var spotifyResponse = await spotifyClient.getAllPlaylists(req, res);
+
+        var numberOfPages = Math.ceil(spotifyResponse.total / spotifyResponse.limit);
+        var currentPage = Math.floor((spotifyResponse.offset + spotifyResponse.limit) / spotifyResponse.limit);
+
+        var playlistsPageData = {
+            currentPage: currentPage,
+            numberOfPages: numberOfPages,
+            numberOfPlaylistsPerPage: spotifyResponse.limit,
+            totalNumberOfPlaylists: spotifyResponse.total,
+            playlists: spotifyResponse.items
+        };
+
+        // Shove the playlist response data onto the playlists page for the user to interact with
+        res.render('viewPlaylists', playlistsPageData);
     }
     catch (error)
     {
+        logger.logError('Failed to get all playlists page: ' + error.message);
         next(error);
         return;
     }
-
-    var numberOfPages = Math.ceil(spotifyResponse.total / spotifyResponse.limit);
-    var currentPage = Math.floor((spotifyResponse.offset + spotifyResponse.limit) / spotifyResponse.limit);
-
-    var playlistsPageData = {
-        currentPage: currentPage,
-        numberOfPages: numberOfPages,
-        numberOfPlaylistsPerPage: spotifyResponse.limit,
-        totalNumberOfPlaylists: spotifyResponse.total,
-        playlists: spotifyResponse.items
-    };
-
-    // Shove the playlist response data onto the playlists page for the user to interact with
-    res.render('viewPlaylists', playlistsPageData);
 }
 
 exports.deletePlaylistPage = async function(req, res, next)
@@ -71,28 +74,29 @@ exports.deletePlaylistPage = async function(req, res, next)
     {
         var spotifyResponse = await spotifyClient.getSinglePlaylist(req, res);
         await spotifyClient.deleteSinglePlaylist(req, res);
+
+        var playlistData = {
+            playlistId: spotifyResponse.id,
+            playlistName: spotifyResponse.name,
+            playlistDescription: spotifyResponse.description,
+            isCollaborative: spotifyResponse.collaborative,
+            isPublic: spotifyResponse.public,
+            followersCount: spotifyResponse.followers.total,
+            trackCount: spotifyResponse.tracks.total,
+            images: spotifyResponse.images,
+            deleted: true
+        };
+
+        // Shove the playlist response data onto the home page for the user to interact with
+        res.location('/playlist');
+        res.render('viewPlaylist', playlistData);
     }
     catch (error)
     {
+        logger.logError('Failed to get delete playlist page: ' + error.message);
         next(error);
         return;
     }
-
-    var playlistData = {
-        playlistId: spotifyResponse.id,
-        playlistName: spotifyResponse.name,
-        playlistDescription: spotifyResponse.description,
-        isCollaborative: spotifyResponse.collaborative,
-        isPublic: spotifyResponse.public,
-        followersCount: spotifyResponse.followers.total,
-        trackCount: spotifyResponse.tracks.total,
-        images: spotifyResponse.images,
-        deleted: true
-    };
-
-    // Shove the playlist response data onto the home page for the user to interact with
-    res.location('/playlist');
-    res.render('viewPlaylist', playlistData);
 }
 
 exports.restorePlaylistPage = async function(req, res, next)
@@ -102,35 +106,45 @@ exports.restorePlaylistPage = async function(req, res, next)
     {
         await spotifyClient.restoreSinglePlaylist(req, res);
         var spotifyResponse = await spotifyClient.getSinglePlaylist(req, res);
+
+        var playlistData = {
+            playlistId: spotifyResponse.id,
+            playlistName: spotifyResponse.name,
+            playlistDescription: spotifyResponse.description,
+            isCollaborative: spotifyResponse.collaborative,
+            isPublic: spotifyResponse.public,
+            followersCount: spotifyResponse.followers.total,
+            trackCount: spotifyResponse.tracks.total,
+            images: spotifyResponse.images,
+            deleted: false
+        };
+
+        // Shove the playlist response data onto the playlist page for the user to interact with
+        res.location('/playlist');
+        res.render('viewPlaylist', playlistData);
     }
     catch (error)
     {
+        logger.logError('Failed to get restore playlist page: ' + error.message)
         next(error);
         return;
     }
-
-    var playlistData = {
-        playlistId: spotifyResponse.id,
-        playlistName: spotifyResponse.name,
-        playlistDescription: spotifyResponse.description,
-        isCollaborative: spotifyResponse.collaborative,
-        isPublic: spotifyResponse.public,
-        followersCount: spotifyResponse.followers.total,
-        trackCount: spotifyResponse.tracks.total,
-        images: spotifyResponse.images,
-        deleted: false
-    };
-
-    // Shove the playlist response data onto the playlist page for the user to interact with
-    res.location('/playlist');
-    res.render('viewPlaylist', playlistData);
 }
 
 exports.createPlaylistPage = async function(req, res, next)
 {
     // Simply show the user the page to create a new playlist
-    res.location('/createPlaylist');
-    res.render('createPlaylist');
+    try
+    {
+        res.location('/createPlaylist');
+        res.render('createPlaylist');
+    }
+    catch (error)
+    {
+        logger.logError('Failed to get create playlist page: ' + error.message);
+        next(error);
+        return;
+    }
 }
 
 exports.createPlaylist = async function(req, res, next)
@@ -142,26 +156,27 @@ exports.createPlaylist = async function(req, res, next)
         // The app has to get their user ID first to attach this new playlist to their profile
         req.body.userId = await spotifyClient.getCurrentUserId(req, res);
         var spotifyResponse = await spotifyClient.createSinglePlaylist(req, res);
+
+        var playlistData = {
+            playlistId: spotifyResponse.id,
+            playlistName: spotifyResponse.name,
+            playlistDescription: spotifyResponse.description,
+            isCollaborative: spotifyResponse.collaborative,
+            isPublic: spotifyResponse.public,
+            followersCount: spotifyResponse.followers.total,
+            trackCount: spotifyResponse.tracks.total,
+            images: spotifyResponse.images,
+            deleted: false
+        };
+
+        // Shove the playlist response data onto the playlist page for the user to interact with
+        res.location('/playlist');
+        res.render('viewPlaylist', playlistData);
     }
     catch (error)
     {
+        logger.logError('Failed to create playlist: ' + error.message);
         next(error);
         return;
     }
-
-    var playlistData = {
-        playlistId: spotifyResponse.id,
-        playlistName: spotifyResponse.name,
-        playlistDescription: spotifyResponse.description,
-        isCollaborative: spotifyResponse.collaborative,
-        isPublic: spotifyResponse.public,
-        followersCount: spotifyResponse.followers.total,
-        trackCount: spotifyResponse.tracks.total,
-        images: spotifyResponse.images,
-        deleted: false
-    };
-
-    // Shove the playlist response data onto the playlist page for the user to interact with
-    res.location('/playlist');
-    res.render('viewPlaylist', playlistData);
 }
