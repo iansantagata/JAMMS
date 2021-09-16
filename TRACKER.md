@@ -16,7 +16,6 @@ Feel free to add issues to the repository or open a pull request to address anyt
 
 ### Bugs
 
-- HTTP callback instead of HTTPS for login from Spotify
 - Cookies used for tokens are not secure signed cookies
 - Cannot log out of Spotify account within a session, only JAMMS login
 

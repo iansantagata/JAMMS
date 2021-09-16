@@ -16,6 +16,12 @@ getBaseUri = function(req)
     }
 
     // Build the full Uri to work both in production and while developing via localhost
-    // TODO - Make this https when in production and http when in development
-    return req.protocol + '://' + hostName;
+    if (process.env.NODE_ENV === 'production')
+    {
+        return 'https://' + hostName;
+    }
+    else
+    {
+        return 'http://' + hostName;
+    }
 }
