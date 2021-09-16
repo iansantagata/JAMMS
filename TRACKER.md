@@ -10,7 +10,7 @@ Feel free to add issues to the repository or open a pull request to address anyt
 - Smart Playlist "genre" rule selector
 - Smart Playlist "track audio features" rule selectors
 - Dark mode (exclusively - no light mode to be supported)
-- Separate smart playlist song gathering into a previous before playlist generation
+- Separate smart playlist song gathering into a previous before playlist generation (playlist previews)
 - Playlist detail editing functionality (including playlist image and meta details)
 - Refreshing of smart playlists in place
 
