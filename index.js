@@ -11,9 +11,10 @@ var cors = require('cors'); // Cross-origin resource sharing
 var cookieParser = require('cookie-parser'); // Parsing and storing encrypted cookies
 var vash = require('vash'); // Templating and building HTML files to render
 
+// Inject Environment Variables (Development Only)
 if (process.env.NODE_ENV !== 'production')
 {
-    require('dotenv').config(); // Inject environment variables (Development only)
+    require('dotenv').config();
 }
 
 // Custom Modules
@@ -25,6 +26,8 @@ var logout = require(path.join(customModulePath, 'logout.js'));
 var playlist = require(path.join(customModulePath, 'playlist.js'));
 var smartPlaylist = require(path.join(customModulePath, 'smartPlaylist.js'));
 var logger = require(path.join(customModulePath, 'logger.js'));
+var redirect = require(path.join(customModulePath, 'redirect.js'));
+var server = require(path.join(customModulePath, 'server.js'));
 
 // Setup Page Handling
 const staticFilesPath = path.join(__dirname, 'public');
@@ -39,6 +42,12 @@ app.use(express.static(staticFilesPath))
  // Setup Templating Views
  app.set('view engine', 'vash')
     .set('views', viewsFilesPath);
+
+// Redirect HTTP Requests to HTTPS (Production Only)
+if (process.env.NODE_ENV === 'production')
+{
+    app.use(redirect.useHttpsRequests);
+}
 
 // Home Logic
 app.get('/', home.getLandingPage);
@@ -69,6 +78,11 @@ app.use('/error', error.handleExpectedError);
 app.use(error.handlePageNotFound);
 app.use(error.handleUnexpectedError);
 
-// Listening Port
-logger.logInfo('Listening for requests on port ' + process.env.PORT);
-app.listen(process.env.PORT);
+// HTTP Server Startup
+server.startUpHttpServer(app);
+
+// HTTPS Server Startup (Production Only)
+if (process.env.NODE_ENV === 'production')
+{
+    server.startUpHttpsServer(app);
+}
