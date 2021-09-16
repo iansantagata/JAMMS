@@ -21,18 +21,27 @@ exports.getAuthorizationTokens = async function(req, res)
 {
     try
     {
+        // Make sure we have the data we need to get authorization tokens from Spotify
+        var authorizationCode = req.query.code || null;
+        if (authorizationCode === undefined || authorizationCode === null)
+        {
+            throw new Error('Failed to locate authorization code from Spotify');
+        }
+
+        var redirectUri = redirect.getValidateLoginRedirectUri(req);
+
         // Make the request to get access and refresh tokens
         var requestData = {
-            code: req.query.code || null,
-            redirect_uri: redirect.getValidateLoginRedirectUri(req),
+            code: authorizationCode,
+            redirect_uri: redirectUri,
             grant_type: 'authorization_code'
         };
 
-        var authToken = await secrets.getBase64EncodedAuthorizationToken();
+        var authorizationToken = await secrets.getBase64EncodedAuthorizationToken();
 
         var requestOptions = {
             headers: {
-                'Authorization': 'Basic ' + authToken,
+                'Authorization': 'Basic ' + authorizationToken,
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         };

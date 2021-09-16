@@ -70,7 +70,7 @@ exports.validateLogin = async function(req, res)
         var storedStateToken = await cookie.getCookie(req, stateKey);
         if (stateToken !== storedStateToken)
         {
-            throw new Error('State mismatch between browser state token and Spotify state token');
+            throw new Error('Failed to match state token of browser to Spotify state token');
         }
 
         // State validated successfully, can clear the state cookie
