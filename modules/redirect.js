@@ -6,16 +6,6 @@ exports.getValidateLoginRedirectUri = function(req)
     return getBaseUri(req) + validateLoginEndpoint;
 };
 
-exports.useHttpsRequests = function(req, res, next)
-{
-    if (req.protocol === 'http')
-    {
-        res.redirect(301, 'https://' + req.hostname + req.url);
-    }
-
-    next();
-}
-
 // Local Helper Functions
 getBaseUri = function(req)
 {
