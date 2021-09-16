@@ -12,6 +12,7 @@
     "cors": "^2.8.4",
     "dotenv": "^10.0.0",
     "express": "~4.16.0",
+    "fast-glob": "^3.2.7",
     "nodemon": "^2.0.12",
     "querystring": "^0.2.1",
     "vash": "^0.13.0"
