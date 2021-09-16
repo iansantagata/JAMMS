@@ -23,9 +23,9 @@ exports.getFullSslCredentials = async function()
         var sslFolderPath = await getSslFolderPath();
 
         // Next, get the file names and paths of the SSL related files
-        var certFilePath = await getSslCertificateFilePath(sslFolderPath);
-        var caBundleFilePath = await getCertificateAuthorityBundleFilePath(sslFolderPath);
-        var keyFilePath = await getSslKeyFilePath(sslFolderPath);
+        var certFilePath = await ssl.getSslCertificateFilePath(sslFolderPath);
+        var caBundleFilePath = await ssl.getCertificateAuthorityBundleFilePath(sslFolderPath);
+        var keyFilePath = await ssl.getSslKeyFilePath(sslFolderPath);
 
         // Finally, read the files into string variables and return the lot of them
         var cert = fs.readFileSync(certFilePath);
