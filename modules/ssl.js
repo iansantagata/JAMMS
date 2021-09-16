@@ -58,7 +58,7 @@ getSslCertificateFilePath = async function(sslFolderPath)
         };
 
         var certFiles = await glob(allNestedFilesGlob + sslCertExtension, globOptions);
-        if (certFiles === undefined || certFiles === null || !Array.isArray(certFiles) || certFiles.length === 0)
+        if (certFiles === undefined || certFiles === null || !certFiles.isArray() || certFiles.length === 0)
         {
             throw new Error('No certificate files found via globbing');
         }
@@ -88,7 +88,7 @@ getCertificateAuthorityBundleFilePath = async function(sslFolderPath)
         };
 
         var caBundleFiles = await glob(allNestedFilesGlob + caBundleExtension, globOptions);
-        if (caBundleFiles === undefined || caBundleFiles === null || !Array.isArray(caBundleFiles) || caBundleFiles.length === 0)
+        if (caBundleFiles === undefined || caBundleFiles === null || !caBundleFiles.isArray() || caBundleFiles.length === 0)
         {
             throw new Error('No CA bundle files found via globbing');
         }
@@ -118,7 +118,7 @@ getSslKeyFilePath = async function(sslFolderPath)
         };
 
         var keyFiles = await glob(allNestedFilesGlob + sslKeyExtension, globOptions);
-        if (keyFiles === undefined || keyFiles === null || !Array.isArray(keyFiles) || keyFiles.length === 0)
+        if (keyFiles === undefined || keyFiles === null || !keyFiles.isArray() || keyFiles.length === 0)
         {
             throw new Error('No SSL key files found via globbing');
         }
