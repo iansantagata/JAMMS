@@ -11,9 +11,10 @@ var cors = require('cors'); // Cross-origin resource sharing
 var cookieParser = require('cookie-parser'); // Parsing and storing encrypted cookies
 var vash = require('vash'); // Templating and building HTML files to render
 
+// Inject Environment Variables from File (Development Only)
 if (process.env.NODE_ENV !== 'production')
 {
-    require('dotenv').config(); // Inject environment variables (Development only)
+    require('dotenv').config();
 }
 
 // Custom Modules
