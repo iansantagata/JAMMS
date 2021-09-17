@@ -7,19 +7,15 @@ var authorize = require(path.join(customModulePath, 'authorize.js'));
 var logger = require(path.join(customModulePath, 'logger.js'));
 
 // Logout Logic
-exports.getLogoutPage = async function(req, res, next)
+exports.logOut = async function(req, res, next)
 {
     try
     {
         // Logging out just consists of removing cookies and redirecting to the landing page
         await authorize.deleteAuthorizationCookies(req, res);
 
-        var logoutPageData = {
-            isAwaitingLogin: true
-        };
-
-        res.location('/');
-        res.render('logout', logoutPageData);
+        // Now that we have successfully logged out, redirect to the landing page
+        res.redirect('/');
     }
     catch (error)
     {

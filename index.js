@@ -21,6 +21,7 @@ if (process.env.NODE_ENV !== 'production')
 const customModulePath = path.join(__dirname, 'modules');
 var error = require(path.join(customModulePath, 'error.js'));
 var home = require(path.join(customModulePath, 'home.js'));
+var landing = require(path.join(customModulePath, 'landing.js'));
 var login = require(path.join(customModulePath, 'login.js'));
 var logout = require(path.join(customModulePath, 'logout.js'));
 var playlist = require(path.join(customModulePath, 'playlist.js'));
@@ -41,14 +42,14 @@ app.use(express.static(staticFilesPath))
  app.set('view engine', 'vash')
     .set('views', viewsFilesPath);
 
-// Home Logic
-app.get('/', home.getLandingPage);
+// Landing / Home Logic
+app.get('/', landing.getLandingPage);
 app.get('/home', home.getHomePage);
 
-// Login Logic
+// Login / Logout Logic
 app.get('/login', login.getLoginPage);
 app.get('/validateLogin', login.validateLogin);
-app.get('/logout', logout.getLogoutPage);
+app.get('/logout', logout.logOut);
 
 // Playlist Logic
 app.get('/playlist', playlist.getPlaylistPage);
