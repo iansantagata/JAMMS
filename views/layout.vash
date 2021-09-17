@@ -34,7 +34,7 @@
       @if(model.isAwaitingLogin)
       {
         <div class="col">
-          <p class="my-0">JAMMS - Just a Music Maintainer for Spotify</p>
+          <p class="my-0">JAMMS</p>
         </div>
       }
       else
