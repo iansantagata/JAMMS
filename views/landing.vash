@@ -56,10 +56,12 @@
 
         <div id="faqWhatIsASmartPlaylistResponse" class="collapse" aria-labelledby="faqWhatIsASmartPlaylist" data-parent="#faq">
           <div class="card-body">
-            <p>In a regular playlist, users manually add songs to it and remove songs from it.</p>
-            <p>For a smart playlist, a user specified the rules they wish the smart playlist to follow, and the app grabs all the songs that follow the rules and puts them into this smart playlist.</p>
+            <p>A smart playlist is a playlist that is created, filled, and maintained using a set of logical rules provided by the user.</p>
             <br/>
-            <p>A smart playlist is a playlist that is filled with songs and maintained using a set of logical rules rather than being filled and maintained manually by the user.</p>
+            <p>For a regular playlist, users create the playlist, manually add songs to it, and manually remove songs from it, one at a time.</p>
+            <p>For a smart playlist, a user specifies the rules they wish the smart playlist to follow when selecting music for their playlist. JAMMS grabs all the songs that follow these rules and puts them into a playlist for the user.</p>
+            <br/>
+            <p>Playlist created by JAMMS are considered "smart" because they allow users to offload some manual work to automation and computation. Internally within Spotify, at the time of this writing, there is no official designation between a playlist and a "smart" playlist.</p>
           </div>
         </div>
       </div>
