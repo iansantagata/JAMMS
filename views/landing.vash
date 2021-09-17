@@ -110,10 +110,11 @@
         <div id="faqWhyShouldIUseJammsResponse" class="collapse" aria-labelledby="faqWhyShouldIUseJamms" data-parent="#faq">
           <div class="card-body">
             <ul>
-              <li>Do you find it time-consuming to painstakingly add each song by all the artists you want to a playlist and then maintain that playlist constantly?</li>
+              <li>Do you find it time-consuming to painstakingly add each individual song you want to a playlist and then maintain that playlist constantly?</li>
               <li>Have you always wanted to create a playlist of every Carly Rae Jepsen, Yellowcard, and Foo Fighters song from after 2000?</li>
               <li>Do you have so many songs saved that you constantly find yourself rediscovering old favorites in your own library?</li>
-              <li>Are you looking for a way to easily keep track of new music you just discovered in a playlist?</p>
+              <li>Are you looking for a way to easily keep track of new music you just discovered in a playlist?</li>
+              <li>Do you crave the flexibility of creating custom playlists exactly to your liking with very little time and effort?</li>
             </ul>
             <p>Your time is precious, and your musical tastes are varied.</p>
             <p>Let smart playlists do the heavy lifting for you and build your very own custom playlists.</p>
