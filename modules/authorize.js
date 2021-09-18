@@ -14,8 +14,8 @@ var logger = require(path.join(customModulePath, 'logger.js'));
 // Authorize Logic
 const spotifyAccessTokenUri = 'https://accounts.spotify.com/api/token';
 
-const accessKey = 'accessToken';
-const refreshKey = 'refreshToken';
+const accessKey = 'AccessToken';
+const refreshKey = 'RefreshToken';
 
 exports.getAuthorizationTokens = async function(req, res)
 {

@@ -35,7 +35,7 @@ const viewsFilesPath = path.join(__dirname, 'views');
 var app = express();
 app.use(express.static(staticFilesPath))
    .use(cors())
-   .use(cookieParser())
+   .use(cookieParser(process.env.COOKIE_KEY))
    .use(express.urlencoded({ extended: true }));
 
  // Setup Templating Views

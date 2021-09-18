@@ -68,7 +68,7 @@
           <p class="my-0">Created by <a href="http://iansantagata.com">Ian Santagata</a></p>
         </div>
         <div class="col">
-          <p class="my-0"><a href="@html.raw("mailto:admin@jamms.app")">Contact E-Mail</a></p>
+          <p class="my-0"><a href="@html.raw('mailto:admin@jamms.app')">Contact E-Mail</a></p>
         </div>
       </div>
     </div>

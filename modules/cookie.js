@@ -20,7 +20,7 @@ exports.getCookie = function(req, cookieName)
             throw new Error('Cookie name not valid');
         }
 
-        var cookieValue = req.cookies ? req.cookies[cookieName] : null;
+        var cookieValue = req.signedCookies ? req.signedCookies[cookieName] : null;
         if (cookieValue === undefined || cookieValue === null)
         {
             // Do not want to log an error because this may be that a cookie
@@ -50,7 +50,7 @@ exports.setCookie = function(req, res, cookieName, cookieValue, cookieMaxAge)
             throw new Error('No request object found');
         }
 
-        if (req.cookies === undefined || req.cookies === null)
+        if (req.signedCookies === undefined || req.signedCookies === null)
         {
             throw new Error('No request cookies object found');
         }
@@ -81,10 +81,14 @@ exports.setCookie = function(req, res, cookieName, cookieValue, cookieMaxAge)
         // Declare that the cookies should only be used by this app in a first party only context
         var sameSiteSetting = 'Strict';
 
+        // Sign cookies with a secret and read them back with the same secret to validate them
+        var useSignedCookies = true;
+
         var cookieOptions = {
             secure: useSecureCookiesOverHttps,
             httpOnly: useHttpOnlyFlag,
-            sameSite: sameSiteSetting
+            sameSite: sameSiteSetting,
+            signed: useSignedCookies
         };
 
         // Session cookies do not have an explicit expiration
@@ -100,7 +104,7 @@ exports.setCookie = function(req, res, cookieName, cookieValue, cookieMaxAge)
         // However, the request object does not have the updated cookie value for this request
         // Since it is desirable to retrieve data from cookies that have been set on this request,
         // Update the request object to include this newly set cookie for the current request
-        req.cookies[cookieName] = cookieValue;
+        req.signedCookies[cookieName] = cookieValue;
 
         // Does not return anything, just indicate success
         return Promise.resolve();

@@ -1,8 +1,11 @@
 @html.extend('layout', function(model) {
 	@html.block('content', function(model) {
-    <h2>Request Error</h2>
+    <h2 class="my-3">Request Error</h2>
     <p>
       We apologize, but there was an error in trying to process your request.
+    </p>
+    <p>
+      Please <a href="@html.raw('mailto:admin@jamms.app')">contact us via e-mail</a> if the error persists to help get the problem resolved.
     </p>
   })
 })
