@@ -70,17 +70,25 @@ exports.setCookie = function(req, res, cookieName, cookieValue, cookieMaxAge)
             throw new Error('Cookie value not valid');
         }
 
-        if (cookieMaxAge === undefined || cookieMaxAge === null)
-        {
-             // Set a session cookie (no explicit expiration)
-            res.cookie(cookieName, cookieValue);
-            return Promise.resolve();
-        }
+        // Only want to use HTTPS for cookies in Production
+        var useSecureCookiesOverHttps = process.env.NODE_ENV === 'production';
 
-        // Cookie is not a session cookie, so ensure it has an expiration
+        // Note - This field is poorly named in this package / library
+        // Ensures that the cookie is only sent and accessed via HTTP(S) requests only by the web server and not through client JavaScript
+        // Helps to prevent against cross-site scripting (XSS) attacks
+        var useHttpOnlyFlag = true;
+
         var cookieOptions = {
-            maxAge: cookieMaxAge
+            secure: useSecureCookiesOverHttps,
+            httpOnly: useHttpOnlyFlag
         };
+
+        // Session cookies do not have an explicit expiration
+        // Only set an expiration if one exists (and thus this is not a session cookie)
+        if (cookieMaxAge !== undefined && cookieMaxAge !== null)
+        {
+            cookieOptions['maxAge'] = cookieMaxAge;
+        }
 
         res.cookie(cookieName, cookieValue, cookieOptions);
 
