@@ -78,9 +78,13 @@ exports.setCookie = function(req, res, cookieName, cookieValue, cookieMaxAge)
         // Helps to prevent against cross-site scripting (XSS) attacks
         var useHttpOnlyFlag = true;
 
+        // Declare that the cookies should only be used by this app in a first party only context
+        var sameSiteSetting = 'Strict';
+
         var cookieOptions = {
             secure: useSecureCookiesOverHttps,
-            httpOnly: useHttpOnlyFlag
+            httpOnly: useHttpOnlyFlag,
+            sameSite: sameSiteSetting
         };
 
         // Session cookies do not have an explicit expiration
