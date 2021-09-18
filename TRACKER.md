@@ -16,14 +16,12 @@ Feel free to add issues to the repository or open a pull request to address anyt
 
 ### Bugs
 
-- Cookies used for tokens are not secure signed cookies
 - Cannot log out of Spotify account within a session, only JAMMS login
 
 ### Issues
 
 - JAMMS.app icon not yet created
 - JAMMS.app logo not yet created
-- Cookie use for tokens are insecure
 - Smart playlist retrieves only from liked songs library
 - Smart playlist rules are always "AND"-ed together, implement "OR" option
 - Not using latest Node.js version available
