@@ -1,3 +1,10 @@
+// Dependencies
+var path = require('path'); // URI and local file paths
+
+// Custom Modules
+const customModulePath = __dirname;
+var environment = require(path.join(customModulePath, 'environment.js'));
+
 // Redirect Logic
 const validateLoginEndpoint = '/validateLogin';
 
@@ -16,12 +23,12 @@ getBaseUri = function(req)
     }
 
     // Build the full Uri to work both in production and while developing via localhost
-    if (process.env.NODE_ENV === 'production')
+    var isProductionEnvironment = environment.isProductionEnvironmentSync();
+    if (isProductionEnvironment)
     {
         return 'https://' + hostName;
     }
-    else
-    {
-        return 'http://' + hostName;
-    }
+
+    // Non-Production environments should use HTTP rather than HTTPS
+    return 'http://' + hostName;
 }

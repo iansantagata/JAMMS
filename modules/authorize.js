@@ -74,7 +74,6 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
     try
     {
         // Get the refresh token from cookies
-        // TODO - Access token is the only one that should be a cookie, figure out how to handle this more securely
         var refreshToken = await cookie.getCookie(req, refreshKey);
 
         // Request the access token from the refresh token
@@ -104,12 +103,12 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
 
         // Throw the new token back into a cookie for the user to use
         var accessTypeAndToken = refreshAuthorizationResponse.tokenType + ' ' + refreshAuthorizationResponse.accessToken;
-        await cookie.setCookie(req, res, accessKey, accessTypeAndToken, refreshAuthorizationResponse.tokenExpirationInMsec);
+        cookie.setCookie(req, res, accessKey, accessTypeAndToken, refreshAuthorizationResponse.tokenExpirationInMsec);
 
         // If the request did return a new refresh token, make sure we overwrite the old token
         if (refreshAuthorizationResponse.refreshToken !== undefined && refreshAuthorizationResponse.refreshToken !== null)
         {
-            await cookie.setCookie(req, res, refreshKey, refreshAuthorizationResponse.refreshToken); // Session cookie (no explicit expiration)
+            cookie.setCookie(req, res, refreshKey, refreshAuthorizationResponse.refreshToken); // Session cookie (no explicit expiration)
         }
 
         // Return success when re-authorization occurred
@@ -179,7 +178,7 @@ exports.getRefreshTokenFromCookies = async function(req, res)
     }
 }
 
-exports.setAuthorizationCookies = async function(req, res, auth)
+exports.setAuthorizationCookies = function(req, res, auth)
 {
     try
     {
@@ -209,11 +208,9 @@ exports.setAuthorizationCookies = async function(req, res, auth)
             throw new Error("Refresh token not found");
         }
 
-        // TODO - Figure out a better way to store this information than browser cookies (which is insecure, at least for refresh token)
-        // TODO - Look into signed cookies (see cookie-parser docs) to still use client cookies, but ensure tampering is accounted for (interception still an issue however)
         var accessTypeAndToken = auth.tokenType + ' ' + auth.accessToken;
-        await cookie.setCookie(req, res, accessKey, accessTypeAndToken, auth.tokenExpirationInMsec);
-        await cookie.setCookie(req, res, refreshKey, auth.refreshToken); // Session cookie (no explicit expiration);
+        cookie.setCookie(req, res, accessKey, accessTypeAndToken, auth.tokenExpirationInMsec);
+        cookie.setCookie(req, res, refreshKey, auth.refreshToken); // Session cookie (no explicit expiration);
 
         // No return value, just indicate success
         return Promise.resolve();

@@ -5,7 +5,7 @@ var querystring = require('querystring'); // URI query string manipulation
 // Custom Modules
 const customModulePath = __dirname;
 var authorize = require(path.join(customModulePath, 'authorize.js'));
-var secrets = require(path.join(customModulePath, 'secrets.js'));
+var environment = require(path.join(customModulePath, 'environment.js'));
 var randomString = require(path.join(customModulePath, 'randomString.js'));
 var redirect = require(path.join(customModulePath, 'redirect.js'));
 var cookie = require(path.join(customModulePath, 'cookie.js'));
@@ -25,9 +25,9 @@ exports.getLoginPage = async function(req, res, next)
     {
         // Set state token locally for logging in to be validated against Spotify returned state token
         var stateToken = randomString.generateRandomString(stateLength);
-        await cookie.setCookie(req, res, stateKey, stateToken); // Session cookie (no explicit expiration)
+        cookie.setCookie(req, res, stateKey, stateToken); // Session cookie (no explicit expiration)
 
-        var clientId = await secrets.getClientId();
+        var clientId = await environment.getClientId();
         var redirectUri = redirect.getValidateLoginRedirectUri(req);
 
         var requestParameters = {
@@ -80,7 +80,7 @@ exports.validateLogin = async function(req, res)
         var authorizationResponse = await authorize.getAuthorizationTokens(req, res);
 
         // Use the access token and refresh token to validate access to Spotify's API
-        var cookieResponse = await authorize.setAuthorizationCookies(req, res, authorizationResponse);
+        var cookieResponse = authorize.setAuthorizationCookies(req, res, authorizationResponse);
 
         // Once we have our tokens, redirect to the home page
         res.redirect('/home');

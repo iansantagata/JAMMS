@@ -4,6 +4,7 @@ var path = require('path'); // URI and local file paths
 // Custom Modules
 const customModulePath = __dirname;
 var logger = require(path.join(customModulePath, 'logger.js'));
+var environment = require(path.join(customModulePath, 'environment.js'));
 
 // Cookie Logic
 exports.getCookie = function(req, cookieName)
@@ -71,7 +72,7 @@ exports.setCookie = function(req, res, cookieName, cookieValue, cookieMaxAge)
         }
 
         // Only want to use HTTPS for cookies in Production
-        var useSecureCookiesOverHttps = process.env.NODE_ENV === 'production';
+        var useSecureCookiesOverHttps = environment.isProductionEnvironmentSync();
 
         // Note - This field is poorly named in this package / library
         // Ensures that the cookie is only sent and accessed via HTTP(S) requests only by the web server and not through client JavaScript
@@ -115,8 +116,6 @@ exports.setCookie = function(req, res, cookieName, cookieValue, cookieMaxAge)
         return Promise.reject(error);
     }
 };
-
-// TODO - Implement secure cookies (for usage over HTTPS)
 
 exports.clearCookie = function(res, cookieName)
 {
