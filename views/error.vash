@@ -5,7 +5,7 @@
       We apologize, but there was an error in trying to process your request.
     </p>
     <p>
-      Please <a href="@html.raw('mailto:admin@jamms.app')">contact us via e-mail</a> if the error persists to help get the problem resolved.
+      If the error persists, please <a href="@html.raw('mailto:admin@jamms.app')">contact us via e-mail</a> or <a href="https://github.com/iansantagata/jamms/issues">open an issue in our open-source repository</a> to help get the problem resolved.
     </p>
   })
 })
