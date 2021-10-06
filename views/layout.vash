@@ -22,14 +22,16 @@
   crossorigin="anonymous"></script>
   <!-- Helper Functions Used Across the App -->
   <script src="scripts/helperFunctions.js"></script>
+  <!-- Custom CSS StyleSheet Used Across the App -->
+  <link rel="stylesheet" href="styles/main.css" />
 </head>
 
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column h-100 jamms-bg-very-dark jamms-text-light">
 
   <script defer src="scripts/layout.js"></script>
 
   <!-- TODO - Have to put a warning / acceptance alert about cookies eventually if they continue to be used -->
-  <header class="card-header text-center mb-2">
+  <header class="card-header text-center jamms-bg-dark mb-2">
     <div class="row">
       @if(model.isAwaitingLogin)
       {
@@ -58,7 +60,7 @@
     </div>
   </main>
 
-  <footer class="footer mt-auto">
+  <footer class="footer jamms-bg-dark mt-auto">
     <div class="card-footer text-center">
       <div class="row">
         <div class="col">

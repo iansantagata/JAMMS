@@ -1,0 +1,21 @@
+:root
+{
+    --jamms-very-dark: #0D1117;
+    --jamms-dark: #202429;
+    --jamms-light: #C9D1D9;
+}
+
+.jamms-bg-very-dark
+{
+    background-color: var(--jamms-very-dark);
+}
+
+.jamms-bg-dark
+{
+    background-color: var(--jamms-dark);
+}
+
+.jamms-text-light
+{
+    color: var(--jamms-light);
+}
