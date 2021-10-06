@@ -1,4 +1,6 @@
-[![Build and Deploy via Sync](https://github.com/iansantagata/jamms/actions/workflows/main.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/main.yml)
+[![Continuous Integration](https://github.com/iansantagata/jamms/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/continuous-integration.yml)
+
+[![Code QL Scan](https://github.com/iansantagata/jamms/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/codeql-analysis.yml)
 
 ## Overview
 
