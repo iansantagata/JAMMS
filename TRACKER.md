@@ -13,10 +13,6 @@ Feel free to add issues to the repository or open a pull request to address anyt
 - Playlist detail editing functionality (including playlist image and meta details)
 - Refreshing of smart playlists in place
 
-### Bugs
-
-- Create smart playlist fails when no matching songs are found
-
 ### Issues
 
 - JAMMS.app icon not yet created
