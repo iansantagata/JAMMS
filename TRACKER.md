@@ -17,6 +17,7 @@ Feel free to add issues to the repository or open a pull request to address anyt
 ### Bugs
 
 - Cannot log out of Spotify account within a session, only JAMMS login
+- Rule operators can use nonsensical combinations (e.g. year and contains, artist name and less than, etc)
 
 ### Issues
 
