@@ -15,7 +15,6 @@ Feel free to add issues to the repository or open a pull request to address anyt
 
 ### Bugs
 
-- Rule operators can use nonsensical combinations (e.g. year and contains, artist name and less than, etc)
 - Create smart playlist fails when no matching songs are found
 
 ### Issues
