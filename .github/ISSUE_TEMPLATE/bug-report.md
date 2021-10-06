@@ -36,6 +36,7 @@ For example:
 ### Screenshots
 <!-- If applicable, add screenshots to help explain your problem. -->
 
+
 ### Platform
 <!-- Information about the device you used where this problem arose. -->
 - Device Type:  <!-- e.g. Desktop, Smartphone, Tablet, etc. -->
