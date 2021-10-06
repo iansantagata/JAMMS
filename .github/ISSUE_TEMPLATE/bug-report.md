@@ -7,25 +7,27 @@ assignees: ''
 
 ---
 
-**The Problem**
+## The Problem
 A clear and concise description of what the problem is.
 
-**Expected Behavior**
+## Expected Behavior
 A clear and concise description of what you expected to happen.
 
-**To Reproduce the Problem**
-Steps to reproduce the behavior:
+## Steps to Reproduce the Problem
+
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
 4. See error, etc.
 
-**Screenshots**
+## Additional Information
+
+### Screenshots
 If applicable, add screenshots to help explain your problem.
 
-**Platform**
+### Platform
 - Device Type: [Desktop, Smartphone, Tablet, etc.]
 - Browser: [e.g. Chrome, Firefox, Safari, Edge, etc.]
 
-**Additional Context**
+### Context
 Add any other context about the problem here.
