@@ -34,8 +34,7 @@
                   <option value="greaterThanOrEqual">is greater than or equal to</option>
                   <option value="lessThan">is less than</option>
                   <option value="lessThanOrEqual">is less than or equal to</option>
-                  <!-- TODO - Add contains back in when it is ready to be used (developed) -->
-                  <!-- <option value="contains">contains</option> -->
+                  <option value="contains">contains</option>
                 </select>
               </div>
               <div class="col-3">

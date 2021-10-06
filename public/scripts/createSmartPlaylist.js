@@ -91,10 +91,9 @@ function addRuleFormFields()
     lessThanOrEqualToOptionRuleOperator.setAttribute("value", "lessThanOrEqual");
     lessThanOrEqualToOptionRuleOperator.innerText = "is less than or equal to";
 
-    // TODO - Add contains back in when it is fully developed
-    // var containsOptionRuleOperator = document.createElement("option");
-    // containsOptionRuleOperator.setAttribute("value", "contains");
-    // containsOptionRuleOperator.innerText = "contains";
+    var containsOptionRuleOperator = document.createElement("option");
+    containsOptionRuleOperator.setAttribute("value", "contains");
+    containsOptionRuleOperator.innerText = "contains";
 
     var selectRuleOperator = document.createElement("select");
     selectRuleOperator.setAttribute("name", "playlistRuleOperator-" + ruleIndex);
@@ -106,8 +105,7 @@ function addRuleFormFields()
     selectRuleOperator.appendChild(greaterThanOrEqualToOptionRuleOperator);
     selectRuleOperator.appendChild(lessThanOptionRuleOperator);
     selectRuleOperator.appendChild(lessThanOrEqualToOptionRuleOperator);
-    // TODO - Add contains back in when it is fully developed
-    // selectRuleOperator.appendChild(containsOptionRuleOperator);
+    selectRuleOperator.appendChild(containsOptionRuleOperator);
 
     var ruleOperatorDiv = document.createElement("div");
     ruleOperatorDiv.setAttribute("class", "col-4");

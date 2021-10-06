@@ -468,49 +468,56 @@ getArtistNameFromArtist = function(artist)
 }
 
 // Operator Functions
-equals = function(target, existing)
+equals = function(a, b)
 {
-    return target === existing;
+    return a === b;
 }
 
-notEquals = function(target, existing)
+notEquals = function(a, b)
 {
-    return target !== existing;
+    return a !== b;
 }
 
-greaterThan = function(target, existing)
+greaterThan = function(a, b)
 {
-    return target > existing;
+    return a > b;
 }
 
-greaterThanOrEqualTo = function(target, existing)
+greaterThanOrEqualTo = function(a, b)
 {
-    return greaterThan(target, existing) || equals(target, existing);
+    return greaterThan(a, b) || equals(a, b);
 }
 
-lessThan = function(target, existing)
+lessThan = function(a, b)
 {
-    return target < existing;
+    return a < b;
 }
 
-lessThanOrEqualTo = function(target, existing)
+lessThanOrEqualTo = function(a, b)
 {
-    return lessThan(target, existing) || equals(target, existing);
+    return lessThan(a, b) || equals(a, b);
 }
 
-// TODO - Contains logic
+contains = function(a, b)
+{
+    return a.includes(b);
+}
 
 // Rule Functions
 ruleBySongName = function(track, songNameRuleData, operatorFunction)
 {
     var trackSongName = getTrackNameFromSavedTrack(track);
-    return operatorFunction(trackSongName, songNameRuleData.toUpperCase());
+    var normalizedSongNameRuleData = songNameRuleData.toUpperCase();
+
+    return operatorFunction(trackSongName, normalizedSongNameRuleData);
 }
 
 ruleByAlbumName = function(track, albumNameRuleData, operatorFunction)
 {
     var trackAlbumName = getAlbumNameFromSavedTrack(track);
-    return operatorFunction(trackAlbumName, albumNameRuleData.toUpperCase());
+    var normalizedAlbumNameRuleData = albumNameRuleData.toUpperCase();
+
+    return operatorFunction(trackAlbumName, normalizedAlbumNameRuleData);
 }
 
 ruleByReleaseYear = function(track, releaseYearRuleData, operatorFunction)
@@ -521,8 +528,10 @@ ruleByReleaseYear = function(track, releaseYearRuleData, operatorFunction)
 
 ruleByArtistName = function(track, artistNameRuleData, operatorFunction)
 {
-    var trackArtistName = getArtistNamesFromSavedTrack(track);
-    return operatorFunction(trackArtistName, artistNameRuleData.toUpperCase());
+    var trackArtistNames = getArtistNamesFromSavedTrack(track);
+    var normalizedArtistNameRuleData = artistNameRuleData.toUpperCase();
+
+    return operatorFunction(trackArtistNames, normalizedArtistNameRuleData);
 }
 
 // TODO - Rule for genre
@@ -549,7 +558,7 @@ getRuleOperatorFunction = function(operator)
             operatorFunction = lessThanOrEqualTo;
             break;
         case "contains":
-            // TODO - Create a contains function
+            operatorFunction = contains;
             break;
         case "equal":
         default:

@@ -398,6 +398,8 @@ exports.addTracksToPlaylist = async function(req, res)
             }
         };
 
+        console.log(requestData);
+
         var addTracksToPlaylistUri = spotifyBaseUri + spotifyPlaylistsUriPath + '/' + playlistId + spotifyTracksUriPath;
         var response = await axios.post(addTracksToPlaylistUri, requestData, requestOptions);
 

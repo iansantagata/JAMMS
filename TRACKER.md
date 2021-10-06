@@ -6,7 +6,6 @@ Feel free to add issues to the repository or open a pull request to address anyt
 
 ### Features
 
-- Smart Playlist "contains" rule operator
 - Smart Playlist "genre" rule selector
 - Smart Playlist "track audio features" rule selectors
 - Dark mode (exclusively - no light mode to be supported)
@@ -18,6 +17,7 @@ Feel free to add issues to the repository or open a pull request to address anyt
 
 - Cannot log out of Spotify account within a session, only JAMMS login
 - Rule operators can use nonsensical combinations (e.g. year and contains, artist name and less than, etc)
+- Create smart playlist fails when no matching songs are found
 
 ### Issues
 
