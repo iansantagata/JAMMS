@@ -18,15 +18,17 @@ assignees: ''
 ## Steps to Reproduce the Problem
 <!-- An ordered list of steps to reproduce the problem mentioned.  If the problem is not regularly reproducible, mention so and give a best approximation. -->
 
-<!-- For example: -->
-<!-- 1. Go to '...' -->
-<!-- 2. Click on '....' -->
-<!-- 3. Scroll down to '....' -->
-<!-- 4. See error, etc. -->
+<!--
+For example:
+1. Go to '...'
+2. Click on '....'
+3. Scroll down to '....'
+4. See error, etc.
+-->
 
-1. 
-2. 
-3. 
+1.
+2.
+3.
 
 ## Additional Information
 <!-- Include additional information related to this bug in the sub-sections below. -->
