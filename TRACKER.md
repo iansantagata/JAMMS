@@ -34,3 +34,4 @@ Feel free to add issues to the repository or open a pull request to address anyt
 - Footer data consolidated with header
 - In-line search for rule selectors (album, artist, song name, etc.)
 - Quick adding songs to liked songs (top songs by artist, all songs by artist, all songs by album, all songs by playlist, etc)
+- Separate home page and FAQ data, but allow FAQ to be accessible (or viewable) from home page
