@@ -114,14 +114,6 @@
           <div class="my-3">
             <button id="generateSmartPlaylistPreviewButton" type="submit" class="btn btn-info">Preview Smart Playlist Tracks</button>
           </div>
-
-          <div id="previewContainer">
-          </div>
-
-          <!-- TODO - Restore this button after the smart playlist has been previewed successfully and has song results -->
-          <!-- <div class="mt-3">
-            <button id="createSmartPlaylistButton" type="submit" class="btn btn-info">Create Smart Playlist</button>
-          </div> -->
         </form>
       </div>
     </div>

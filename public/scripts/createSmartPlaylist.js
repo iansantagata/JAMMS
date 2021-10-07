@@ -8,7 +8,6 @@ addOnClickEventListenerToElementById("removeRuleButton-" + lastActiveRuleIndex, 
 addOnClickEventListenerToElementById("addRuleButton", addRuleFormFields);
 
 addOnClickEventListenerToElementById("generateSmartPlaylistPreviewButton", previewSmartPlaylist);
-addOnClickEventListenerToElementById("createSmartPlaylistButton", controlLoadingOfFormSubmitAction);
 
 // DOM Specific Functions
 function controlEnablementOfLimitElements()
@@ -67,7 +66,14 @@ function previewSmartPlaylist()
 function displaySmartPlaylistPreview(data)
 {
     // TODO - If there are no tracks returned, handle that case
+    // TODO - Put a notification somewhere if the preview is no longer accurate (the form has changed since last submit)
 
+    // Start with a header to indicate that this is the preview tracks section
+    var headerElement = document.createElement("h4");
+    headerElement.setAttribute("class", "my-3");
+    headerElement.innerText = "Smart Playlist Track Preview"
+
+    // Next, create the playlist preview table, beginning with the header cells
     var tableHeaderColumnOneElement = document.createElement("th");
     tableHeaderColumnOneElement.setAttribute("scope", "col");
     tableHeaderColumnOneElement.setAttribute("class", "align-middle");
@@ -93,6 +99,7 @@ function displaySmartPlaylistPreview(data)
     tableHeaderColumnFiveElement.setAttribute("class", "align-middle");
     tableHeaderColumnFiveElement.innerText = "Album Art";
 
+    // Combine all the header cells into the header row
     var tableHeadRowElement = document.createElement("tr");
     tableHeadRowElement.appendChild(tableHeaderColumnOneElement);
     tableHeadRowElement.appendChild(tableHeaderColumnTwoElement);
@@ -103,32 +110,37 @@ function displaySmartPlaylistPreview(data)
     var tableHeadElement = document.createElement("thead");
     tableHeadElement.appendChild(tableHeadRowElement);
 
-    // For every song, we want one row in the preview table
-    var trackCounter = 0;
+    // For the table body, we want one row in the preview table per track
+    var trackNumber = 0;
     var tableBodyElement = document.createElement("tbody");
 
     for (var savedTrackData of data)
     {
-        trackCounter++;
+        trackNumber++;
         var track = savedTrackData.track;
 
+        // Track Number
         var tableBodyHeaderCellElement = document.createElement("th");
         tableBodyHeaderCellElement.setAttribute("scope", "row");
         tableBodyHeaderCellElement.setAttribute("class", "align-middle");
-        tableBodyHeaderCellElement.innerText = trackCounter;
+        tableBodyHeaderCellElement.innerText = trackNumber;
 
+        // Track Name
         var tableBodyFirstDataElement = document.createElement("td");
         tableBodyFirstDataElement.setAttribute("class", "align-middle text-capitalize");
         tableBodyFirstDataElement.innerText = track.name;
 
+        // Artist Name(s)
         var tableBodySecondDataElement = document.createElement("td");
         tableBodySecondDataElement.setAttribute("class", "align-middle text-capitalize");
         tableBodySecondDataElement.innerText = concatenateArtistNames(track);
 
+        // Album Name
         var tableBodyThirdDataElement = document.createElement("td");
         tableBodyThirdDataElement.setAttribute("class", "align-middle text-capitalize");
         tableBodyThirdDataElement.innerText = track.album.name;
 
+        // Album Art
         var albumArtPath = getVisibleAlbumArtPath(track.album);
         var albumArtImageElement = document.createElement("img");
         albumArtImageElement.setAttribute("class", "img-fluid");
@@ -139,6 +151,7 @@ function displaySmartPlaylistPreview(data)
         tableBodyFourthDataElement.setAttribute("class", "align-middle col-md-2");
         tableBodyFourthDataElement.appendChild(albumArtImageElement);
 
+        // Combine all the cells together into the table row
         var tableBodyRowElement = document.createElement("tr");
         tableBodyRowElement.appendChild(tableBodyHeaderCellElement);
         tableBodyRowElement.appendChild(tableBodyFirstDataElement);
@@ -146,6 +159,7 @@ function displaySmartPlaylistPreview(data)
         tableBodyRowElement.appendChild(tableBodyThirdDataElement);
         tableBodyRowElement.appendChild(tableBodyFourthDataElement);
 
+        // Put the table row into the table
         tableBodyElement.appendChild(tableBodyRowElement);
     }
 
@@ -154,11 +168,6 @@ function displaySmartPlaylistPreview(data)
     tableElement.setAttribute("class", "table table-striped table-sm table-hover");
     tableElement.appendChild(tableHeadElement);
     tableElement.appendChild(tableBodyElement);
-
-    // Add a header to indicate that this is the preview tracks section
-    var headerElement = document.createElement("h4");
-    headerElement.setAttribute("class", "my-3");
-    headerElement.innerText = "Smart Playlist Track Preview"
 
     // TODO - Put a notification here that there is a limited number of songs in the preview, maybe if the user goes over this limit
 
@@ -169,10 +178,24 @@ function displaySmartPlaylistPreview(data)
     previewContainerElement.appendChild(headerElement);
     previewContainerElement.appendChild(tableElement);
 
+    // Add a submit button at the end of the form so that the user can create their smart playlist after checking the preview
+    var buttonElement = document.createElement("button");
+    buttonElement.setAttribute("id", "createSmartPlaylistButton");
+    buttonElement.setAttribute("type", "submit");
+    buttonElement.setAttribute("class", "btn btn-info");
+    buttonElement.innerText = "Create Smart Playlist";
+
+    // Add an event listener to the smart playlist button
+    addOnClickEventListenerToElement(buttonElement, controlLoadingOfFormSubmitAction);
+
+    var buttonDivElement = document.createElement("div");
+    buttonDivElement.setAttribute("class", "my-3");
+    buttonDivElement.appendChild(buttonElement);
+
+    // Finally, append all of this new content onto the end of the existing form
     var formElement = document.getElementById("createSmartPlaylistForm");
     formElement.appendChild(previewContainerElement);
-
-    // TODO - Add the submit button back here
+    formElement.appendChild(buttonDivElement);
 }
 
 function addRuleFormFields()

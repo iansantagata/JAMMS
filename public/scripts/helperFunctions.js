@@ -79,8 +79,8 @@ function controlLoadingOfFormSubmitAction()
         return;
     }
 
-    var isFormValid = isFormValid(formElement);
-    if (!isFormValid)
+    var isValidForm = isFormValid(formElement);
+    if (!isValidForm)
     {
         return;
     }
