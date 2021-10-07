@@ -19,7 +19,7 @@ Although PLYLST is [open source](https://github.com/Shpigford/plylst), JAMMS is 
 
 ## The Future
 
-For bugs, issues, and features to be developed, see the [TRACKER.md](TRACKER.md) file.
+For bugs, issues, and features to be developed, see the [Issues](/issues) section of this repository.
 
 ## Installation
 
