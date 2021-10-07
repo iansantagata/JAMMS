@@ -33,9 +33,8 @@ exports.createSmartPlaylistPage = function(req, res, next)
     }
 }
 
-exports.createSmartPlaylist = async function(req, res, next)
+exports.getSmartPlaylistData = async function(req, res, next)
 {
-    // Create a new smart playlist based on the user's request parameters
     try
     {
         // First, process all of the rules and optional settings from the request
@@ -139,19 +138,44 @@ exports.createSmartPlaylist = async function(req, res, next)
             orderedTracksInPlaylist.push(tracksInPlaylist[trackIndex]);
         }
 
+        var smartPlaylistData = {
+            limitData: playlistLimitData,
+            orderData: playlistOrderData,
+            trackData: orderedTracksInPlaylist
+        };
+
+        console.log(smartPlaylistData);
+
+        return smartPlaylistData;
+    }
+    catch (error)
+    {
+        logger.logError('Failed to get smart playlist tracks: ' + error.message);
+        next(error);
+        return;
+    }
+}
+
+exports.createSmartPlaylist = async function(req, res, next)
+{
+    try
+    {
+        // Get track data and information needed to create the smart playlist
+        var smartPlaylistData = await exports.getSmartPlaylistData(req, res, next);
+
         // Only thing we do not have supplied from the user is their user ID
         // The app has to get their user ID first to attach this new playlist to their profile
         req.body.userId = await spotifyClient.getCurrentUserId(req, res);
 
         // For visibility purposes, prepend the name of the smart playlist with the app name
         req.body.playlistName = playlistNamePrefix + req.body.playlistName;
-        req.body.playlistDescription = getPlaylistDescription(playlistLimitData, playlistOrderData);
+        req.body.playlistDescription = getPlaylistDescription(smartPlaylistData.limitData, smartPlaylistData.orderData);
         var createPlaylistResponse = await spotifyClient.createSinglePlaylist(req, res);
 
         // Now that we have created the playlist, we want to add the valid songs to it based on the smart playlist rules
         var playlistId = createPlaylistResponse.id;
         req.body.playlistId = playlistId;
-        req.body.trackUris = orderedTracksInPlaylist.map(getUriFromSavedTrack);
+        req.body.trackUris = smartPlaylistData.trackData.map(getUriFromSavedTrack);
         var addTracksToPlaylistResponse = await spotifyClient.addTracksToPlaylist(req, res);
 
         // Finally, we want to show the user info about their new playlist, so retrieve that data after songs were inserted
