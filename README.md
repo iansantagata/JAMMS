@@ -23,6 +23,10 @@ For bugs, issues, and features to be developed, see the [Issues](https://github.
 
 ## Installation
 
+The following is a small guide on how to run this application from source locally. This section is not necessary for users to interact with the hosted version of this web application currently deployed.
+
+For anyone looking to clone or fork this repository, this is a good place to start to get up and running quickly!
+
 ### Secrets
 
 This application will not run properly without specific secrets (not included in the repository for security reasons).
