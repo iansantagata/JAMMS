@@ -144,8 +144,6 @@ exports.getSmartPlaylistData = async function(req, res, next)
             trackData: orderedTracksInPlaylist
         };
 
-        console.log(smartPlaylistData);
-
         return smartPlaylistData;
     }
     catch (error)

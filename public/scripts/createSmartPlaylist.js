@@ -7,6 +7,7 @@ addOnClickEventListenerToElementById("playlistOrderEnabledInput", controlEnablem
 addOnClickEventListenerToElementById("removeRuleButton-" + lastActiveRuleIndex, removeRuleFormFields);
 addOnClickEventListenerToElementById("addRuleButton", addRuleFormFields);
 
+addOnClickEventListenerToElementById("generateSmartPlaylistPreviewButton", previewSmartPlaylist);
 addOnClickEventListenerToElementById("createSmartPlaylistButton", controlLoadingOfFormSubmitAction);
 
 // DOM Specific Functions
@@ -20,6 +21,45 @@ function controlEnablementOfOrderElements()
 {
     controlEnablementOfElementById("playlistOrderDirectionInput");
     controlEnablementOfElementById("playlistOrderFieldInput");
+}
+
+function previewSmartPlaylist()
+{
+    var eventTargetId = event.target.id;
+    var eventElement = document.getElementById(eventTargetId);
+
+    var formElement = getClosestForm(eventElement);
+    if (formElement === null)
+    {
+        return;
+    }
+
+    var isValidForm = isFormValid(formElement);
+    if (!isValidForm)
+    {
+        return;
+    }
+
+    controlEnablementOfElement(eventElement);
+    replaceElementContentsWithLoadingIndicator(eventElement, true);
+
+    var formData = new FormData(formElement);
+    var plainFormData = Object.fromEntries(formData.entries());
+    var formDataJson = JSON.stringify(plainFormData);
+
+    var fetchOptions = {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: formDataJson
+    };
+
+    fetch("/getSmartPlaylistData", fetchOptions)
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error(error.message));
 }
 
 function addRuleFormFields()

@@ -70,16 +70,16 @@ function controlLoadingIndicatorWithText()
 
 function controlLoadingOfFormSubmitAction()
 {
-    var eventElementId = event.target.id;
-    var eventElement = document.getElementById(eventElementId);
+    var eventTargetId = event.target.id;
+    var eventElement = document.getElementById(eventTargetId);
 
-    var formElement = eventElement.closest("form");
+    var formElement = getClosestForm(eventElement);
     if (formElement === null)
     {
         return;
     }
 
-    var isFormValid = formElement.checkValidity();
+    var isFormValid = isFormValid(formElement);
     if (!isFormValid)
     {
         return;
@@ -89,6 +89,17 @@ function controlLoadingOfFormSubmitAction()
     replaceElementContentsWithLoadingIndicator(eventElement, true);
 
     formElement.submit();
+}
+
+function getClosestForm(eventElement)
+{
+    var formElement = eventElement.closest("form");
+    return formElement;
+}
+
+function isFormValid(formElement)
+{
+    return formElement.checkValidity();
 }
 
 function replaceElementContentsWithLoadingIndicatorById(id, showLoadingText)
