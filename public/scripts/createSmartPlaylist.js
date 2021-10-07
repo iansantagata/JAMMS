@@ -56,10 +56,17 @@ function previewSmartPlaylist()
         body: formDataJson
     };
 
-    fetch("/getSmartPlaylistData", fetchOptions)
+    // Make the AJAX call and handle the response
+    fetch("/getSmartPlaylistPreview", fetchOptions)
         .then(response => response.json())
-        .then(data => console.log(data))
+        .then(displaySmartPlaylistPreview)
         .catch(error => console.error(error.message));
+}
+
+function displaySmartPlaylistPreview(data)
+{
+    // TODO - Build the table with the preview
+    console.log(data);
 }
 
 function addRuleFormFields()

@@ -33,7 +33,82 @@ exports.createSmartPlaylistPage = function(req, res, next)
     }
 }
 
-exports.getSmartPlaylistData = async function(req, res, next)
+exports.getSmartPlaylistPreview = async function(req, res, next)
+{
+    try
+    {
+        // TODO - Add a limit for number of songs gathered for the preview
+        // TODO - Figure out a way to make it so that once you find that limit, you stop looking for more songs
+        var smartPlaylistData = await getSmartPlaylistData(req, res, next);
+        var playlistPreviewData = smartPlaylistData.trackData;
+
+        res.set('Content-Type', 'application/json');
+        res.send(playlistPreviewData);
+        return;
+    }
+    catch (error)
+    {
+        logger.logError('Failed to get smart playlist preview: ' + error.message);
+        next(error);
+        return;
+    }
+}
+
+exports.createSmartPlaylist = async function(req, res, next)
+{
+    try
+    {
+        // Get track data and information needed to create the smart playlist
+        var smartPlaylistData = await getSmartPlaylistData(req, res, next);
+
+        // Only thing we do not have supplied from the user is their user ID
+        // The app has to get their user ID first to attach this new playlist to their profile
+        req.body.userId = await spotifyClient.getCurrentUserId(req, res);
+
+        // For visibility purposes, prepend the name of the smart playlist with the app name
+        req.body.playlistName = playlistNamePrefix + req.body.playlistName;
+        req.body.playlistDescription = getPlaylistDescription(smartPlaylistData.limitData, smartPlaylistData.orderData);
+        var createPlaylistResponse = await spotifyClient.createSinglePlaylist(req, res);
+
+        // Now that we have created the playlist, we want to add the valid songs to it based on the smart playlist rules
+        var playlistId = createPlaylistResponse.id;
+        req.body.playlistId = playlistId;
+        req.body.trackUris = smartPlaylistData.trackData.map(getUriFromSavedTrack);
+        var addTracksToPlaylistResponse = await spotifyClient.addTracksToPlaylist(req, res);
+
+        // Finally, we want to show the user info about their new playlist, so retrieve that data after songs were inserted
+        // TODO - Consider the possibility of splitting up previewing the songs to be on a playlist (in a table) before creating it
+        req.query.playlistId = playlistId;
+        var getPlaylistResponse = await spotifyClient.getSinglePlaylist(req, res);
+
+        var playlistData = {
+            playlistId: getPlaylistResponse.id,
+            playlistName: getPlaylistResponse.name,
+            playlistDescription: getPlaylistResponse.description,
+            isCollaborative: getPlaylistResponse.collaborative,
+            isPublic: getPlaylistResponse.public,
+            followersCount: getPlaylistResponse.followers.total,
+            trackCount: getPlaylistResponse.tracks.total,
+            images: getPlaylistResponse.images,
+            deleted: false
+        };
+
+        // Shove the playlist response data onto the playlist page for the user to interact with
+        res.location('/playlist');
+        res.render('viewPlaylist', playlistData);
+    }
+    catch (error)
+    {
+        logger.logError('Failed to create smart playlist: ' + error.message);
+        next(error);
+        return;
+    }
+}
+
+// Local Helper Functions
+
+// Track Retrieval Functions
+getSmartPlaylistData = async function(req, res, next)
 {
     try
     {
@@ -153,59 +228,6 @@ exports.getSmartPlaylistData = async function(req, res, next)
         return;
     }
 }
-
-exports.createSmartPlaylist = async function(req, res, next)
-{
-    try
-    {
-        // Get track data and information needed to create the smart playlist
-        var smartPlaylistData = await exports.getSmartPlaylistData(req, res, next);
-
-        // Only thing we do not have supplied from the user is their user ID
-        // The app has to get their user ID first to attach this new playlist to their profile
-        req.body.userId = await spotifyClient.getCurrentUserId(req, res);
-
-        // For visibility purposes, prepend the name of the smart playlist with the app name
-        req.body.playlistName = playlistNamePrefix + req.body.playlistName;
-        req.body.playlistDescription = getPlaylistDescription(smartPlaylistData.limitData, smartPlaylistData.orderData);
-        var createPlaylistResponse = await spotifyClient.createSinglePlaylist(req, res);
-
-        // Now that we have created the playlist, we want to add the valid songs to it based on the smart playlist rules
-        var playlistId = createPlaylistResponse.id;
-        req.body.playlistId = playlistId;
-        req.body.trackUris = smartPlaylistData.trackData.map(getUriFromSavedTrack);
-        var addTracksToPlaylistResponse = await spotifyClient.addTracksToPlaylist(req, res);
-
-        // Finally, we want to show the user info about their new playlist, so retrieve that data after songs were inserted
-        // TODO - Consider the possibility of splitting up previewing the songs to be on a playlist (in a table) before creating it
-        req.query.playlistId = playlistId;
-        var getPlaylistResponse = await spotifyClient.getSinglePlaylist(req, res);
-
-        var playlistData = {
-            playlistId: getPlaylistResponse.id,
-            playlistName: getPlaylistResponse.name,
-            playlistDescription: getPlaylistResponse.description,
-            isCollaborative: getPlaylistResponse.collaborative,
-            isPublic: getPlaylistResponse.public,
-            followersCount: getPlaylistResponse.followers.total,
-            trackCount: getPlaylistResponse.tracks.total,
-            images: getPlaylistResponse.images,
-            deleted: false
-        };
-
-        // Shove the playlist response data onto the playlist page for the user to interact with
-        res.location('/playlist');
-        res.render('viewPlaylist', playlistData);
-    }
-    catch (error)
-    {
-        logger.logError('Failed to create smart playlist: ' + error.message);
-        next(error);
-        return;
-    }
-}
-
-// Local Helper Functions
 
 // Playlist Functions
 getPlaylistLimits = function(req)

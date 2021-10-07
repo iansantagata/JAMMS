@@ -76,7 +76,7 @@ app.post('/createPlaylist', playlist.createPlaylist);
 // Smart Playlist Logic
 app.get('/createSmartPlaylist', smartPlaylist.createSmartPlaylistPage);
 app.post('/createSmartPlaylist', smartPlaylist.createSmartPlaylist);
-app.post('/getSmartPlaylistData', smartPlaylist.getSmartPlaylistData);
+app.post('/getSmartPlaylistPreview', smartPlaylist.getSmartPlaylistPreview);
 
 logger.logInfo('Set up endpoint routing');
 
