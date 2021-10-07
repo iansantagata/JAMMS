@@ -91,9 +91,9 @@ function controlLoadingOfFormSubmitAction()
     formElement.submit();
 }
 
-function getClosestForm(eventElement)
+function getClosestForm(element)
 {
-    var formElement = eventElement.closest("form");
+    var formElement = element.closest("form");
     return formElement;
 }
 
