@@ -24,6 +24,7 @@ function controlEnablementOfOrderElements()
 
 function previewSmartPlaylist()
 {
+    // First, make sure the event fired correctly and the form is valid
     var eventTargetId = event.target.id;
     var eventElement = document.getElementById(eventTargetId);
 
@@ -39,9 +40,18 @@ function previewSmartPlaylist()
         return;
     }
 
+    // Next, trigger the loading icon for the button
     controlEnablementOfElement(eventElement);
     replaceElementContentsWithLoadingIndicator(eventElement, true);
 
+    // In case there was a previous error in place, remove it so the user does not get confused
+    var errorContainerElement = document.getElementById("previewErrorMessage");
+    if (errorContainerElement !== undefined && errorContainerElement !== null)
+    {
+        errorContainerElement.remove();
+    }
+
+    // Grab the form data and pump it into a JSON object
     var formData = new FormData(formElement);
     var plainFormData = Object.fromEntries(formData.entries());
     var formDataJson = JSON.stringify(plainFormData);
@@ -55,17 +65,50 @@ function previewSmartPlaylist()
         body: formDataJson
     };
 
-    // Make the AJAX call and handle the response
+    // Make the AJAX call and handle the response by displaying the preview data
     fetch("/getSmartPlaylistPreview", fetchOptions)
         .then(response => response.json())
         .then(displaySmartPlaylistPreview)
-        .catch(error => console.error(error.message));
+        .catch(handlePlaylistPreviewError);
         // TODO - Add a finally where the generate preview button is restored (not loading anymore and enabled again)
+}
+
+function handlePlaylistPreviewError(error)
+{
+    // TODO - Might be a good idea to throw the preview into a modal of its own
+    // TODO - Would probably be best to convert this to an alert line or something instead of a paragraph (see Bootstrap)
+    var paragraphElement = document.createElement("p");
+    paragraphElement.innerText = "Unable to find any tracks to preview with the last submitted rules and settings!";
+
+    var errorContainerDivElement = document.createElement("div");
+    errorContainerDivElement.setAttribute("id", "previewErrorMessage");
+    errorContainerDivElement.setAttribute("class", "my-3");
+    errorContainerDivElement.appendChild(paragraphElement);
+
+    // Finally, append all of this new content onto the end of the existing form
+    var formElement = document.getElementById("createSmartPlaylistForm");
+    formElement.appendChild(errorContainerDivElement);
+
+    // Log error to the console for developer visibility, even though it is handled in the UI
+    console.error(error.message);
 }
 
 function displaySmartPlaylistPreview(data)
 {
-    // TODO - If there are no tracks returned, handle that case
+    if (data === undefined || data === null)
+    {
+        var dataNotFoundError = new Error("Failed to find AJAX response data");
+        handlePlaylistPreviewError(dataNotFoundError);
+        return;
+    }
+
+    if (data.length === undefined || data.length <= 0)
+    {
+        var tracksNotFoundError = new Error("Failed to find tracks in AJAX response data");
+        handlePlaylistPreviewError(tracksNotFoundError);
+        return;
+    }
+
     // TODO - Put a notification somewhere if the preview is no longer accurate (the form has changed since last submit)
 
     // Start with a header to indicate that this is the preview tracks section
@@ -125,6 +168,8 @@ function displaySmartPlaylistPreview(data)
         tableBodyHeaderCellElement.setAttribute("class", "align-middle");
         tableBodyHeaderCellElement.innerText = trackNumber;
 
+        // TODO - Better error handling in case some of this data does not exist (like track.name, or album.images, etc)
+
         // Track Name
         var tableBodyFirstDataElement = document.createElement("td");
         tableBodyFirstDataElement.setAttribute("class", "align-middle text-capitalize");
@@ -133,7 +178,7 @@ function displaySmartPlaylistPreview(data)
         // Artist Name(s)
         var tableBodySecondDataElement = document.createElement("td");
         tableBodySecondDataElement.setAttribute("class", "align-middle text-capitalize");
-        tableBodySecondDataElement.innerText = concatenateArtistNames(track);
+        tableBodySecondDataElement.innerText = getCommaSeparatedArtistNames(track.artists);
 
         // Album Name
         var tableBodyThirdDataElement = document.createElement("td");
@@ -141,7 +186,10 @@ function displaySmartPlaylistPreview(data)
         tableBodyThirdDataElement.innerText = track.album.name;
 
         // Album Art
-        var albumArtPath = getVisibleAlbumArtPath(track.album);
+        var defaultImagePath = "/images/question.png";
+        var minimumPixelsPerSide = 64;
+        var albumArtPath = getImagePath(track.album.images, minimumPixelsPerSide, defaultImagePath);
+
         var albumArtImageElement = document.createElement("img");
         albumArtImageElement.setAttribute("class", "img-fluid");
         albumArtImageElement.setAttribute("alt", "Album Named " + track.album.name);
@@ -352,45 +400,4 @@ function removeRuleFormFields()
     var targetRuleId = "rule-" + targetRuleNumber;
     var targetRuleElement = document.getElementById(targetRuleId);
     targetRuleElement.remove();
-}
-
-// TODO - Move this to helper functions and perhaps rename
-function concatenateArtistNames(track)
-{
-    var artistNames = "";
-
-    // Smush all the artists of a track together into a comma separated string
-    for (var artist of track.artists)
-    {
-        artistNames = artistNames + artist.name + ", ";
-    }
-
-    // Remove the trailing comma and space
-    artistNames = artistNames.substring(0, artistNames.length - 2);
-    return artistNames;
-}
-
-// TODO - Perhaps move this to helper functions and rename
-function getVisibleAlbumArtPath(album)
-{
-    // Images are ordered from widest to smallest width, so start at the end to keep images small-ish yet reasonably visible
-    var imageIndex = album.images.length - 1;
-
-    // We want images that are at least over 64 pixels in both dimensions for the user to see them
-    // If there are none, we will end up using the first and biggest image
-    while (imageIndex > 0 &&
-      album.images[imageIndex] !== undefined &&
-      (album.images[imageIndex].width < 64 ||
-      album.images[imageIndex].height < 64))
-    {
-        imageIndex = imageIndex - 1;
-    }
-
-    if (album.images[imageIndex] !== undefined)
-    {
-        return album.images[imageIndex].url;
-    }
-
-    // If no image was found, use the default album art image signifying this
-    return "images/question.png";
 }

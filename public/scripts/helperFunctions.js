@@ -132,3 +132,96 @@ function replaceElementContentsWithLoadingIndicator(element, showLoadingText)
         element.appendChild(textNode);
     }
 }
+
+// Spotify Object Specific Functions
+function getCommaSeparatedArtistNames(artists)
+{
+    if (artists === undefined || artists === null)
+    {
+        return "";
+    }
+
+    // Smush all the artists of a track together into a comma separated string
+    var artistNames = "";
+    for (var artist of artists)
+    {
+        // Make sure the artist has a name, and if not, do not include it
+        if (artist.name !== undefined || artist.name !== null || artist.name !== "")
+        {
+            artistNames = artistNames + artist.name + ", ";
+        }
+    }
+
+    // Remove the trailing comma and space (if there is one)
+    var lastCommaIndex = artistNames.lastIndexOf(",");
+    if (lastCommaIndex === -1)
+    {
+        return artistNames;
+    }
+
+    artistNames = artistNames.substring(0, lastCommaIndex);
+    return artistNames;
+}
+
+function getImagePath(images, minimumPixelsPerSide, defaultImagePath)
+{
+    // Make sure we actually have images, or else we can short circuit
+    if (images === undefined || images === null || images.length === 0)
+    {
+        return defaultImagePath;
+    }
+
+    // Images are ordered from widest to smallest width, so start at the end to keep images small-ish yet reasonably visible
+    var imageIndex = images.length - 1;
+
+    // We want images that are at least over the minimum pixels in both dimensions for the user to see them
+    // If there are none, we will end up using the first and biggest image
+    while (imageIndex < 0)
+    {
+        // If the image is not valid, keep going to the next image
+        var image = images[imageIndex];
+        if (image === undefined || image === null)
+        {
+            imageIndex--;
+            continue;
+        }
+
+        // Make sure the image has all the information we need
+        var hasWidth = image.width !== undefined && image.width !== null;
+        var hasHeight = image.height !== undefined && image.height !== null;
+        var hasUrl = image.url !== undefined && image.url !== null && image.url !== "";
+
+        if (!hasWidth || !hasHeight || !hasUrl)
+        {
+            imageIndex--;
+            continue;
+        }
+
+        // Make sure the image can satisfy the minimum bounds
+        if (image.width >= minimumPixelsPerSide && image.height >= minimumPixelsPerSide)
+        {
+            // We have found our image index so we can exit the loop
+            break;
+        }
+
+        imageIndex = imageIndex - 1;
+    }
+
+    // Image was not found, so use the default image
+    var targetImage = images[imageIndex];
+    if (targetImage === undefined || targetImage === null)
+    {
+        return defaultImagePath;
+    }
+
+
+    // The URL was invalid, so use the default image
+    var targetImageUrl = targetImage.url;
+    if (targetImageUrl === undefined || targetImageUrl === null || targetImageUrl === "")
+    {
+        return defaultImagePath;
+    }
+
+    // The URL is a valid one, so use it to point to the biggest valid image
+    return targetImage.url;
+}
