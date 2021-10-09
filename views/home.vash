@@ -6,6 +6,102 @@
 		<h3 class="mb-3">Your Playlists</h3>
 		<p>You currently have <b>@model.numberOfPlaylists</b> playlists saved in Spotify!</p>
 
+    @{
+      // Note - Copied from helperFunctions.js because Vash cannot talk to scripts (they have different evaluation times and scopes)
+      // TODO - Figure out a way to consolidate these functions (that are the same) into a single place for maintainability
+      function getCommaSeparatedArtistNames(artists)
+      {
+          if (artists === undefined || artists === null)
+          {
+              return "";
+          }
+
+          // Smush all the artists of a track together into a comma separated string
+          var artistNames = "";
+          for (var artist of artists)
+          {
+              // Make sure the artist has a name, and if not, do not include it
+              if (artist.name !== undefined || artist.name !== null || artist.name !== "")
+              {
+                  artistNames = artistNames + artist.name + ", ";
+              }
+          }
+
+          // Remove the trailing comma and space (if there is one)
+          var lastCommaIndex = artistNames.lastIndexOf(",");
+          if (lastCommaIndex === -1)
+          {
+              return artistNames;
+          }
+
+          artistNames = artistNames.substring(0, lastCommaIndex);
+          return artistNames;
+      }
+
+      function getImagePath(images, minimumPixelsPerSide, defaultImagePath)
+      {
+          // Make sure we actually have images, or else we can short circuit
+          if (images === undefined || images === null || images.length === 0)
+          {
+              return defaultImagePath;
+          }
+
+          // Images are ordered from widest to smallest width, so start at the end to keep images small-ish yet reasonably visible
+          var imageIndex = images.length - 1;
+
+          // We want images that are at least over the minimum pixels in both dimensions for the user to see them
+          // If there are none, we will end up using the first and biggest image
+          while (imageIndex < 0)
+          {
+              // If the image is not valid, keep going to the next image
+              var image = images[imageIndex];
+              if (image === undefined || image === null)
+              {
+                  imageIndex--;
+                  continue;
+              }
+
+              // Make sure the image has all the information we need
+              var hasWidth = image.width !== undefined && image.width !== null;
+              var hasHeight = image.height !== undefined && image.height !== null;
+              var hasUrl = image.url !== undefined && image.url !== null && image.url !== "";
+
+              if (!hasWidth || !hasHeight || !hasUrl)
+              {
+                  imageIndex--;
+                  continue;
+              }
+
+              // Make sure the image can satisfy the minimum bounds
+              if (image.width >= minimumPixelsPerSide && image.height >= minimumPixelsPerSide)
+              {
+                  // We have found our image index so we can exit the loop
+                  break;
+              }
+
+              imageIndex = imageIndex - 1;
+          }
+
+          // Image was not found, so use the default image
+          var targetImage = images[imageIndex];
+          if (targetImage === undefined || targetImage === null)
+          {
+              return defaultImagePath;
+          }
+
+
+          // The URL was invalid, so use the default image
+          var targetImageUrl = targetImage.url;
+          if (targetImageUrl === undefined || targetImageUrl === null || targetImageUrl === "")
+          {
+              return defaultImagePath;
+          }
+
+          // The URL is a valid one, so use it to point to the biggest valid image
+          return targetImage.url;
+      }
+    }
+
     @if(model.samplePlaylistData.length > 0)
 		{
       <p>Some of your playlists are listed below!</p>
@@ -23,11 +119,13 @@
           </thead>
           <tbody>
             @{
-              var playlistCount = 1;
+              var playlistCount = 0;
             }
 
             @model.samplePlaylistData.forEach(function(item)
             {
+              playlistCount++;
+
               <tr>
                 <th scope="row" class="align-middle">@playlistCount</th>
                 <td class="align-middle text-capitalize">@item.name</td>
@@ -40,33 +138,13 @@
                 </td>
                 <td class="align-middle col-md-2">
                   @{
-                    // Images are ordered from widest to smallest width, so start at the end to keep images small-ish yet reasonably visible
-                    var playlistImageIndex = item.images.length - 1;
-                    // We want images that are at least over 50 pixels in both dimensions for the user to see them
-                    // If there are none, we will end up using the first and biggest image
-
-                    while (playlistImageIndex > 0 &&
-                      item.images[playlistImageIndex] !== undefined &&
-                      (item.images[playlistImageIndex].width < 50 ||
-                      item.images[playlistImageIndex].height < 50))
-                    {
-                      playlistImageIndex = playlistImageIndex - 1;
-                    }
+                    var minimumPixelsPerSide = 50;
+                    var defaultImagePath = "images/question_small.png";
+                    var playlistImagePath = getImagePath(item.images, minimumPixelsPerSide, defaultImagePath);
                   }
-
-                  @if(item.images[playlistImageIndex] !== undefined)
-                  {
-                    <img src="@item.images[playlistImageIndex].url" class="img-fluid" alt="Playlist Named @item.name" />
-                  }
-                  else
-                  {
-                    <img src="images/question_small.png" class="img-fluid" alt="Playlist Named @item.name" />
-                  }
+                  <img src="@playlistImagePath" class="img-fluid" alt="Playlist Named @item.name" />
                 </td>
               </tr>
-              @{
-                playlistCount++;
-              }
             })
           </tbody>
         </table>
@@ -108,55 +186,35 @@
           </thead>
           <tbody>
             @{
-              var trackCount = 1;
+              var trackCount = 0;
             }
             @model.sampleTrackData.forEach(function(item)
             {
+              trackCount++;
+
               <tr>
                 <th scope="row" class="align-middle">@trackCount</th>
                 <td class="align-middle text-capitalize">@item.name</td>
                 @{
-                  var artistNames = "";
-
-                  // Smush all the artists of a track together into a comma separated string
-                  for (var artist of item.artists)
-                  {
-                    artistNames = artistNames + artist.name + ", ";
-                  }
-
-                  // Remove the trailing comma and space
-                  artistNames = artistNames.substring(0, artistNames.length - 2);
+                  var artistNames = getCommaSeparatedArtistNames(item.artists);
                 }
                 <td class="align-middle text-capitalize">@artistNames</td>
                 <td class="align-middle text-capitalize">@item.album.name</td>
                 <td class="align-middle col-md-2">
                   @{
-                    // Images are ordered from widest to smallest width, so start at the end to keep images small-ish yet reasonably visible
-                    var trackImageIndex = item.album.images.length - 1;
-                    // We want images that are at least over 64 pixels in both dimensions for the user to see them
-                    // If there are none, we will end up using the first and biggest image
-                    while (trackImageIndex > 0 &&
-                      item.album.images[trackImageIndex] !== undefined &&
-                      (item.album.images[trackImageIndex].width < 64 ||
-                      item.album.images[trackImageIndex].height < 64))
+                    var minimumPixelsPerSide = 64;
+                    var defaultImagePath = "images/question.png";
+                    var albumImagePath = defaultImagePath;
+
+                    // Make sure we have an album to grab an image from, otherwise use the default
+                    if (item.album !== undefined && item.album !== null)
                     {
-                      trackImageIndex = trackImageIndex - 1;
+                      albumImagePath = getImagePath(item.album.images, minimumPixelsPerSide, defaultImagePath);
                     }
                   }
-
-                  @if(item.album.images[trackImageIndex] !== undefined)
-                  {
-                    <img src="@item.album.images[trackImageIndex].url" class="img-fluid" alt="Album Named @item.album.name" />
-                  }
-                  else
-                  {
-                    <img src="images/question.png" class="img-fluid" alt="Album Named @item.album.name" />
-                  }
+                  <img src="@albumImagePath" class="img-fluid" alt="Album Named @item.album.name" />
                 </td>
               </tr>
-              @{
-                trackCount++;
-              }
             })
           </tbody>
         </table>
@@ -182,10 +240,12 @@
           </thead>
           <tbody>
             @{
-              var artistCount = 1;
+              var artistCount = 0;
             }
             @model.sampleArtistData.forEach(function(item)
             {
+              artistCount++;
+
               <tr>
                 <th scope="row" class="align-middle">@artistCount</th>
                 <td class="align-middle text-capitalize">@item.name</td>
@@ -198,32 +258,13 @@
                 </td>
                 <td class="align-middle col-md-2">
                   @{
-                    // Images are ordered from widest to smallest width, so start at the end to keep images small-ish yet reasonably visible
-                    var artistImageIndex = item.images.length - 1;
-                    // We want images that are at least over 100 pixels in both dimensions for the user to see them
-                    // If there are none, we will end up using the first and biggest image
-                    while (artistImageIndex > 0 &&
-                      item.images[artistImageIndex] !== undefined &&
-                      (item.images[artistImageIndex].width < 100 ||
-                      item.images[artistImageIndex].height < 100))
-                    {
-                      artistImageIndex = artistImageIndex - 1;
-                    }
+                    var minimumPixelsPerSide = 100;
+                    var defaultImagePath = "images/question.png";
+                    var artistImagePath = getImagePath(item.images, minimumPixelsPerSide, defaultImagePath);
                   }
-
-                  @if(item.images[artistImageIndex] !== undefined)
-                  {
-                    <img src="@item.images[artistImageIndex].url" class="img-fluid" alt="Artist Named @item.name" />
-                  }
-                  else
-                  {
-                    <img src="images/question.png" class="img-fluid" alt="Artist Named @item.name" />
-                  }
+                  <img src="@artistImagePath" class="img-fluid" alt="Artist Named @item.name" />
                 </td>
               </tr>
-              @{
-                artistCount++;
-              }
             })
           </tbody>
         </table>

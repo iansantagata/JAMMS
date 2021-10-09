@@ -46,6 +46,7 @@ var app = express();
 app.use(express.static(staticFilesPath))
    .use(cors())
    .use(cookieParser(cookieSigningKey))
+   .use(express.json())
    .use(express.urlencoded({ extended: true }));
 
  // Setup Templating Views
@@ -75,6 +76,7 @@ app.post('/createPlaylist', playlist.createPlaylist);
 // Smart Playlist Logic
 app.get('/createSmartPlaylist', smartPlaylist.createSmartPlaylistPage);
 app.post('/createSmartPlaylist', smartPlaylist.createSmartPlaylist);
+app.post('/getSmartPlaylistPreview', smartPlaylist.getSmartPlaylistPreview);
 
 logger.logInfo('Set up endpoint routing');
 

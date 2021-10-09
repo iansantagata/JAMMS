@@ -16,6 +16,8 @@ const playlistDescriptionOrder = "order";
 const playlistDescriptionSpace = " ";
 const playlistDescriptionPeriod = "."
 
+const playlistPreviewLimit = 25;
+
 // Smart Playlist Logic
 exports.createSmartPlaylistPage = function(req, res, next)
 {
@@ -33,12 +35,88 @@ exports.createSmartPlaylistPage = function(req, res, next)
     }
 }
 
+exports.getSmartPlaylistPreview = async function(req, res, next)
+{
+    try
+    {
+        // Set that this is to be a playlist preview (which will short circuit some extra work not needed for a preview)
+        req.body.isPlaylistPreview = true;
+
+        var smartPlaylistData = await getSmartPlaylistData(req, res, next);
+        var playlistPreviewData = smartPlaylistData.trackData;
+
+        // Send the preview data back to the caller without reloading the page
+        res.set('Content-Type', 'application/json');
+        res.send(playlistPreviewData);
+        return;
+    }
+    catch (error)
+    {
+        logger.logError('Failed to get smart playlist preview: ' + error.message);
+        next(error);
+        return;
+    }
+}
+
 exports.createSmartPlaylist = async function(req, res, next)
 {
-    // Create a new smart playlist based on the user's request parameters
+    try
+    {
+        // Get track data and information needed to create the smart playlist
+        var smartPlaylistData = await getSmartPlaylistData(req, res, next);
+
+        // Only thing we do not have supplied from the user is their user ID
+        // The app has to get their user ID first to attach this new playlist to their profile
+        req.body.userId = await spotifyClient.getCurrentUserId(req, res);
+
+        // For visibility purposes, prepend the name of the smart playlist with the app name
+        req.body.playlistName = playlistNamePrefix + req.body.playlistName;
+        req.body.playlistDescription = getPlaylistDescription(smartPlaylistData.limitData, smartPlaylistData.orderData);
+        var createPlaylistResponse = await spotifyClient.createSinglePlaylist(req, res);
+
+        // Now that we have created the playlist, we want to add the valid songs to it based on the smart playlist rules
+        var playlistId = createPlaylistResponse.id;
+        req.body.playlistId = playlistId;
+        req.body.trackUris = smartPlaylistData.trackData.map(getUriFromSavedTrack);
+        var addTracksToPlaylistResponse = await spotifyClient.addTracksToPlaylist(req, res);
+
+        // Finally, we want to show the user info about their new playlist, so retrieve that data after songs were inserted
+        req.query.playlistId = playlistId;
+        var getPlaylistResponse = await spotifyClient.getSinglePlaylist(req, res);
+
+        var playlistData = {
+            playlistId: getPlaylistResponse.id,
+            playlistName: getPlaylistResponse.name,
+            playlistDescription: getPlaylistResponse.description,
+            isCollaborative: getPlaylistResponse.collaborative,
+            isPublic: getPlaylistResponse.public,
+            followersCount: getPlaylistResponse.followers.total,
+            trackCount: getPlaylistResponse.tracks.total,
+            images: getPlaylistResponse.images,
+            deleted: false
+        };
+
+        // Shove the playlist response data onto the playlist page for the user to interact with
+        res.location('/playlist');
+        res.render('viewPlaylist', playlistData);
+    }
+    catch (error)
+    {
+        logger.logError('Failed to create smart playlist: ' + error.message);
+        next(error);
+        return;
+    }
+}
+
+// Local Helper Functions
+
+// Track Retrieval Functions
+getSmartPlaylistData = async function(req, res, next)
+{
     try
     {
         // First, process all of the rules and optional settings from the request
+        var isPlaylistPreview = !!req.body.isPlaylistPreview;
         var playlistLimitData = getPlaylistLimits(req);
         var playlistOrderData = getPlaylistOrdering(req);
         var playlistRules = getPlaylistRules(req);
@@ -47,14 +125,14 @@ exports.createSmartPlaylist = async function(req, res, next)
         var tracksInPlaylist = [];
         var trackOrderingInPlaylist = [];
         var timeOfTracksInPlaylistInMsec = 0;
-        var existMoreBatchesToRetrieve = true;
+        var canRetrieveMoreBatches = true;
 
         req.query.pageNumber = 1; // Start with first page
         req.query.tracksPerPage = 50; // Maximum value of tracks to retrieve per page
 
         // Loop over all songs in the library in batches
         // TODO - Make the song retrieval area configurable (library, playlist, etc)
-        while (existMoreBatchesToRetrieve)
+        while (canRetrieveMoreBatches)
         {
             // Get all the tracks in this batch
             var getAllTracksBatchedResponse = await spotifyClient.getAllTracks(req, res);
@@ -69,7 +147,7 @@ exports.createSmartPlaylist = async function(req, res, next)
             // If there are no more tracks to retrieve from the library after these ones, mark that so we do not continue endlessly
             if (tracksProcessed >= totalTracks)
             {
-                existMoreBatchesToRetrieve = false;
+                canRetrieveMoreBatches = false;
             }
 
             // Process each track in the batch
@@ -109,6 +187,18 @@ exports.createSmartPlaylist = async function(req, res, next)
                     // If order does not matter, just add the track to the end of the list
                     trackOrderingInPlaylist.push(lastTrackAddedIndex);
                 }
+
+                // If this is a playlist preview, we want to get the first set of songs that satisfy the requirements quickly
+                // We want to be conscious of processing time, so we do not need to get all the songs in the library to create the playlist yet
+                // Thus, we can just stop grabbing new batches and processing tracks once we have reached the desired limit
+                if (isPlaylistPreview && tracksInPlaylist.length >= playlistPreviewLimit)
+                {
+                    // Will break out of the batch processing loop
+                    canRetrieveMoreBatches = false;
+
+                    // Breaks out of the track processing loop for a single batch
+                    break;
+                }
             }
         }
 
@@ -139,55 +229,26 @@ exports.createSmartPlaylist = async function(req, res, next)
             orderedTracksInPlaylist.push(tracksInPlaylist[trackIndex]);
         }
 
-        // Only thing we do not have supplied from the user is their user ID
-        // The app has to get their user ID first to attach this new playlist to their profile
-        req.body.userId = await spotifyClient.getCurrentUserId(req, res);
-
-        // For visibility purposes, prepend the name of the smart playlist with the app name
-        req.body.playlistName = playlistNamePrefix + req.body.playlistName;
-        req.body.playlistDescription = getPlaylistDescription(playlistLimitData, playlistOrderData);
-        var createPlaylistResponse = await spotifyClient.createSinglePlaylist(req, res);
-
-        // Now that we have created the playlist, we want to add the valid songs to it based on the smart playlist rules
-        var playlistId = createPlaylistResponse.id;
-        req.body.playlistId = playlistId;
-        req.body.trackUris = orderedTracksInPlaylist.map(getUriFromSavedTrack);
-        var addTracksToPlaylistResponse = await spotifyClient.addTracksToPlaylist(req, res);
-
-        // Finally, we want to show the user info about their new playlist, so retrieve that data after songs were inserted
-        // TODO - Consider the possibility of splitting up previewing the songs to be on a playlist (in a table) before creating it
-        req.query.playlistId = playlistId;
-        var getPlaylistResponse = await spotifyClient.getSinglePlaylist(req, res);
-
-        var playlistData = {
-            playlistId: getPlaylistResponse.id,
-            playlistName: getPlaylistResponse.name,
-            playlistDescription: getPlaylistResponse.description,
-            isCollaborative: getPlaylistResponse.collaborative,
-            isPublic: getPlaylistResponse.public,
-            followersCount: getPlaylistResponse.followers.total,
-            trackCount: getPlaylistResponse.tracks.total,
-            images: getPlaylistResponse.images,
-            deleted: false
+        var smartPlaylistData = {
+            limitData: playlistLimitData,
+            orderData: playlistOrderData,
+            trackData: orderedTracksInPlaylist
         };
 
-        // Shove the playlist response data onto the playlist page for the user to interact with
-        res.location('/playlist');
-        res.render('viewPlaylist', playlistData);
+        return smartPlaylistData;
     }
     catch (error)
     {
-        logger.logError('Failed to create smart playlist: ' + error.message);
+        logger.logError('Failed to get smart playlist tracks: ' + error.message);
         next(error);
         return;
     }
 }
 
-// Local Helper Functions
-
 // Playlist Functions
 getPlaylistLimits = function(req)
 {
+    // TODO - Change these to !! instead of long if-else statements (beware of gotchas like !!"false" which is true!)
     var isPlaylistLimitEnabled = req.body.playlistLimitEnabled || null;
     if (isPlaylistLimitEnabled === undefined || isPlaylistLimitEnabled === null)
     {
