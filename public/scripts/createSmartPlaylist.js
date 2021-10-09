@@ -123,6 +123,18 @@ function displaySmartPlaylistPreview(data)
         return;
     }
 
+    // Extract the saved tracks from the response data, removing garbage data if there is any
+    var tracks = data
+            .map(item => item?.track ?? null)
+            .filter(mappedItem => mappedItem !== null);
+
+    if (tracks === undefined || tracks === null || tracks.length <= 0)
+    {
+        var tracksNotFoundError = new Error("Failed to find valid tracks information in AJAX response data");
+        handlePlaylistPreviewError(tracksNotFoundError);
+        return;
+    }
+
     // Start with a header to indicate that this is the preview tracks section
     var headerElement = document.createElement("h4");
     headerElement.setAttribute("class", "my-3");
@@ -181,18 +193,14 @@ function displaySmartPlaylistPreview(data)
     var trackNumber = 0;
     var tableBodyElement = document.createElement("tbody");
 
-    for (var savedTrackData of data)
+    for (var track of tracks)
     {
-        trackNumber++;
-        var track = savedTrackData.track;
-
         // Track Number
+        trackNumber++;
         var tableBodyHeaderCellElement = document.createElement("th");
         tableBodyHeaderCellElement.setAttribute("scope", "row");
         tableBodyHeaderCellElement.setAttribute("class", "align-middle");
         tableBodyHeaderCellElement.innerText = trackNumber;
-
-        // TODO - Better error handling in case some of this data does not exist (like track.name, or album.images, etc)
 
         // Track Name
         var tableBodyFirstDataElement = document.createElement("td");
@@ -205,6 +213,10 @@ function displaySmartPlaylistPreview(data)
         tableBodySecondDataElement.innerText = getCommaSeparatedArtistNames(track.artists);
 
         // Album Name
+        if (track.album === undefined || track.album === null)
+        {
+            track.album = {};
+        }
         var tableBodyThirdDataElement = document.createElement("td");
         tableBodyThirdDataElement.setAttribute("class", "align-middle text-capitalize");
         tableBodyThirdDataElement.innerText = track.album.name;
