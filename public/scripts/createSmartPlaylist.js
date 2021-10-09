@@ -82,19 +82,22 @@ function previewSmartPlaylist()
 
 function handlePlaylistPreviewError(error)
 {
-    // TODO - Might be a good idea to throw the preview into a modal of its own
-    // TODO - Would probably be best to convert this to an alert line or something instead of a paragraph (see Bootstrap)
-    var paragraphElement = document.createElement("p");
-    paragraphElement.innerText = "Unable to find any tracks to preview with the last submitted rules and settings!";
+    // Create an alert telling the user there is a problem
+    var textElement = document.createTextNode("Unable to find any tracks to preview with the submitted rules and settings.");
 
-    var errorContainerDivElement = document.createElement("div");
-    errorContainerDivElement.setAttribute("id", "previewErrorMessage");
-    errorContainerDivElement.setAttribute("class", "my-3");
-    errorContainerDivElement.appendChild(paragraphElement);
+    var alertImageElement = document.createElement("i");
+    alertImageElement.setAttribute("class", "bi-exclamation-triangle-fill mx-2");
+
+    var alertDivElement = document.createElement("div");
+    alertDivElement.setAttribute("id", "previewErrorMessage");
+    alertDivElement.setAttribute("class", "alert alert-danger my-3");
+    alertDivElement.setAttribute("role", "alert");
+    alertDivElement.appendChild(alertImageElement);
+    alertDivElement.appendChild(textElement);
 
     // Finally, append all of this new content onto the end of the existing form
     var formElement = document.getElementById("createSmartPlaylistForm");
-    formElement.appendChild(errorContainerDivElement);
+    formElement.appendChild(alertDivElement);
 
     // Log error to the console for developer visibility, even though it is handled in the UI
     console.error(error.message);
@@ -102,6 +105,8 @@ function handlePlaylistPreviewError(error)
 
 function displaySmartPlaylistPreview(data)
 {
+    // TODO - Might be a good idea to throw the preview into a modal of its own instead of on the same page
+    // TODO - That does come with some pros and cons however (editing rules in place, regenerating previews, etc)
     if (data === undefined || data === null)
     {
         var dataNotFoundError = new Error("Failed to find AJAX response data");
