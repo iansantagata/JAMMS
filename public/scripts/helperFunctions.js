@@ -14,6 +14,21 @@ function addOnClickEventListenerToElement(element, callback)
     }
 }
 
+function addOnChangeEventListenerToElementById(id, callback)
+{
+    var element = document.getElementById(id);
+    addOnChangeEventListenerToElement(element, callback);
+}
+
+function addOnChangeEventListenerToElement(element, callback)
+{
+    // Only try to add event listeners when we actually find the target element
+    if (element !== undefined && element !== null)
+    {
+        element.addEventListener("change", callback);
+    }
+}
+
 function controlEnablementOfElementById(id)
 {
     var element = document.getElementById(id);

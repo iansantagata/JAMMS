@@ -9,6 +9,8 @@ addOnClickEventListenerToElementById("addRuleButton", addRuleFormFields);
 
 addOnClickEventListenerToElementById("generateSmartPlaylistPreviewButton", previewSmartPlaylist);
 
+addOnChangeEventListenerToElementById("createSmartPlaylistForm", displayPreviewOutOfDateAlert);
+
 // DOM Specific Functions
 function controlEnablementOfLimitElements()
 {
@@ -83,10 +85,10 @@ function previewSmartPlaylist()
 function handlePlaylistPreviewError(error)
 {
     // Create an alert telling the user there is a problem
-    var textElement = document.createTextNode("Unable to find any tracks to preview with the submitted rules and settings.");
+    var textElement = document.createTextNode("Error - Unable to find any tracks to preview with the submitted rules and settings.");
 
     var alertImageElement = document.createElement("i");
-    alertImageElement.setAttribute("class", "bi-exclamation-triangle-fill mx-2");
+    alertImageElement.setAttribute("class", "bi-x-circle-fill mx-2");
 
     var alertDivElement = document.createElement("div");
     alertDivElement.setAttribute("id", "previewErrorMessage");
@@ -120,8 +122,6 @@ function displaySmartPlaylistPreview(data)
         handlePlaylistPreviewError(tracksNotFoundError);
         return;
     }
-
-    // TODO - Put a notification somewhere if the preview is no longer accurate (the form has changed since last submit)
 
     // Start with a header to indicate that this is the preview tracks section
     var headerElement = document.createElement("h4");
@@ -275,6 +275,42 @@ function restoreGeneratePreviewButton()
     var eventElement = document.getElementById("generateSmartPlaylistPreviewButton");
     controlEnablementOfElement(eventElement);
     replaceElementContentsWithText(eventElement, "Preview Smart Playlist Tracks");
+}
+
+function displayPreviewOutOfDateAlert()
+{
+    // First, check that there is a playlist preview already generated
+    var previewContainerElement = document.getElementById("previewContainer");
+    if (previewContainerElement === null)
+    {
+        return;
+    }
+
+    // If there is a playlist preview, and the form has been changed, check for an existing warning
+    var previewAlertElement = document.getElementById("previewAlertMessage");
+    if (previewAlertElement !== null)
+    {
+        // Warning already exists, so do not need to do anything
+        return;
+    }
+
+    // Warning does not exist, so we should create it
+    var textElement = document.createTextNode("Warning - Smart playlist rules or settings have changed since this preview was generated.  This preview does not reflect the latest rules and settings.");
+
+    var alertImageElement = document.createElement("i");
+    alertImageElement.setAttribute("class", "bi-exclamation-triangle-fill mx-2");
+
+    var alertDivElement = document.createElement("div");
+    alertDivElement.setAttribute("id", "previewAlertMessage");
+    alertDivElement.setAttribute("class", "alert alert-warning my-3");
+    alertDivElement.setAttribute("role", "alert");
+    alertDivElement.appendChild(alertImageElement);
+    alertDivElement.appendChild(textElement);
+
+    // Now shove that alert at the top of the preview
+    // Put the alert here so its easily visible and will be removed when a new preview is generated
+    var infoMessageElement = document.getElementById("previewInfoMessage");
+    previewContainerElement.insertBefore(alertDivElement, infoMessageElement);
 }
 
 function addRuleFormFields()
