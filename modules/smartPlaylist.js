@@ -16,6 +16,8 @@ const playlistDescriptionOrder = "order";
 const playlistDescriptionSpace = " ";
 const playlistDescriptionPeriod = "."
 
+const playlistPreviewLimit = 25;
+
 // Smart Playlist Logic
 exports.createSmartPlaylistPage = function(req, res, next)
 {
@@ -37,11 +39,13 @@ exports.getSmartPlaylistPreview = async function(req, res, next)
 {
     try
     {
-        // TODO - Add a limit for number of songs gathered for the preview
-        // TODO - Figure out a way to make it so that once you find that limit, you stop looking for more songs
+        // Set that this is to be a playlist preview (which will short circuit some extra work not needed for a preview)
+        req.body.isPlaylistPreview = true;
+
         var smartPlaylistData = await getSmartPlaylistData(req, res, next);
         var playlistPreviewData = smartPlaylistData.trackData;
 
+        // Send the preview data back to the caller without reloading the page
         res.set('Content-Type', 'application/json');
         res.send(playlistPreviewData);
         return;
@@ -77,7 +81,6 @@ exports.createSmartPlaylist = async function(req, res, next)
         var addTracksToPlaylistResponse = await spotifyClient.addTracksToPlaylist(req, res);
 
         // Finally, we want to show the user info about their new playlist, so retrieve that data after songs were inserted
-        // TODO - Consider the possibility of splitting up previewing the songs to be on a playlist (in a table) before creating it
         req.query.playlistId = playlistId;
         var getPlaylistResponse = await spotifyClient.getSinglePlaylist(req, res);
 
@@ -113,6 +116,7 @@ getSmartPlaylistData = async function(req, res, next)
     try
     {
         // First, process all of the rules and optional settings from the request
+        var isPlaylistPreview = !!req.body.isPlaylistPreview;
         var playlistLimitData = getPlaylistLimits(req);
         var playlistOrderData = getPlaylistOrdering(req);
         var playlistRules = getPlaylistRules(req);
@@ -121,14 +125,14 @@ getSmartPlaylistData = async function(req, res, next)
         var tracksInPlaylist = [];
         var trackOrderingInPlaylist = [];
         var timeOfTracksInPlaylistInMsec = 0;
-        var existMoreBatchesToRetrieve = true;
+        var canRetrieveMoreBatches = true;
 
         req.query.pageNumber = 1; // Start with first page
         req.query.tracksPerPage = 50; // Maximum value of tracks to retrieve per page
 
         // Loop over all songs in the library in batches
         // TODO - Make the song retrieval area configurable (library, playlist, etc)
-        while (existMoreBatchesToRetrieve)
+        while (canRetrieveMoreBatches)
         {
             // Get all the tracks in this batch
             var getAllTracksBatchedResponse = await spotifyClient.getAllTracks(req, res);
@@ -143,7 +147,7 @@ getSmartPlaylistData = async function(req, res, next)
             // If there are no more tracks to retrieve from the library after these ones, mark that so we do not continue endlessly
             if (tracksProcessed >= totalTracks)
             {
-                existMoreBatchesToRetrieve = false;
+                canRetrieveMoreBatches = false;
             }
 
             // Process each track in the batch
@@ -182,6 +186,18 @@ getSmartPlaylistData = async function(req, res, next)
                 {
                     // If order does not matter, just add the track to the end of the list
                     trackOrderingInPlaylist.push(lastTrackAddedIndex);
+                }
+
+                // If this is a playlist preview, we want to get the first set of songs that satisfy the requirements quickly
+                // We want to be conscious of processing time, so we do not need to get all the songs in the library to create the playlist yet
+                // Thus, we can just stop grabbing new batches and processing tracks once we have reached the desired limit
+                if (isPlaylistPreview && tracksInPlaylist.length >= playlistPreviewLimit)
+                {
+                    // Will break out of the batch processing loop
+                    canRetrieveMoreBatches = false;
+
+                    // Breaks out of the track processing loop for a single batch
+                    break;
                 }
             }
         }
@@ -232,6 +248,7 @@ getSmartPlaylistData = async function(req, res, next)
 // Playlist Functions
 getPlaylistLimits = function(req)
 {
+    // TODO - Change these to !! instead of long if-else statements (beware of gotchas like !!"false" which is true!)
     var isPlaylistLimitEnabled = req.body.playlistLimitEnabled || null;
     if (isPlaylistLimitEnabled === undefined || isPlaylistLimitEnabled === null)
     {
