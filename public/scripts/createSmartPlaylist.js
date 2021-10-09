@@ -128,6 +128,18 @@ function displaySmartPlaylistPreview(data)
     headerElement.setAttribute("class", "my-3");
     headerElement.innerText = "Smart Playlist Track Preview"
 
+    var textElement = document.createTextNode("Note - All playlist previews are generated on request and limited to the first 25 matching tracks.  Any created smart playlist may differ from the tracks shown in the preview.");
+
+    var alertImageElement = document.createElement("i");
+    alertImageElement.setAttribute("class", "bi-info-circle-fill mx-2");
+
+    var alertDivElement = document.createElement("div");
+    alertDivElement.setAttribute("id", "previewInfoMessage");
+    alertDivElement.setAttribute("class", "alert alert-info my-3");
+    alertDivElement.setAttribute("role", "alert");
+    alertDivElement.appendChild(alertImageElement);
+    alertDivElement.appendChild(textElement);
+
     // Next, create the playlist preview table, beginning with the header cells
     var tableHeaderColumnOneElement = document.createElement("th");
     tableHeaderColumnOneElement.setAttribute("scope", "col");
@@ -243,13 +255,12 @@ function displaySmartPlaylistPreview(data)
     buttonDivElement.setAttribute("class", "my-3");
     buttonDivElement.appendChild(buttonElement);
 
-    // TODO - Put a notification here that there is a limited number of songs in the preview, maybe if the user goes over this limit
-
     // Mark the table as responsive and shove the data inside of it
     var previewContainerElement = document.createElement("div")
     previewContainerElement.setAttribute("id", "previewContainer");
     previewContainerElement.setAttribute("class", "table-responsive");
     previewContainerElement.appendChild(headerElement);
+    previewContainerElement.appendChild(alertDivElement);
     previewContainerElement.appendChild(tableElement);
     previewContainerElement.appendChild(buttonDivElement);
 
