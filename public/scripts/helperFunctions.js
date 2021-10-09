@@ -133,6 +133,19 @@ function replaceElementContentsWithLoadingIndicator(element, showLoadingText)
     }
 }
 
+function replaceElementContentsWithText(element, text)
+{
+    // Clear out all nesting of nodes within the node
+    while (element.hasChildNodes())
+    {
+        element.removeChild(element.firstChild);
+    }
+
+    // Add the custom text into the node
+    var textNode = document.createTextNode(text);
+    element.appendChild(textNode);
+}
+
 // Spotify Object Specific Functions
 function getCommaSeparatedArtistNames(artists)
 {

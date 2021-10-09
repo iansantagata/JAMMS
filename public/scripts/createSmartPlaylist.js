@@ -51,6 +51,13 @@ function previewSmartPlaylist()
         errorContainerElement.remove();
     }
 
+    // In case there was a previous preview in place, remove it so the user does not get confused
+    var previewContainerElement = document.getElementById("previewContainer");
+    if (previewContainerElement !== undefined && previewContainerElement !== null)
+    {
+        previewContainerElement.remove();
+    }
+
     // Grab the form data and pump it into a JSON object
     var formData = new FormData(formElement);
     var plainFormData = Object.fromEntries(formData.entries());
@@ -69,8 +76,8 @@ function previewSmartPlaylist()
     fetch("/getSmartPlaylistPreview", fetchOptions)
         .then(response => response.json())
         .then(displaySmartPlaylistPreview)
-        .catch(handlePlaylistPreviewError);
-        // TODO - Add a finally where the generate preview button is restored (not loading anymore and enabled again)
+        .catch(handlePlaylistPreviewError)
+        .finally(restoreGeneratePreviewButton);
 }
 
 function handlePlaylistPreviewError(error)
@@ -217,16 +224,7 @@ function displaySmartPlaylistPreview(data)
     tableElement.appendChild(tableHeadElement);
     tableElement.appendChild(tableBodyElement);
 
-    // TODO - Put a notification here that there is a limited number of songs in the preview, maybe if the user goes over this limit
-
-    // Mark the table as responsive and shove the data inside of it
-    var previewContainerElement = document.createElement("div")
-    previewContainerElement.setAttribute("id", "previewContainer");
-    previewContainerElement.setAttribute("class", "table-responsive");
-    previewContainerElement.appendChild(headerElement);
-    previewContainerElement.appendChild(tableElement);
-
-    // Add a submit button at the end of the form so that the user can create their smart playlist after checking the preview
+    // Add a submit button at the end of the preview so that the user can create their smart playlist after checking the preview
     var buttonElement = document.createElement("button");
     buttonElement.setAttribute("id", "createSmartPlaylistButton");
     buttonElement.setAttribute("type", "submit");
@@ -240,10 +238,27 @@ function displaySmartPlaylistPreview(data)
     buttonDivElement.setAttribute("class", "my-3");
     buttonDivElement.appendChild(buttonElement);
 
+    // TODO - Put a notification here that there is a limited number of songs in the preview, maybe if the user goes over this limit
+
+    // Mark the table as responsive and shove the data inside of it
+    var previewContainerElement = document.createElement("div")
+    previewContainerElement.setAttribute("id", "previewContainer");
+    previewContainerElement.setAttribute("class", "table-responsive");
+    previewContainerElement.appendChild(headerElement);
+    previewContainerElement.appendChild(tableElement);
+    previewContainerElement.appendChild(buttonDivElement);
+
     // Finally, append all of this new content onto the end of the existing form
     var formElement = document.getElementById("createSmartPlaylistForm");
     formElement.appendChild(previewContainerElement);
-    formElement.appendChild(buttonDivElement);
+}
+
+function restoreGeneratePreviewButton()
+{
+    // Flip the enablement of the button and restore its text contents
+    var eventElement = document.getElementById("generateSmartPlaylistPreviewButton");
+    controlEnablementOfElement(eventElement);
+    replaceElementContentsWithText(eventElement, "Preview Smart Playlist Tracks");
 }
 
 function addRuleFormFields()
