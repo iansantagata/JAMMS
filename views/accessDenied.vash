@@ -4,5 +4,6 @@
     <p>
       We apologize, but we cannot let you access what you are requesting.
     </p>
+    <a id="landingButton" href="/" role="button" class="btn btn-info btn-sm">Return Home</a>
   })
 })

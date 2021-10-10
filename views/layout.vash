@@ -35,22 +35,21 @@
   <!-- TODO - Have to put a warning / acceptance alert about cookies eventually if they continue to be used -->
   <header class="card-header text-center mb-2">
     <div class="row">
-      @if(model.isAwaitingLogin)
+      @if(!model.isAwaitingLogin && !model.isLoginError)
       {
         <div class="col">
-          <h5 class="my-0">JAMMS</h5>
+          <a id="homeButton" href="/home" role="button" class="btn btn-info btn-sm">Home</a>
         </div>
       }
-      else
+
+      <div class="col">
+        <h5 class="my-0">JAMMS</h5>
+      </div>
+
+      @if(!model.isAwaitingLogin && !model.isLoginError)
       {
         <div class="col">
-          <a id="homeButton" href="/home" role="button" class="btn btn-info btn-sm stretched-link">Home</a>
-        </div>
-        <div class="col">
-          <h5 class="my-0">JAMMS</h5>
-        </div>
-        <div class="col">
-            <a id="logOutButton" href="/logout" role="button" class="btn btn-info btn-sm stretched-link">Log Out</a>
+            <a id="logOutButton" href="/logout" role="button" class="btn btn-info btn-sm">Log Out</a>
         </div>
       }
     </div>

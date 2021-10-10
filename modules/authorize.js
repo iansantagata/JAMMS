@@ -228,7 +228,7 @@ exports.setAuthorizationCookies = function(req, res, auth)
     }
 }
 
-exports.deleteAuthorizationCookies = async function(req, res)
+exports.deleteAuthorizationCookies = async function(res)
 {
     try
     {

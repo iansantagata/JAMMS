@@ -1,11 +1,12 @@
 @html.extend('layout', function(model) {
 	@html.block('content', function(model) {
-    <h2 class="my-3">Request Error</h2>
+    <h2>Request Error</h2>
     <p>
       We apologize, but there was an error in trying to process your request.
     </p>
     <p>
       If the error persists, please <a href="@html.raw('mailto:admin@jamms.app')">contact us via e-mail</a> or <a href="https://github.com/iansantagata/jamms/issues">open an issue in our open-source repository</a> to help get the problem resolved.
     </p>
+    <a id="landingButton" href="/" role="button" class="btn btn-info btn-sm">Return Home</a>
   })
 })

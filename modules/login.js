@@ -80,14 +80,18 @@ exports.validateLogin = async function(req, res)
         var authorizationResponse = await authorize.getAuthorizationTokens(req, res);
 
         // Use the access token and refresh token to validate access to Spotify's API
-        var cookieResponse = authorize.setAuthorizationCookies(req, res, authorizationResponse);
+        var cookieResponse = await authorize.setAuthorizationCookies(req, res, authorizationResponse);
 
         // Once we have our tokens, redirect to the home page
         res.redirect('/home');
     }
     catch (error)
     {
-        // TODO - Should do clean up here (in case login failed) to make sure that no cookies are stored and the user is not actually half logged in or in some weird state
+        // Clean up any potentially set login cookies if login has failed
+        // This is to be sure that a user is not stuck in a half logged in state
+        await cookie.clearCookie(res, stateKey);
+        await authorize.deleteAuthorizationCookies(res);
+
         logger.logError('Failed to authorize user with Spotify: ' + error.message);
         res.redirect('/accessDenied');
         return;
@@ -102,12 +106,12 @@ exports.isUserLoggedIn = async function(req, res)
         var accessToken = await authorize.getAccessToken(req, res);
 
         // If we have a valid refresh and access token, then a user can be considered logged in
-        return Promise.resolve();
+        return Promise.resolve(true);
     }
-    catch (error)
+    catch
     {
-        // User is not logged in
-        return Promise.reject(error);
+        // User is not logged in if we failed to get their login tokens (can swallow errors here)
+        return Promise.resolve(false);
     }
 }
 
