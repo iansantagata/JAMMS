@@ -4,5 +4,6 @@
     <p>
       We apologize, but we cannot seem to find what you are looking for.
     </p>
+    <a id="landingButton" href="/" role="button" class="btn btn-info btn-sm">Return Home</a>
   })
 })

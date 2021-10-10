@@ -106,12 +106,12 @@ exports.isUserLoggedIn = async function(req, res)
         var accessToken = await authorize.getAccessToken(req, res);
 
         // If we have a valid refresh and access token, then a user can be considered logged in
-        return Promise.resolve();
+        return Promise.resolve(true);
     }
-    catch (error)
+    catch
     {
-        // User is not logged in
-        return Promise.reject(error);
+        // User is not logged in if we failed to get their login tokens (can swallow errors here)
+        return Promise.resolve(false);
     }
 }
 

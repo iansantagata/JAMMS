@@ -13,7 +13,12 @@ exports.getLandingPage = async function(req, res, next)
     try
     {
         // Try to get the home page if the user is already logged in or can authenticate
-        await login.isUserLoggedIn(req, res); // Rejects promise if user is not logged in
+        var isUserLoggedIn = await login.isUserLoggedIn(req, res);
+        if (!isUserLoggedIn)
+        {
+            throw new Error('User is not logged in. Falling back to landing page.');
+        }
+
         var homePageData = await home.getHomePageData(req, res);
         home.renderHomePage(res, homePageData);
     }
