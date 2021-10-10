@@ -103,7 +103,10 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
 
         // Throw the new token back into a cookie for the user to use
         var accessTypeAndToken = refreshAuthorizationResponse.tokenType + ' ' + refreshAuthorizationResponse.accessToken;
-        cookie.setCookie(req, res, accessKey, accessTypeAndToken, refreshAuthorizationResponse.tokenExpirationInMsec);
+        var cookieSettings = {
+            maxAge: refreshAuthorizationResponse.tokenExpirationInMsec
+        };
+        cookie.setCookie(req, res, accessKey, accessTypeAndToken, cookieSettings);
 
         // If the request did return a new refresh token, make sure we overwrite the old token
         if (refreshAuthorizationResponse.refreshToken !== undefined && refreshAuthorizationResponse.refreshToken !== null)
@@ -209,7 +212,10 @@ exports.setAuthorizationCookies = function(req, res, auth)
         }
 
         var accessTypeAndToken = auth.tokenType + ' ' + auth.accessToken;
-        cookie.setCookie(req, res, accessKey, accessTypeAndToken, auth.tokenExpirationInMsec);
+        var cookieSettings = {
+            maxAge: auth.tokenExpirationInMsec
+        };
+        cookie.setCookie(req, res, accessKey, accessTypeAndToken, cookieSettings);
         cookie.setCookie(req, res, refreshKey, auth.refreshToken); // Session cookie (no explicit expiration);
 
         // No return value, just indicate success
