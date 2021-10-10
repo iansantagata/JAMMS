@@ -12,7 +12,7 @@ exports.logOut = async function(req, res, next)
     try
     {
         // Logging out just consists of removing cookies and redirecting to the landing page
-        await authorize.deleteAuthorizationCookies(req, res);
+        await authorize.deleteAuthorizationCookies(res);
 
         // Now that we have successfully logged out, redirect to the landing page
         res.redirect('/');
