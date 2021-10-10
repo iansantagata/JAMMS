@@ -87,6 +87,7 @@ exports.validateLogin = async function(req, res)
     }
     catch (error)
     {
+        // TODO - Should do clean up here (in case login failed) to make sure that no cookies are stored and the user is not actually half logged in or in some weird state
         logger.logError('Failed to authorize user with Spotify: ' + error.message);
         res.redirect('/accessDenied');
         return;

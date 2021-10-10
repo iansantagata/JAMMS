@@ -42,7 +42,7 @@ exports.getCookie = function(req, cookieName)
     }
 }
 
-exports.setCookie = function(req, res, cookieName, cookieValue, cookieMaxAge)
+exports.setCookie = function(req, res, cookieName, cookieValue, cookieSettings)
 {
     try
     {
@@ -79,25 +79,26 @@ exports.setCookie = function(req, res, cookieName, cookieValue, cookieMaxAge)
         // Helps to prevent against cross-site scripting (XSS) attacks
         var useHttpOnlyFlag = true;
 
-        // Declare that the cookies should only be used by this app in a first party only context
-        var sameSiteSetting = 'Strict';
+        // Declare that the cookies will be sent when users or sites are navigating to this application's web pages (from anywhere)
+        // This needs to be 'Lax' instead of 'Strict' to allow cookies to be stored and accessed when logging into Spotify
+        var sameSiteSetting = 'Lax';
 
         // Sign cookies with a secret and read them back with the same secret to validate them
         var useSignedCookies = true;
 
-        var cookieOptions = {
+        // Default cookie options, to be used as default if no settings are specified
+        var defaultCookieOptions = {
             secure: useSecureCookiesOverHttps,
             httpOnly: useHttpOnlyFlag,
             sameSite: sameSiteSetting,
             signed: useSignedCookies
         };
 
-        // Session cookies do not have an explicit expiration
-        // Only set an expiration if one exists (and thus this is not a session cookie)
-        if (cookieMaxAge !== undefined && cookieMaxAge !== null)
-        {
-            cookieOptions['maxAge'] = cookieMaxAge;
-        }
+        // Overwrite any default cookie option with ones manually specified
+        var cookieOptions = {
+            ...defaultCookieOptions,
+            ...cookieSettings
+        };
 
         res.cookie(cookieName, cookieValue, cookieOptions);
 
