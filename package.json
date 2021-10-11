@@ -15,5 +15,8 @@
     "nodemon": "^2.0.12",
     "querystring": "^0.2.1",
     "vash": "^0.13.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0"
   }
 }
