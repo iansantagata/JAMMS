@@ -2,6 +2,7 @@ env:
   browser: true
   commonjs: true
   node: true
+  es6: true
 extends: eslint:recommended
 parserOptions:
   ecmaVersion: 9 # TODO - Latest version support by Atom, update when using CI for this
@@ -18,3 +19,5 @@ rules:
   semi:
     - error
     - always
+  no-console:
+    - off
