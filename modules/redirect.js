@@ -1,12 +1,12 @@
 // Dependencies
-var path = require('path'); // URI and local file paths
+var path = require("path"); // URI and local file paths
 
 // Custom Modules
 const customModulePath = __dirname;
-var environment = require(path.join(customModulePath, 'environment.js'));
+var environment = require(path.join(customModulePath, "environment.js"));
 
 // Redirect Logic
-const validateLoginEndpoint = '/validateLogin';
+const validateLoginEndpoint = "/validateLogin";
 
 exports.getValidateLoginRedirectUri = function(req)
 {
@@ -14,21 +14,21 @@ exports.getValidateLoginRedirectUri = function(req)
 };
 
 // Local Helper Functions
-getBaseUri = function(req)
+var getBaseUri = function(req)
 {
     var hostName = req.hostname;
     if (req.hostname === undefined)
     {
-        hostName = 'localhost';
+        hostName = "localhost";
     }
 
     // Build the full Uri to work both in production and while developing via localhost
     var isProductionEnvironment = environment.isProductionEnvironmentSync();
     if (isProductionEnvironment)
     {
-        return 'https://' + hostName;
+        return "https://" + hostName;
     }
 
     // Non-Production environments should use HTTP rather than HTTPS
-    return 'http://' + hostName;
-}
+    return "http://" + hostName;
+};
