@@ -6,6 +6,9 @@
   "main": "index.js",
   "license": "MIT",
   "repository": "github:iansantagata/jamms",
+  "scripts": {
+    "lint": "eslint **/**.js"
+  },
   "dependencies": {
     "axios": "^0.21.4",
     "cookie-parser": "^1.4.5",
@@ -15,5 +18,8 @@
     "nodemon": "^2.0.12",
     "querystring": "^0.2.1",
     "vash": "^0.13.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0"
   }
 }

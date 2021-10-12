@@ -1,10 +1,10 @@
 // Dependencies
-var path = require('path'); // URI and local file paths
+var path = require("path"); // URI and local file paths
 
 // Custom Modules
 const customModulePath = __dirname;
-var logger = require(path.join(customModulePath, 'logger.js'));
-var environment = require(path.join(customModulePath, 'environment.js'));
+var logger = require(path.join(customModulePath, "logger.js"));
+var environment = require(path.join(customModulePath, "environment.js"));
 
 // Cookie Logic
 exports.getCookie = function(req, cookieName)
@@ -13,12 +13,12 @@ exports.getCookie = function(req, cookieName)
     {
         if (req === undefined || req === null)
         {
-            throw new Error('No request object found');
+            throw new Error("No request object found");
         }
 
         if (cookieName === undefined || cookieName === null)
         {
-            throw new Error('Cookie name not valid');
+            throw new Error("Cookie name not valid");
         }
 
         var cookieValue = req.signedCookies ? req.signedCookies[cookieName] : null;
@@ -26,8 +26,8 @@ exports.getCookie = function(req, cookieName)
         {
             // Do not want to log an error because this may be that a cookie
             // Just does not exist yet or does not exist intentionally
-            var handledError = new Error('Cookie \"' + cookieName + '\" not found');
-            logger.logInfo('Failed to get cookie: ' + handledError.message);
+            var handledError = new Error(`Cookie "${cookieName}" not found`);
+            logger.logInfo("Failed to get cookie: " + handledError.message);
 
             // We still want to indicate that the cookie value was not retrieved regardless
             return Promise.reject(handledError);
@@ -37,10 +37,10 @@ exports.getCookie = function(req, cookieName)
     }
     catch (error)
     {
-        logger.logError('Failed to get cookie: ' + error.message);
+        logger.logError("Failed to get cookie: " + error.message);
         return Promise.reject(error);
     }
-}
+};
 
 exports.setCookie = function(req, res, cookieName, cookieValue, cookieSettings)
 {
@@ -48,27 +48,27 @@ exports.setCookie = function(req, res, cookieName, cookieValue, cookieSettings)
     {
         if (req === undefined || req === null)
         {
-            throw new Error('No request object found');
+            throw new Error("No request object found");
         }
 
         if (req.signedCookies === undefined || req.signedCookies === null)
         {
-            throw new Error('No request cookies object found');
+            throw new Error("No request cookies object found");
         }
 
         if (res === undefined || res === null)
         {
-            throw new Error('No response object found');
+            throw new Error("No response object found");
         }
 
         if (cookieName === undefined || cookieName === null)
         {
-            throw new Error('Cookie name not valid');
+            throw new Error("Cookie name not valid");
         }
 
         if (cookieValue === undefined || cookieValue === null)
         {
-            throw new Error('Cookie value not valid');
+            throw new Error("Cookie value not valid");
         }
 
         // Only want to use HTTPS for cookies in Production
@@ -81,7 +81,7 @@ exports.setCookie = function(req, res, cookieName, cookieValue, cookieSettings)
 
         // Declare that the cookies will be sent when users or sites are navigating to this application's web pages (from anywhere)
         // This needs to be 'Lax' instead of 'Strict' to allow cookies to be stored and accessed when logging into Spotify
-        var sameSiteSetting = 'Lax';
+        var sameSiteSetting = "Lax";
 
         // Sign cookies with a secret and read them back with the same secret to validate them
         var useSignedCookies = true;
@@ -113,7 +113,7 @@ exports.setCookie = function(req, res, cookieName, cookieValue, cookieSettings)
     }
     catch (error)
     {
-        logger.logError('Failed to set cookie: ' + error.message);
+        logger.logError("Failed to set cookie: " + error.message);
         return Promise.reject(error);
     }
 };
@@ -124,12 +124,12 @@ exports.clearCookie = function(res, cookieName)
     {
         if (res === undefined || res === null)
         {
-            throw new Error('No response object found');
+            throw new Error("No response object found");
         }
 
         if (cookieName === undefined || cookieName === null)
         {
-            throw new Error('Cookie name not valid');
+            throw new Error("Cookie name not valid");
         }
 
         res.clearCookie(cookieName);
@@ -139,7 +139,7 @@ exports.clearCookie = function(res, cookieName)
     }
     catch (error)
     {
-        logger.logError('Failed to clear cookie: ' + error.message);
+        logger.logError("Failed to clear cookie: " + error.message);
         return Promise.reject(error);
     }
-}
+};

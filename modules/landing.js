@@ -1,11 +1,11 @@
 // Dependencies
-var path = require('path'); // URI and local file paths
+var path = require("path"); // URI and local file paths
 
 // Custom Modules
 const customModulePath = __dirname;
-var login = require(path.join(customModulePath, 'login.js'));
-var logger = require(path.join(customModulePath, 'logger.js'));
-var home = require(path.join(customModulePath, 'home.js'));
+var login = require(path.join(customModulePath, "login.js"));
+var logger = require(path.join(customModulePath, "logger.js"));
+var home = require(path.join(customModulePath, "home.js"));
 
 // Landing Logic
 exports.getLandingPage = async function(req, res, next)
@@ -16,7 +16,7 @@ exports.getLandingPage = async function(req, res, next)
         var isUserLoggedIn = await login.isUserLoggedIn(req, res);
         if (!isUserLoggedIn)
         {
-            throw new Error('User is not logged in. Falling back to landing page.');
+            throw new Error("User is not logged in. Falling back to landing page.");
         }
 
         var homePageData = await home.getHomePageData(req, res);
@@ -31,15 +31,15 @@ exports.getLandingPage = async function(req, res, next)
                 isAwaitingLogin: true
             };
 
-            res.location('/');
-            res.render('landing', landingPageData);
+            res.location("/");
+            res.render("landing", landingPageData);
         }
         catch (landingPageError)
         {
-            logger.logError('Failed to get home page from landing page: ' + homePageError.message);
-            logger.logError('Failed to get landing page: ' + landingPageError.message);
+            logger.logError("Failed to get home page from landing page: " + homePageError.message);
+            logger.logError("Failed to get landing page: " + landingPageError.message);
             next(landingPageError);
             return;
         }
     }
-}
+};

@@ -1,10 +1,10 @@
 // Dependencies
-var path = require('path'); // URI and local file paths
+var path = require("path"); // URI and local file paths
 
 // Custom Modules
 const customModulePath = __dirname;
-var spotifyClient = require(path.join(customModulePath, 'spotifyClient.js'));
-var logger = require(path.join(customModulePath, 'logger.js'));
+var spotifyClient = require(path.join(customModulePath, "spotifyClient.js"));
+var logger = require(path.join(customModulePath, "logger.js"));
 
 // Playlist Logic
 exports.getPlaylistPage = async function(req, res, next)
@@ -27,12 +27,12 @@ exports.getPlaylistPage = async function(req, res, next)
         };
 
         // Shove the playlist response data onto the playlist page for the user to interact with
-        res.location('/playlist');
-        res.render('viewPlaylist', playlistData);
+        res.location("/playlist");
+        res.render("viewPlaylist", playlistData);
     }
     catch (error)
     {
-        logger.logError('Failed to get playlist page: ' + error.message);
+        logger.logError("Failed to get playlist page: " + error.message);
         next(error);
         return;
     }
@@ -57,15 +57,15 @@ exports.getAllPlaylistPage = async function(req, res, next)
         };
 
         // Shove the playlist response data onto the playlists page for the user to interact with
-        res.render('viewPlaylists', playlistsPageData);
+        res.render("viewPlaylists", playlistsPageData);
     }
     catch (error)
     {
-        logger.logError('Failed to get all playlists page: ' + error.message);
+        logger.logError("Failed to get all playlists page: " + error.message);
         next(error);
         return;
     }
-}
+};
 
 exports.deletePlaylistPage = async function(req, res, next)
 {
@@ -88,16 +88,16 @@ exports.deletePlaylistPage = async function(req, res, next)
         };
 
         // Shove the playlist response data onto the home page for the user to interact with
-        res.location('/playlist');
-        res.render('viewPlaylist', playlistData);
+        res.location("/playlist");
+        res.render("viewPlaylist", playlistData);
     }
     catch (error)
     {
-        logger.logError('Failed to get delete playlist page: ' + error.message);
+        logger.logError("Failed to get delete playlist page: " + error.message);
         next(error);
         return;
     }
-}
+};
 
 exports.restorePlaylistPage = async function(req, res, next)
 {
@@ -120,32 +120,32 @@ exports.restorePlaylistPage = async function(req, res, next)
         };
 
         // Shove the playlist response data onto the playlist page for the user to interact with
-        res.location('/playlist');
-        res.render('viewPlaylist', playlistData);
+        res.location("/playlist");
+        res.render("viewPlaylist", playlistData);
     }
     catch (error)
     {
-        logger.logError('Failed to get restore playlist page: ' + error.message)
+        logger.logError("Failed to get restore playlist page: " + error.message);
         next(error);
         return;
     }
-}
+};
 
 exports.createPlaylistPage = async function(req, res, next)
 {
     // Simply show the user the page to create a new playlist
     try
     {
-        res.location('/createPlaylist');
-        res.render('createPlaylist');
+        res.location("/createPlaylist");
+        res.render("createPlaylist");
     }
     catch (error)
     {
-        logger.logError('Failed to get create playlist page: ' + error.message);
+        logger.logError("Failed to get create playlist page: " + error.message);
         next(error);
         return;
     }
-}
+};
 
 exports.createPlaylist = async function(req, res, next)
 {
@@ -170,13 +170,13 @@ exports.createPlaylist = async function(req, res, next)
         };
 
         // Shove the playlist response data onto the playlist page for the user to interact with
-        res.location('/playlist');
-        res.render('viewPlaylist', playlistData);
+        res.location("/playlist");
+        res.render("viewPlaylist", playlistData);
     }
     catch (error)
     {
-        logger.logError('Failed to create playlist: ' + error.message);
+        logger.logError("Failed to create playlist: " + error.message);
         next(error);
         return;
     }
-}
+};

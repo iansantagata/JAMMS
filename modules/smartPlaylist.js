@@ -1,10 +1,10 @@
 // Dependencies
-var path = require('path'); // URI and local file paths
+var path = require("path"); // URI and local file paths
 
 // Custom Modules
 const customModulePath = __dirname;
-var spotifyClient = require(path.join(customModulePath, 'spotifyClient.js'));
-var logger = require(path.join(customModulePath, 'logger.js'));
+var spotifyClient = require(path.join(customModulePath, "spotifyClient.js"));
+var logger = require(path.join(customModulePath, "logger.js"));
 
 // Default Constant Values
 const playlistNamePrefix = "JAMMS: ";
@@ -14,7 +14,7 @@ const playlistDescriptionOrderPrefix = "Sorted by ";
 const playlistDescriptionIn = "in";
 const playlistDescriptionOrder = "order";
 const playlistDescriptionSpace = " ";
-const playlistDescriptionPeriod = "."
+const playlistDescriptionPeriod = ".";
 
 const playlistPreviewLimit = 25;
 
@@ -24,16 +24,16 @@ exports.createSmartPlaylistPage = function(req, res, next)
     try
     {
         // Simply show the user the page to create a new smart playlist
-        res.location('/createSmartPlaylist');
-        res.render('createSmartPlaylist');
+        res.location("/createSmartPlaylist");
+        res.render("createSmartPlaylist");
     }
     catch (error)
     {
-        logger.logError('Failed to get create smart playlist page: ' + error.message);
+        logger.logError("Failed to get create smart playlist page: " + error.message);
         next(error);
         return;
     }
-}
+};
 
 exports.getSmartPlaylistPreview = async function(req, res, next)
 {
@@ -46,17 +46,17 @@ exports.getSmartPlaylistPreview = async function(req, res, next)
         var playlistPreviewData = smartPlaylistData.trackData;
 
         // Send the preview data back to the caller without reloading the page
-        res.set('Content-Type', 'application/json');
+        res.set("Content-Type", "application/json");
         res.send(playlistPreviewData);
         return;
     }
     catch (error)
     {
-        logger.logError('Failed to get smart playlist preview: ' + error.message);
+        logger.logError("Failed to get smart playlist preview: " + error.message);
         next(error);
         return;
     }
-}
+};
 
 exports.createSmartPlaylist = async function(req, res, next)
 {
@@ -78,7 +78,7 @@ exports.createSmartPlaylist = async function(req, res, next)
         var playlistId = createPlaylistResponse.id;
         req.body.playlistId = playlistId;
         req.body.trackUris = smartPlaylistData.trackData.map(getUriFromSavedTrack);
-        var addTracksToPlaylistResponse = await spotifyClient.addTracksToPlaylist(req, res);
+        await spotifyClient.addTracksToPlaylist(req, res);
 
         // Finally, we want to show the user info about their new playlist, so retrieve that data after songs were inserted
         req.query.playlistId = playlistId;
@@ -97,21 +97,21 @@ exports.createSmartPlaylist = async function(req, res, next)
         };
 
         // Shove the playlist response data onto the playlist page for the user to interact with
-        res.location('/playlist');
-        res.render('viewPlaylist', playlistData);
+        res.location("/playlist");
+        res.render("viewPlaylist", playlistData);
     }
     catch (error)
     {
-        logger.logError('Failed to create smart playlist: ' + error.message);
+        logger.logError("Failed to create smart playlist: " + error.message);
         next(error);
         return;
     }
-}
+};
 
 // Local Helper Functions
 
 // Track Retrieval Functions
-getSmartPlaylistData = async function(req, res, next)
+var getSmartPlaylistData = async function(req, res, next)
 {
     try
     {
@@ -239,14 +239,14 @@ getSmartPlaylistData = async function(req, res, next)
     }
     catch (error)
     {
-        logger.logError('Failed to get smart playlist tracks: ' + error.message);
+        logger.logError("Failed to get smart playlist tracks: " + error.message);
         next(error);
         return;
     }
-}
+};
 
 // Playlist Functions
-getPlaylistLimits = function(req)
+var getPlaylistLimits = function(req)
 {
     // TODO - Change these to !! instead of long if-else statements (beware of gotchas like !!"false" which is true!)
     var isPlaylistLimitEnabled = req.body.playlistLimitEnabled || null;
@@ -275,38 +275,38 @@ getPlaylistLimits = function(req)
 
         if (playlistLimitValue <= 0)
         {
-            logger.logWarn('Playlist limit value entered is zero or negative: \"' + playlistLimitValue + '\".  Overwriting to disable limit.');
+            logger.logWarn(`Playlist limit value entered is zero or negative: "${playlistLimitValue}".  Overwriting to disable limit.`);
             playlistLimitValue = undefined;
             isPlaylistLimitEnabled = false;
         }
 
         if (playlistLimitValue > 10000)
         {
-            logger.logWarn('Playlist limit value entered is greater than ten thosand: \"' + playlistLimitValue + '\".  Overwriting value to 10000.');
+            logger.logWarn(`Playlist limit value entered is greater than ten thosand: "${playlistLimitValue}".  Overwriting value to 10000.`);
             playlistLimitValue = 10000;
         }
 
         // Make sure that the user specified playlist limit is a valid one that the app knows how to handle
         var playlistLimitType = undefined;
         switch (userSpecifiedPlaylistLimitType) {
-            // Convert the value from its time unit to milliseconds to be easier to work with (if applicable)
-            case "minutes":
-                playlistLimitValue = playlistLimitValue * 60 * 1000;
-                playlistLimitType = "milliseconds";
-                break;
-            case "hours":
-                playlistLimitValue = playlistLimitValue * 60 * 60 * 1000;
-                playlistLimitType = "milliseconds";
-                break;
-            case "songs":
-                playlistLimitType = "songs";
-                break;
-            default:
-                // If the user specified an unknown limit type somehow, remove limitations completely since it is unknown how to handle it
-                isPlaylistLimitEnabled = false;
-                userSpecifiedPlaylistLimitType = undefined;
-                playlistLimitType = undefined;
-                break;
+        // Convert the value from its time unit to milliseconds to be easier to work with (if applicable)
+        case "minutes":
+            playlistLimitValue = playlistLimitValue * 60 * 1000;
+            playlistLimitType = "milliseconds";
+            break;
+        case "hours":
+            playlistLimitValue = playlistLimitValue * 60 * 60 * 1000;
+            playlistLimitType = "milliseconds";
+            break;
+        case "songs":
+            playlistLimitType = "songs";
+            break;
+        default:
+            // If the user specified an unknown limit type somehow, remove limitations completely since it is unknown how to handle it
+            isPlaylistLimitEnabled = false;
+            userSpecifiedPlaylistLimitType = undefined;
+            playlistLimitType = undefined;
+            break;
         }
     }
 
@@ -318,9 +318,9 @@ getPlaylistLimits = function(req)
     };
 
     return playlistLimitData;
-}
+};
 
-getPlaylistOrdering = function(req)
+var getPlaylistOrdering = function(req)
 {
     var isPlaylistOrderEnabled = req.body.playlistOrderEnabled || null;
     if (isPlaylistOrderEnabled === undefined || isPlaylistOrderEnabled === null)
@@ -340,18 +340,18 @@ getPlaylistOrdering = function(req)
             // Ensure the order field provided is valid
             switch (playlistOrderField)
             {
-                case "artist":
-                case "album":
-                case "release date":
-                case "duration":
-                case "library add date":
-                case "popularity":
-                case "song":
-                    break;
-                default:
-                    isPlaylistOrderEnabled = false;
-                    playlistOrderField = undefined;
-                    break;
+            case "artist":
+            case "album":
+            case "release date":
+            case "duration":
+            case "library add date":
+            case "popularity":
+            case "song":
+                break;
+            default:
+                isPlaylistOrderEnabled = false;
+                playlistOrderField = undefined;
+                break;
             }
         }
         else
@@ -368,13 +368,13 @@ getPlaylistOrdering = function(req)
         {
             switch (playlistOrderDirection)
             {
-                case "descending":
-                case "ascending":
-                    break;
-                default:
-                    isPlaylistOrderEnabled = false;
-                    playlistOrderDirection = undefined;
-                    break;
+            case "descending":
+            case "ascending":
+                break;
+            default:
+                isPlaylistOrderEnabled = false;
+                playlistOrderDirection = undefined;
+                break;
             }
         }
         else
@@ -398,9 +398,9 @@ getPlaylistOrdering = function(req)
     };
 
     return playlistOrderData;
-}
+};
 
-getPlaylistRules = function(req)
+var getPlaylistRules = function(req)
 {
     var rules = [];
     var parsedRules = [];
@@ -435,9 +435,9 @@ getPlaylistRules = function(req)
     }
 
     return rules;
-}
+};
 
-getPlaylistDescription = function(playlistLimitData, playlistOrderData)
+var getPlaylistDescription = function(playlistLimitData, playlistOrderData)
 {
     var playlistDescription = playlistDescriptionPrefix;
 
@@ -466,199 +466,199 @@ getPlaylistDescription = function(playlistLimitData, playlistOrderData)
     }
 
     return playlistDescription;
-}
+};
 
 // Data Retrieval Functions
-getUriFromSavedTrack = function(savedTrack)
+var getUriFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.uri;
-}
+};
 
-getTrackNameFromSavedTrack = function(savedTrack)
+var getTrackNameFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.name.toUpperCase();
-}
+};
 
-getAlbumNameFromSavedTrack = function(savedTrack)
+var getAlbumNameFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.album.name.toUpperCase();
-}
+};
 
-getArtistsFromSavedTrack = function(savedTrack)
+var getArtistsFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.artists;
-}
+};
 
-getArtistNamesFromSavedTrack = function(savedTrack)
+var getArtistNamesFromSavedTrack = function(savedTrack)
 {
     // A track can have multiple artists and is usually in a particular order
     // Take all the artists on a track and join them into a single comma separated string
     return getArtistsFromSavedTrack(savedTrack).map(getArtistNameFromArtist).join(", ");
-}
+};
 
-getReleaseDateFromSavedTrack = function(savedTrack)
+var getReleaseDateFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.album.release_date;
-}
+};
 
-getReleaseYearFromSavedTrack = function(savedTrack)
+var getReleaseYearFromSavedTrack = function(savedTrack)
 {
     // The release year is usually YYYY-MM-DD but can optionally have month or day level precision
     // Grab the first four characters present to get the year value only as it should always be present
     return getReleaseDateFromSavedTrack(savedTrack).substr(0, 4);
-}
+};
 
-getAddDateFromSavedTrack = function(savedTrack)
+var getAddDateFromSavedTrack = function(savedTrack)
 {
     return savedTrack.added_at;
-}
+};
 
-getDurationFromSavedTrack = function(savedTrack)
+var getDurationFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.duration_ms;
-}
+};
 
-getPopularityFromSavedTrack = function(savedTrack)
+var getPopularityFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.popularity;
-}
+};
 
-getArtistNameFromArtist = function(artist)
+var getArtistNameFromArtist = function(artist)
 {
     return artist.name.toUpperCase();
-}
+};
 
 // Operator Functions
-equals = function(a, b)
+var equals = function(a, b)
 {
     return a === b;
-}
+};
 
-notEquals = function(a, b)
+var notEquals = function(a, b)
 {
     return a !== b;
-}
+};
 
-greaterThan = function(a, b)
+var greaterThan = function(a, b)
 {
     return a > b;
-}
+};
 
-greaterThanOrEqualTo = function(a, b)
+var greaterThanOrEqualTo = function(a, b)
 {
     return greaterThan(a, b) || equals(a, b);
-}
+};
 
-lessThan = function(a, b)
+var lessThan = function(a, b)
 {
     return a < b;
-}
+};
 
-lessThanOrEqualTo = function(a, b)
+var lessThanOrEqualTo = function(a, b)
 {
     return lessThan(a, b) || equals(a, b);
-}
+};
 
-contains = function(a, b)
+var contains = function(a, b)
 {
     return a.includes(b);
-}
+};
 
 // Rule Functions
-ruleBySongName = function(track, songNameRuleData, operatorFunction)
+var ruleBySongName = function(track, songNameRuleData, operatorFunction)
 {
     var trackSongName = getTrackNameFromSavedTrack(track);
     var normalizedSongNameRuleData = songNameRuleData.toUpperCase();
 
     return operatorFunction(trackSongName, normalizedSongNameRuleData);
-}
+};
 
-ruleByAlbumName = function(track, albumNameRuleData, operatorFunction)
+var ruleByAlbumName = function(track, albumNameRuleData, operatorFunction)
 {
     var trackAlbumName = getAlbumNameFromSavedTrack(track);
     var normalizedAlbumNameRuleData = albumNameRuleData.toUpperCase();
 
     return operatorFunction(trackAlbumName, normalizedAlbumNameRuleData);
-}
+};
 
-ruleByReleaseYear = function(track, releaseYearRuleData, operatorFunction)
+var ruleByReleaseYear = function(track, releaseYearRuleData, operatorFunction)
 {
     var trackReleaseYear = getReleaseYearFromSavedTrack(track);
     return operatorFunction(trackReleaseYear, releaseYearRuleData);
-}
+};
 
-ruleByArtistName = function(track, artistNameRuleData, operatorFunction)
+var ruleByArtistName = function(track, artistNameRuleData, operatorFunction)
 {
     var trackArtistNames = getArtistNamesFromSavedTrack(track);
     var normalizedArtistNameRuleData = artistNameRuleData.toUpperCase();
 
     return operatorFunction(trackArtistNames, normalizedArtistNameRuleData);
-}
+};
 
 // TODO - Rule for genre
 
-getRuleOperatorFunction = function(operator)
+var getRuleOperatorFunction = function(operator)
 {
     var operatorFunction = () => {};
 
     switch (operator)
     {
-        case "notEqual":
-            operatorFunction = notEquals;
-            break;
-        case "greaterThan":
-            operatorFunction = greaterThan;
-            break;
-        case "greaterThanOrEqual":
-            operatorFunction = greaterThanOrEqualTo;
-            break;
-        case "lessThan":
-            operatorFunction = lessThan;
-            break;
-        case "lessThanOrEqual":
-            operatorFunction = lessThanOrEqualTo;
-            break;
-        case "contains":
-            operatorFunction = contains;
-            break;
-        case "equal":
-        default:
-            operatorFunction = equals;
-            break;
+    case "notEqual":
+        operatorFunction = notEquals;
+        break;
+    case "greaterThan":
+        operatorFunction = greaterThan;
+        break;
+    case "greaterThanOrEqual":
+        operatorFunction = greaterThanOrEqualTo;
+        break;
+    case "lessThan":
+        operatorFunction = lessThan;
+        break;
+    case "lessThanOrEqual":
+        operatorFunction = lessThanOrEqualTo;
+        break;
+    case "contains":
+        operatorFunction = contains;
+        break;
+    case "equal":
+    default:
+        operatorFunction = equals;
+        break;
     }
 
     return operatorFunction;
-}
+};
 
-getRuleFunction = function(ruleType)
+var getRuleFunction = function(ruleType)
 {
     var ruleFunction = () => {};
 
     switch (ruleType)
     {
-        case "artist":
-            ruleFunction = ruleByArtistName;
-            break;
-        case "album":
-            ruleFunction = ruleByAlbumName;
-            break;
-        case "genre":
-            // TODO - Rule by genre function
-            break;
-        case "year":
-            ruleFunction = ruleByReleaseYear;
-            break;
-        case "song":
-        default:
-            ruleFunction = ruleBySongName;
-            break;
+    case "artist":
+        ruleFunction = ruleByArtistName;
+        break;
+    case "album":
+        ruleFunction = ruleByAlbumName;
+        break;
+    case "genre":
+        // TODO - Rule by genre function
+        break;
+    case "year":
+        ruleFunction = ruleByReleaseYear;
+        break;
+    case "song":
+    default:
+        ruleFunction = ruleBySongName;
+        break;
     }
 
     return ruleFunction;
-}
+};
 
 // Ordering Functions
-getOrderForTracks = function(targetTrackIndex, tracks, orderOfTracks, orderComparisonFunction)
+var getOrderForTracks = function(targetTrackIndex, tracks, orderOfTracks, orderComparisonFunction)
 {
     if (orderOfTracks === undefined || orderOfTracks === null || !Array.isArray(orderOfTracks))
     {
@@ -723,61 +723,61 @@ getOrderForTracks = function(targetTrackIndex, tracks, orderOfTracks, orderCompa
     targetOrderIndex = lowerBoundInclusive;
     orderOfTracks.splice(targetOrderIndex, 0, targetTrackIndex);
     return orderOfTracks;
-}
+};
 
-getOrderingFunction = function(orderField, orderDirection)
+var getOrderingFunction = function(orderField, orderDirection)
 {
     var orderingFunction = () => {};
 
     switch (orderField)
     {
-        case "artist":
-            orderingFunction = getOrderingFunctionByDirection(compareByArtistAscending, compareByArtistDescending, orderDirection);
-            break;
-        case "album":
-            orderingFunction = getOrderingFunctionByDirection(compareByAlbumAscending, compareByAlbumDescending, orderDirection);
-            break;
-        case "release date":
-            orderingFunction = getOrderingFunctionByDirection(compareByReleaseAscending, compareByReleaseDescending, orderDirection);
-            break;
-        case "duration":
-            orderingFunction = getOrderingFunctionByDirection(compareByDurationAscending, compareByDurationDescending, orderDirection);
-            break;
-        case "library add date":
-            orderingFunction = getOrderingFunctionByDirection(compareByLibraryAscending, compareByLibraryDescending, orderDirection);
-            break;
-        case "popularity":
-            orderingFunction = getOrderingFunctionByDirection(compareByPopularityAscending, compareByPopularityDescending, orderDirection);
-            break;
-        case "song":
-        default:
-            orderingFunction = getOrderingFunctionByDirection(compareBySongAscending, compareBySongDescending, orderDirection);
-            break;
+    case "artist":
+        orderingFunction = getOrderingFunctionByDirection(compareByArtistAscending, compareByArtistDescending, orderDirection);
+        break;
+    case "album":
+        orderingFunction = getOrderingFunctionByDirection(compareByAlbumAscending, compareByAlbumDescending, orderDirection);
+        break;
+    case "release date":
+        orderingFunction = getOrderingFunctionByDirection(compareByReleaseAscending, compareByReleaseDescending, orderDirection);
+        break;
+    case "duration":
+        orderingFunction = getOrderingFunctionByDirection(compareByDurationAscending, compareByDurationDescending, orderDirection);
+        break;
+    case "library add date":
+        orderingFunction = getOrderingFunctionByDirection(compareByLibraryAscending, compareByLibraryDescending, orderDirection);
+        break;
+    case "popularity":
+        orderingFunction = getOrderingFunctionByDirection(compareByPopularityAscending, compareByPopularityDescending, orderDirection);
+        break;
+    case "song":
+    default:
+        orderingFunction = getOrderingFunctionByDirection(compareBySongAscending, compareBySongDescending, orderDirection);
+        break;
     }
 
     return orderingFunction;
-}
+};
 
-getOrderingFunctionByDirection = function(ascendingFunction, descendingFunction, direction)
+var getOrderingFunctionByDirection = function(ascendingFunction, descendingFunction, direction)
 {
     var orderingFunctionByDirection = () => {};
 
     switch (direction)
     {
-        case "descending":
-            orderingFunctionByDirection = descendingFunction;
-            break;
-        case "ascending":
-        default:
-            orderingFunctionByDirection = ascendingFunction;
-            break;
+    case "descending":
+        orderingFunctionByDirection = descendingFunction;
+        break;
+    case "ascending":
+    default:
+        orderingFunctionByDirection = ascendingFunction;
+        break;
     }
 
     return orderingFunctionByDirection;
-}
+};
 
 // Comparison Functions
-compareBySongAscending = function(targetTrack, existingTrack)
+var compareBySongAscending = function(targetTrack, existingTrack)
 {
     var targetTrackSongName = getTrackNameFromSavedTrack(targetTrack);
     var existingTrackSongName = getTrackNameFromSavedTrack(existingTrack);
@@ -793,9 +793,9 @@ compareBySongAscending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
-compareBySongDescending = function(targetTrack, existingTrack)
+var compareBySongDescending = function(targetTrack, existingTrack)
 {
     var targetTrackSongName = getTrackNameFromSavedTrack(targetTrack);
     var existingTrackSongName = getTrackNameFromSavedTrack(existingTrack);
@@ -811,9 +811,9 @@ compareBySongDescending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
-compareByLibraryAscending = function(targetTrack, existingTrack)
+var compareByLibraryAscending = function(targetTrack, existingTrack)
 {
     var targetTrackLibraryAddTimeStamp = getAddDateFromSavedTrack(targetTrack);
     var existingTrackLibraryAddTimeStamp = getAddDateFromSavedTrack(existingTrack);
@@ -829,9 +829,9 @@ compareByLibraryAscending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
-compareByLibraryDescending = function(targetTrack, existingTrack)
+var compareByLibraryDescending = function(targetTrack, existingTrack)
 {
     var targetTrackLibraryAddTimeStamp = getAddDateFromSavedTrack(targetTrack);
     var existingTrackLibraryAddTimeStamp = getAddDateFromSavedTrack(existingTrack);
@@ -847,9 +847,9 @@ compareByLibraryDescending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
-compareByAlbumAscending = function(targetTrack, existingTrack)
+var compareByAlbumAscending = function(targetTrack, existingTrack)
 {
     var targetTrackAlbumName = getAlbumNameFromSavedTrack(targetTrack);
     var existingTrackAlbumName = getAlbumNameFromSavedTrack(existingTrack);
@@ -865,9 +865,9 @@ compareByAlbumAscending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
-compareByAlbumDescending = function(targetTrack, existingTrack)
+var compareByAlbumDescending = function(targetTrack, existingTrack)
 {
     var targetTrackAlbumName = getAlbumNameFromSavedTrack(targetTrack);
     var existingTrackAlbumName = getAlbumNameFromSavedTrack(existingTrack);
@@ -883,9 +883,9 @@ compareByAlbumDescending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
-compareByReleaseAscending = function(targetTrack, existingTrack)
+var compareByReleaseAscending = function(targetTrack, existingTrack)
 {
     var targetTrackReleaseDate = getReleaseDateFromSavedTrack(targetTrack);
     var existingTrackReleaseDate = getReleaseDateFromSavedTrack(existingTrack);
@@ -901,9 +901,9 @@ compareByReleaseAscending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
-compareByReleaseDescending = function(targetTrack, existingTrack)
+var compareByReleaseDescending = function(targetTrack, existingTrack)
 {
     var targetTrackReleaseDate = getReleaseDateFromSavedTrack(targetTrack);
     var existingTrackReleaseDate = getReleaseDateFromSavedTrack(existingTrack);
@@ -919,9 +919,9 @@ compareByReleaseDescending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
-compareByArtistAscending = function(targetTrack, existingTrack)
+var compareByArtistAscending = function(targetTrack, existingTrack)
 {
     var targetTrackArtists = getArtistNamesFromSavedTrack(targetTrack);
     var existingTrackArtists = getArtistNamesFromSavedTrack(existingTrack);
@@ -937,9 +937,9 @@ compareByArtistAscending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
-compareByArtistDescending = function(targetTrack, existingTrack)
+var compareByArtistDescending = function(targetTrack, existingTrack)
 {
     var targetTrackArtists = getArtistNamesFromSavedTrack(targetTrack);
     var existingTrackArtists = getArtistNamesFromSavedTrack(existingTrack);
@@ -955,9 +955,9 @@ compareByArtistDescending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
-compareByDurationAscending = function(targetTrack, existingTrack)
+var compareByDurationAscending = function(targetTrack, existingTrack)
 {
     var targetTrackDuration = getDurationFromSavedTrack(targetTrack);
     var existingTrackDuration = getDurationFromSavedTrack(existingTrack);
@@ -973,9 +973,9 @@ compareByDurationAscending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
-compareByDurationDescending = function(targetTrack, existingTrack)
+var compareByDurationDescending = function(targetTrack, existingTrack)
 {
     var targetTrackDuration = getDurationFromSavedTrack(targetTrack);
     var existingTrackDuration = getDurationFromSavedTrack(existingTrack);
@@ -991,9 +991,9 @@ compareByDurationDescending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
-compareByPopularityAscending = function(targetTrack, existingTrack)
+var compareByPopularityAscending = function(targetTrack, existingTrack)
 {
     var targetTrackPopularity = getPopularityFromSavedTrack(targetTrack);
     var existingTrackPopularity = getPopularityFromSavedTrack(existingTrack);
@@ -1009,9 +1009,9 @@ compareByPopularityAscending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
-compareByPopularityDescending = function(targetTrack, existingTrack)
+var compareByPopularityDescending = function(targetTrack, existingTrack)
 {
     var targetTrackPopularity = getPopularityFromSavedTrack(targetTrack);
     var existingTrackPopularity = getPopularityFromSavedTrack(existingTrack);
@@ -1027,4 +1027,4 @@ compareByPopularityDescending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};

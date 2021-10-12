@@ -1,10 +1,10 @@
 // Dependencies
-var path = require('path'); // URI and local file paths
+var path = require("path"); // URI and local file paths
 
 // Custom Modules
 const customModulePath = __dirname;
-var spotifyClient = require(path.join(customModulePath, 'spotifyClient.js'));
-var logger = require(path.join(customModulePath, 'logger.js'));
+var spotifyClient = require(path.join(customModulePath, "spotifyClient.js"));
+var logger = require(path.join(customModulePath, "logger.js"));
 
 // Home Logic
 exports.getHomePage = async function(req, res, next)
@@ -16,7 +16,7 @@ exports.getHomePage = async function(req, res, next)
     }
     catch (error)
     {
-        logger.logError('Failed to get home page: ' + error.message);
+        logger.logError("Failed to get home page: " + error.message);
         next(error);
         return;
     }
@@ -31,7 +31,7 @@ exports.getHomePageData = async function(req, res)
     }
     catch (error)
     {
-        logger.logError('Failed to get home page data: ' + error.message);
+        logger.logError("Failed to get home page data: " + error.message);
         return Promise.reject(error);
     }
 
@@ -45,11 +45,11 @@ exports.getHomePageData = async function(req, res)
     };
 
     return Promise.resolve(homePageData);
-}
+};
 
 exports.renderHomePage = function(res, homePageData)
 {
     // Shove the playlist response data onto the home page for the user to interact with
-    res.location('/home');
-    res.render('home', homePageData);
-}
+    res.location("/home");
+    res.render("home", homePageData);
+};
