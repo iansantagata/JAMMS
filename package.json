@@ -7,7 +7,7 @@
   "license": "MIT",
   "repository": "github:iansantagata/jamms",
   "scripts": {
-    "lintjs": "eslint --ignore-path .gitignore **/**.js",
+    "lintjs": "eslint .",
     "lint": "npm run lintjs"
   },
   "dependencies": {

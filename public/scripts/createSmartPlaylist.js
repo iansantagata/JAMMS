@@ -125,7 +125,7 @@ function displaySmartPlaylistPreview(data)
 
     // Extract the saved tracks from the response data, removing garbage data if there is any
     var tracks = data
-        .map(item => item !== undefined && item !== null ? item.track : null)
+        .map(item => item?.track ?? null)
         .filter(mappedItem => mappedItem !== null);
 
     if (tracks === undefined || tracks === null || tracks.length <= 0)
