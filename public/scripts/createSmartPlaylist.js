@@ -66,7 +66,7 @@ function previewSmartPlaylist()
     var formDataJson = JSON.stringify(plainFormData);
 
     var fetchOptions = {
-        method: 'POST',
+        method: "POST",
         headers: {
             "Content-Type": "application/json",
             "Accept": "application/json"
@@ -125,20 +125,20 @@ function displaySmartPlaylistPreview(data)
 
     // Extract the saved tracks from the response data, removing garbage data if there is any
     var tracks = data
-            .map(item => item?.track ?? null)
-            .filter(mappedItem => mappedItem !== null);
+        .map(item => item !== undefined && item !== null ? item.track : null)
+        .filter(mappedItem => mappedItem !== null);
 
     if (tracks === undefined || tracks === null || tracks.length <= 0)
     {
-        var tracksNotFoundError = new Error("Failed to find valid tracks information in AJAX response data");
-        handlePlaylistPreviewError(tracksNotFoundError);
+        var validTracksNotFoundError = new Error("Failed to find valid tracks information in AJAX response data");
+        handlePlaylistPreviewError(validTracksNotFoundError);
         return;
     }
 
     // Start with a header to indicate that this is the preview tracks section
     var headerElement = document.createElement("h4");
     headerElement.setAttribute("class", "my-3");
-    headerElement.innerText = "Smart Playlist Track Preview"
+    headerElement.innerText = "Smart Playlist Track Preview";
 
     var textElement = document.createTextNode("Note - All playlist previews are generated on request and limited to the first 25 matching tracks.  Any created smart playlist may differ from the tracks shown in the preview.");
 
@@ -268,7 +268,7 @@ function displaySmartPlaylistPreview(data)
     buttonDivElement.appendChild(buttonElement);
 
     // Mark the table as responsive and shove the data inside of it
-    var previewContainerElement = document.createElement("div")
+    var previewContainerElement = document.createElement("div");
     previewContainerElement.setAttribute("id", "previewContainer");
     previewContainerElement.setAttribute("class", "table-responsive");
     previewContainerElement.appendChild(headerElement);
@@ -444,7 +444,7 @@ function addRuleFormFields()
     ruleDiv.setAttribute("id", "rule-" + ruleIndex);
     ruleDiv.appendChild(ruleTypeDiv);
     ruleDiv.appendChild(ruleOperatorDiv);
-    ruleDiv.appendChild(ruleTextDataDiv)
+    ruleDiv.appendChild(ruleTextDataDiv);
     ruleDiv.appendChild(removeRuleButtonDiv);
 
     // Append a form row of fields for a new rule

@@ -6,7 +6,7 @@ addOnClickListenersForPlaylistsPageNavigationLinks();
 // DOM Specific Logic
 function addOnClickListenersForViewPlaylistLinks()
 {
-    var playlistLinkNodes = document.querySelectorAll('[id^="viewPlaylistLink-"]');
+    var playlistLinkNodes = document.querySelectorAll("[id^=\"viewPlaylistLink-\"]");
     for (var playlistLinkNode of playlistLinkNodes)
     {
         addOnClickEventListenerToElement(playlistLinkNode, controlLoadingIndicatorWithText);
@@ -15,7 +15,7 @@ function addOnClickListenersForViewPlaylistLinks()
 
 function addOnClickListenersForPlaylistsPageNavigationLinks()
 {
-    var playlistsPageNavigationLinkNodes = document.querySelectorAll('[id^="playlistsPageNavigation-"]');
+    var playlistsPageNavigationLinkNodes = document.querySelectorAll("[id^=\"playlistsPageNavigation-\"]");
     for (var playlistsPageNavigationLink of playlistsPageNavigationLinkNodes)
     {
         // Do not want the text of these nodes to be replaced with loading text, so just use the spinner
@@ -25,7 +25,7 @@ function addOnClickListenersForPlaylistsPageNavigationLinks()
 
 function addOnClickListenersForPlaylistPerPageLinks()
 {
-    var playlistsPerPageLinkNodes = document.querySelectorAll('[id^="playlistsPerPageLink-"]');
+    var playlistsPerPageLinkNodes = document.querySelectorAll("[id^=\"playlistsPerPageLink-\"]");
     for (var playlistsPerPageLink of playlistsPerPageLinkNodes)
     {
         // Seems somewhat strange, but with a dropdown of links, the desired behavior is for the
