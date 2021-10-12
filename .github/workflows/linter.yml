@@ -1,0 +1,25 @@
+name: Linter
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  linter:
+    runs-on: ubuntu-latest
+    name: Linter
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+
+    - name: Lint JavaScript Files
+      run: npm run lintjs --if-present
