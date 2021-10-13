@@ -11,6 +11,7 @@
         <div class="dropdown input-group-prepend">
           <button id="playlistsPerPageDropdown" class="btn btn-outline-info btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Playlists Per Page</button>
           <div class="dropdown-menu">
+            <!-- TODO - Refactor this in JS instead of Vash -->
             @if(model.numberOfPlaylistsPerPage !== 10)
             {
               <a id="playlistsPerPageLink-10" class="dropdown-item" href="/playlists?playlistsPerPage=10">10</a>
