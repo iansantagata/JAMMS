@@ -1,5 +1,5 @@
 # Secrets (Files Only)
-*.secrets
+*.secret
 *.env
 
 # Node
