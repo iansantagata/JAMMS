@@ -120,7 +120,7 @@ exports.getAllPlaylists = async function(req, res)
     try
     {
         // Handle cases where invalid parameters were passed for request limit
-        let playlistRequestLimit = req.query.playlistsPerPage
+        const playlistRequestLimit = req.query.playlistsPerPage
             ? parseInt(req.query.playlistsPerPage, 10) // User specified value is present
             : playlistRequestLimitDefault; // Value not present, use default
 
@@ -130,7 +130,7 @@ exports.getAllPlaylists = async function(req, res)
         }
 
         // Handle cases where invalid parameters were passed for page number
-        let playlistPageNumber = req.query.pageNumber
+        const playlistPageNumber = req.query.pageNumber
             ? parseInt(req.query.pageNumber, 10) // User specified value is present
             : playlistPageNumberDefault; // Value not present, use default
 
@@ -402,7 +402,7 @@ exports.getTopArtists = async function(req, res)
     try
     {
         // Handle the case where the invalid parameters were passed to the artist limit
-        let artistRequestLimit = req.query.artistsPerPage
+        const artistRequestLimit = req.query.artistsPerPage
             ? parseInt(req.query.artistsPerPage, 10) // User specified value is present
             : artistRequestLimitDefault; // Value not specified, use default
 
@@ -412,7 +412,7 @@ exports.getTopArtists = async function(req, res)
         }
 
         // Handle the case where the invalid parameters were passed to the artist page number
-        let artistPageNumber = req.query.pageNumber
+        const artistPageNumber = req.query.pageNumber
             ? parseInt(req.query.pageNumber) // User specified value is present
             : artistPageNumberDefault; // Value not specified, use default
 
@@ -422,7 +422,7 @@ exports.getTopArtists = async function(req, res)
         }
 
         // Handle the case where the invalid parameters were passed to the artist time range
-        let artistTimeRange = req.query.timeRange || artistTimeRangeDefault;
+        const artistTimeRange = req.query.timeRange || artistTimeRangeDefault;
         if (typeof artistTimeRange !== "string" ||
             (artistTimeRange !== "short_term" &&
             artistTimeRange !== "medium_term" &&
@@ -474,7 +474,7 @@ exports.getAllArtists = async function(req, res)
     try
     {
         // Handle the case where the invalid parameters were passed to artist limit
-        let artistRequestLimit = req.query.artistsPerPage
+        const artistRequestLimit = req.query.artistsPerPage
             ? parseInt(req.query.artistsPerPage) // User specified value is present
             : artistRequestLimitDefault; // Value not specified, use default
 
@@ -521,7 +521,7 @@ exports.getAllTracks = async function(req, res)
     try
     {
         // Handle the case where the invalid parameters were passed to tracks limit
-        let tracksRequestLimit = req.query.tracksPerPage
+        const tracksRequestLimit = req.query.tracksPerPage
             ? parseInt(req.query.tracksPerPage) // User specified value is present
             : tracksRequestLimitDefault; // Value not specified, use default
 
@@ -531,7 +531,7 @@ exports.getAllTracks = async function(req, res)
         }
 
         // Handle the case where the invalid parameters were passed to tracks page number
-        let tracksPageNumber = req.query.pageNumber
+        const tracksPageNumber = req.query.pageNumber
             ? parseInt(req.query.pageNumber) // User specified value is present
             : tracksPageNumberDefault; // Value not specified, use default
 
@@ -581,7 +581,7 @@ exports.getTopTracks = async function(req, res)
     try
     {
         // Handle the case where the invalid parameters were passed to track limit
-        let tracksRequestLimit = req.query.tracksPerPage
+        const tracksRequestLimit = req.query.tracksPerPage
             ? parseInt(req.query.tracksPerPage) // User specified value is present
             : tracksRequestLimitDefault; // Value not specified, use default
 
@@ -591,7 +591,7 @@ exports.getTopTracks = async function(req, res)
         }
 
         // Handle the case where the invalid parameters were passed to track page number
-        let tracksPageNumber = req.query.pageNumber
+        const tracksPageNumber = req.query.pageNumber
             ? parseInt(req.query.pageNumber, 10) // User specified value is present
             : tracksPageNumberDefault; // Value not specified, use default
 
@@ -601,7 +601,7 @@ exports.getTopTracks = async function(req, res)
         }
 
         // Handle the case where the invalid parameters were passed to track time range
-        let tracksTimeRange = req.query.timeRange || tracksTimeRangeDefault;
+        const tracksTimeRange = req.query.timeRange || tracksTimeRangeDefault;
         if (typeof tracksTimeRange !== "string" ||
             (tracksTimeRange !== "short_term" &&
             tracksTimeRange !== "medium_term" &&

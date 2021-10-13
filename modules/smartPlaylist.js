@@ -275,12 +275,14 @@ function getPlaylistLimits(req)
     {
         return defaultPlaylistLimitData;
     }
-    else if (playlistLimitData.value <= 0)
+
+    if (playlistLimitData.value <= 0)
     {
         logger.logWarn(`Playlist limit value entered is zero or negative: "${playlistLimitData.value}". Falling back to using no limit.`);
         return defaultPlaylistLimitData;
     }
-    else if (playlistLimitData.value > maximumPlaylistSongLimit)
+
+    if (playlistLimitData.value > maximumPlaylistSongLimit)
     {
         logger.logWarn(`Playlist limit value entered is greater than ten thosand: "${playlistLimitData.value}". Falling back to using limit of ${maximumPlaylistSongLimit}.`);
         playlistLimitData.value = maximumPlaylistSongLimit;
