@@ -1,12 +1,14 @@
+"use strict";
+
 // Dependencies
-var axios = require("axios"); // Make HTTP requests
-var path = require("path"); // URI and local file paths
-var querystring = require("querystring"); // URI query string manipulation
+const axios = require("axios"); // Make HTTP requests
+const path = require("path"); // URI and local file paths
+const querystring = require("querystring"); // URI query string manipulation
 
 // Custom Modules
 const customModulePath = __dirname;
-var authorize = require(path.join(customModulePath, "authorize.js"));
-var logger = require(path.join(customModulePath, "logger.js"));
+const authorize = require(path.join(customModulePath, "authorize.js"));
+const logger = require(path.join(customModulePath, "logger.js"));
 
 // Spotify URIs
 const spotifyBaseUri = "https://api.spotify.com/v1";
@@ -21,12 +23,16 @@ const spotifyPlaylistsUriPath = "/playlists";
 
 // Default Constant Values
 const playlistRequestLimitDefault = 10;
+const playlistRequestLimitMax = 50;
 const playlistPageNumberDefault = 1;
 const artistRequestLimitDefault = 10;
+const artistRequestLimitMax = 50;
 const artistPageNumberDefault = 1;
-const artistTimeRangeDefault = "long_term";
 const tracksRequestLimitDefault = 10;
+const tracksRequestLimitMax = 50;
 const tracksPageNumberDefault = 1;
+
+const artistTimeRangeDefault = "long_term";
 const tracksTimeRangeDefault = "long_term";
 const createdPlaylistDescription = "Playlist created with JAMMS.app!";
 
@@ -36,21 +42,21 @@ exports.getCurrentUserId = async function(req, res)
     // Make the request to get the current user's data
     try
     {
-        var requestOptions = {
+        const requestOptions = {
             headers: {
-                "Authorization": await authorize.getAccessToken(req, res)
+                Authorization: await authorize.getAccessToken(req, res)
             }
         };
 
-        var spotifyGetCurrentUserUri = spotifyBaseUri + spotifyCurrentUserUriPath;
-        var response = await axios.get(spotifyGetCurrentUserUri, requestOptions);
+        const spotifyGetCurrentUserUri = spotifyBaseUri + spotifyCurrentUserUriPath;
+        const response = await axios.get(spotifyGetCurrentUserUri, requestOptions);
 
         // Return only this user's ID
         return Promise.resolve(response.data.id);
     }
     catch (error)
     {
-        logger.logError("Failed to get current user ID: " + error.message);
+        logger.logError(`Failed to get current user ID: ${error.message}`);
         return Promise.reject(error);
     }
 };
@@ -58,43 +64,45 @@ exports.getCurrentUserId = async function(req, res)
 exports.getUserData = async function(req, res)
 {
     // Call a series of Spotify endpoints to get a small amount of sample data
-    // and aggregate metadata about this user's music collection
+    // Then, aggregate metadata about this user's music collection
     try
     {
+        const defaultDataPointsPerPage = 10;
+
         // Get number of playlists and sample playlists from the user
-        req.query.playlistsPerPage = 10;
+        req.query.playlistsPerPage = defaultDataPointsPerPage;
         req.query.pageNumber = 1;
-        var playlistResponse = await exports.getAllPlaylists(req, res);
+        const playlistResponse = await exports.getAllPlaylists(req, res);
 
         // Get sample top artists from the user
-        req.query.artistsPerPage = 10;
+        req.query.artistsPerPage = defaultDataPointsPerPage;
         req.query.pageNumber = 1;
         req.query.timeRange = "long_term";
-        var topArtistsResponse = await exports.getTopArtists(req, res);
+        const topArtistsResponse = await exports.getTopArtists(req, res);
 
         // Get number of artists from the user
         req.query.artistsPerPage = 1;
         req.query.pageNumber = 1;
-        var artistsResponse = await exports.getAllArtists(req, res);
+        const artistsResponse = await exports.getAllArtists(req, res);
 
         // Get sample top tracks from the user
-        req.query.tracksPerPage = 10;
+        req.query.tracksPerPage = defaultDataPointsPerPage;
         req.query.pageNumber = 1;
         req.query.timeRange = "long_term";
-        var topTracksResponse = await exports.getTopTracks(req, res);
+        const topTracksResponse = await exports.getTopTracks(req, res);
 
         // Get number of tracks from the user
         req.query.tracksPerPage = 1;
         req.query.pageNumber = 1;
-        var tracksResponse = await exports.getAllTracks(req, res);
+        const tracksResponse = await exports.getAllTracks(req, res);
 
         // Now aggregate all of the responses together to a single block of user data
-        var fullSpotifyResponse = {
-            numberOfPlaylists: playlistResponse.total,
-            samplePlaylistData: playlistResponse.items,
+        const fullSpotifyResponse = {
             numberOfArtists: artistsResponse.total,
-            sampleArtistData: topArtistsResponse.items,
+            numberOfPlaylists: playlistResponse.total,
             numberOfTracks: tracksResponse.total,
+            sampleArtistData: topArtistsResponse.items,
+            samplePlaylistData: playlistResponse.items,
             sampleTrackData: topTracksResponse.items
         };
 
@@ -102,7 +110,7 @@ exports.getUserData = async function(req, res)
     }
     catch (error)
     {
-        logger.logError("Failed to get current user data: " + error.message);
+        logger.logError(`Failed to get current user data: ${error.message}`);
         return Promise.reject(error);
     }
 };
@@ -111,54 +119,46 @@ exports.getAllPlaylists = async function(req, res)
 {
     try
     {
-        var playlistRequestLimit = req.query.playlistsPerPage;
-        var playlistPageNumber = req.query.pageNumber;
+        // Handle cases where invalid parameters were passed for request limit
+        const playlistRequestLimit = req.query.playlistsPerPage
+            ? parseInt(req.query.playlistsPerPage, 10) // User specified value is present
+            : playlistRequestLimitDefault; // Value not present, use default
 
-        // Handle the case where the invalid parameters were passed
-        if (playlistRequestLimit === undefined || playlistRequestLimit === null)
+        if (isNaN(playlistRequestLimit) || playlistRequestLimit <= 0 || playlistRequestLimit > playlistRequestLimitMax)
         {
-            logger.logInfo("User requested invalid playlist limit: Value not found. Overwriting with default value.");
-            playlistRequestLimit = playlistRequestLimitDefault;
+            throw new Error(`Invalid playlists per page limit of "${playlistRequestLimit}" requested`);
         }
 
-        if (playlistRequestLimit <= 0 || playlistRequestLimit > 50)
+        // Handle cases where invalid parameters were passed for page number
+        const playlistPageNumber = req.query.pageNumber
+            ? parseInt(req.query.pageNumber, 10) // User specified value is present
+            : playlistPageNumberDefault; // Value not present, use default
+
+        if (isNaN(playlistPageNumber) || playlistPageNumber <= 0)
         {
-            logger.logWarn(`User requested invalid playlist limit: "${playlistRequestLimit}". Overwriting with default value.`);
-            playlistRequestLimit = playlistRequestLimitDefault;
+            throw new Error(`Invalid playlist page number of "${playlistPageNumber}" requested`);
         }
 
-        if (playlistPageNumber === undefined || playlistPageNumber === null)
-        {
-            logger.logInfo("User requested invalid playlist page: Value not found. Overwriting with default value.");
-            playlistPageNumber = playlistPageNumberDefault;
-        }
-
-        if (playlistPageNumber <= 0)
-        {
-            logger.logWarn(`User requested invalid playlist page: "${playlistPageNumber}". Overwriting with default value.`);
-            playlistPageNumber = playlistPageNumberDefault;
-        }
-
-        var playlistRequestOffset = (playlistPageNumber - 1) * playlistRequestLimit;
+        // Convert page number that user sees to starting offset (basically an index) to retrieve data from the API
+        const playlistRequestOffset = (playlistPageNumber - 1) * playlistRequestLimit;
 
         // Make the request to get all playlist data for this user
-        var requestData = {
+        const requestData = {
             limit: playlistRequestLimit,
             offset: playlistRequestOffset
         };
 
-        // Trigger the request and handle possible responses
-        var requestOptions = {
+        const requestOptions = {
             headers: {
-                "Authorization": await authorize.getAccessToken(req, res)
+                Authorization: await authorize.getAccessToken(req, res)
             }
         };
 
-        var spotifyGetAllPlaylistsUri = spotifyBaseUri + spotifyCurrentUserUriPath + spotifyPlaylistsUriPath;
-        var response = await axios.get(spotifyGetAllPlaylistsUri + "?" + querystring.stringify(requestData), requestOptions);
+        const spotifyGetAllPlaylistsUri = spotifyBaseUri + spotifyCurrentUserUriPath + spotifyPlaylistsUriPath;
+        const response = await axios.get(`${spotifyGetAllPlaylistsUri}?${querystring.stringify(requestData)}`, requestOptions);
 
         // Extract only the data from the successful response that the user will care to see
-        var spotifyPagedResponse = {
+        const spotifyPagedResponse = {
             items: response.data.items,
             limit: response.data.limit,
             offset: response.data.offset,
@@ -169,7 +169,7 @@ exports.getAllPlaylists = async function(req, res)
     }
     catch (error)
     {
-        logger.logError("Failed to get all playlists for user: " + error.message);
+        logger.logError(`Failed to get all playlists for user: ${error.message}`);
         return Promise.reject(error);
     }
 };
@@ -178,31 +178,31 @@ exports.getSinglePlaylist = async function(req, res)
 {
     try
     {
-        var playlistId = req.query.playlistId || null;
-        if (playlistId === undefined || playlistId === null)
+        const playlistId = req.query.playlistId;
+        if (!playlistId || typeof playlistId !== "string")
         {
             throw new Error(`Invalid playlist ID of "${playlistId}" requested`);
         }
 
         // Make the request to get the single playlist's data
-        var requestOptions = {
+        const requestOptions = {
             headers: {
-                "Authorization": await authorize.getAccessToken(req, res)
+                Authorization: await authorize.getAccessToken(req, res)
             }
         };
 
-        var spotifyGetSinglePlaylistUri = spotifyBaseUri + spotifyPlaylistsUriPath + "/" + playlistId;
-        var response = await axios.get(spotifyGetSinglePlaylistUri, requestOptions);
+        const spotifyGetSinglePlaylistUri = `${spotifyBaseUri}${spotifyPlaylistsUriPath}/${playlistId}`;
+        const response = await axios.get(spotifyGetSinglePlaylistUri, requestOptions);
 
         // Extract only the data from the successful response that the user will care to see
-        var spotifyResponse = {
-            id: response.data.id,
-            name: response.data.name,
-            description: response.data.description,
-            public: response.data.public,
+        const spotifyResponse = {
             collaborative: response.data.collaborative,
+            description: response.data.description,
             followers: response.data.followers,
+            id: response.data.id,
             images: response.data.images,
+            name: response.data.name,
+            public: response.data.public,
             tracks: response.data.tracks
         };
 
@@ -210,7 +210,7 @@ exports.getSinglePlaylist = async function(req, res)
     }
     catch (error)
     {
-        logger.logError("Failed to get playlist: " + error.message);
+        logger.logError(`Failed to get playlist: ${error.message}`);
         return Promise.reject(error);
     }
 };
@@ -219,80 +219,66 @@ exports.createSinglePlaylist = async function(req, res)
 {
     try
     {
-        var userId = req.body.userId || null;
-        if (userId === undefined || userId === null)
+        const userId = req.body.userId;
+        if (!userId || typeof userId !== "string")
         {
             throw new Error(`Invalid user ID of "${userId}" attempted to create new playlist`);
         }
 
-        var playlistName = req.body.playlistName || null;
-        if (playlistName === undefined || playlistName === null)
+        const playlistName = req.body.playlistName;
+        if (!playlistName || typeof playlistName !== "string")
         {
             throw new Error(`Invalid playlist name of "${playlistName}" provided`);
         }
 
-        var playlistDescription = req.body.playlistDescription || null;
-        if (playlistDescription === undefined || playlistDescription === null)
+        let playlistDescription = req.body.playlistDescription;
+        if (!playlistDescription || typeof playlistDescription !== "string")
         {
+            // Handle playlist descriptions differently if there is none or there is an error
+            // App can just default to a playlist description in that case
             playlistDescription = createdPlaylistDescription;
         }
         else
         {
-            playlistDescription = createdPlaylistDescription + " " + playlistDescription;
+            playlistDescription = `${createdPlaylistDescription} ${playlistDescription}`;
         }
 
-        var playlistIsPublic = req.body.playlistIsPublic || null;
-        if (playlistIsPublic === undefined || playlistIsPublic === null)
-        {
-            playlistIsPublic = false;
-        }
-        else
-        {
-            playlistIsPublic = true;
-        }
+        const playlistIsPublic = Boolean(req.body.playlistIsPublic);
+        let playlistIsCollaborative = Boolean(req.body.playlistIsCollaborative);
 
-        var playlistIsCollaborative = req.body.playlistIsCollaborative || null;
-        if (playlistIsCollaborative === undefined || playlistIsCollaborative === null)
+        // Playlists cannot both be collaborative and public, so let public override collaboration
+        if (playlistIsCollaborative && playlistIsPublic)
         {
             playlistIsCollaborative = false;
         }
-        else if (playlistIsCollaborative && playlistIsPublic)
-        {
-            // Playlists cannot both be collaborative and public, so let public override collaboration
-            playlistIsCollaborative = false;
-        }
-        else
-        {
-            playlistIsCollaborative = true;
-        }
 
-        var requestData = {
-            name: playlistName,
+        const requestData = {
+            collaborative: playlistIsCollaborative,
             description: playlistDescription,
-            public: playlistIsPublic,
-            collaborative: playlistIsCollaborative
+            name: playlistName,
+            public: playlistIsPublic
         };
 
         // Make the request to create a new playlist, albeit an empty one to start
-        var requestOptions = {
+        const requestOptions = {
             headers: {
                 "Authorization": await authorize.getAccessToken(req, res),
                 "Content-Type": "application/json"
             }
         };
 
-        var createSinglePlaylistUri = spotifyBaseUri + spotifyUsersUriPath + "/" + userId + spotifyPlaylistsUriPath;
-        var response = await axios.post(createSinglePlaylistUri, requestData, requestOptions);
+        const createSinglePlaylistUri = `${spotifyBaseUri}${spotifyUsersUriPath}/${userId}${spotifyPlaylistsUriPath}`;
+        const response = await axios.post(createSinglePlaylistUri, requestData, requestOptions);
 
         // Extract only the data from the successful response that the user will care to see
-        var spotifyResponse = {
-            id: response.data.id,
-            name: response.data.name,
-            description: response.data.description,
-            public: response.data.public,
+        const spotifyResponse = {
             collaborative: response.data.collaborative,
+            description: response.data.description,
             followers: response.data.followers,
+            id: response.data.id,
             images: response.data.images,
+            name: response.data.name,
+            public: response.data.public,
             tracks: response.data.tracks
         };
 
@@ -300,7 +286,7 @@ exports.createSinglePlaylist = async function(req, res)
     }
     catch (error)
     {
-        logger.logError("Failed to create playlist: " + error.message);
+        logger.logError(`Failed to create playlist: ${error.message}`);
         return Promise.reject(error);
     }
 };
@@ -309,20 +295,20 @@ exports.deleteSinglePlaylist = async function(req, res)
 {
     try
     {
-        var playlistId = req.query.playlistId || null;
-        if (playlistId === undefined || playlistId === null)
+        const playlistId = req.query.playlistId;
+        if (!playlistId || typeof playlistId !== "string")
         {
             throw new Error(`Invalid playlist ID of "${playlistId}" requested for deletion`);
         }
 
         // Make the request to "unfollow" the playlist, Spotify's way of deleting it from the user's library
-        var requestOptions = {
+        const requestOptions = {
             headers: {
-                "Authorization": await authorize.getAccessToken(req, res)
+                Authorization: await authorize.getAccessToken(req, res)
             }
         };
 
-        var deleteSinglePlaylistUri = spotifyBaseUri + spotifyPlaylistsUriPath + "/" + playlistId + spotifyFollowersUriPath;
+        const deleteSinglePlaylistUri = `${spotifyBaseUri}${spotifyPlaylistsUriPath}/${playlistId}${spotifyFollowersUriPath}`;
         await axios.delete(deleteSinglePlaylistUri, requestOptions);
 
         // No response message for this endpoint, just return successfully
@@ -330,7 +316,7 @@ exports.deleteSinglePlaylist = async function(req, res)
     }
     catch (error)
     {
-        logger.logError("Failed to delete playlist: " + error.message);
+        logger.logError(`Failed to delete playlist: ${error.message}`);
         return Promise.reject(error);
     }
 };
@@ -339,25 +325,25 @@ exports.restoreSinglePlaylist = async function(req, res)
 {
     try
     {
-        var playlistId = req.query.playlistId || null;
-        if (playlistId === undefined || playlistId === null)
+        const playlistId = req.query.playlistId;
+        if (!playlistId || typeof playlistId !== "string")
         {
             throw new Error(`Invalid playlist ID of "${playlistId}" requested for restoration`);
         }
 
-        var requestData = {
+        const requestData = {
             public: true
         };
 
         // Make the request to "re-follow" the playlist, Spotify's way of restoring a deleted playlist from the user's library
-        var requestOptions = {
+        const requestOptions = {
             headers: {
                 "Authorization": await authorize.getAccessToken(req, res),
                 "Content-Type": "application/json"
             }
         };
 
-        var restoreSinglePlaylistUri = spotifyBaseUri + spotifyPlaylistsUriPath + "/" + playlistId + spotifyFollowersUriPath;
+        const restoreSinglePlaylistUri = `${spotifyBaseUri}${spotifyPlaylistsUriPath}/${playlistId}${spotifyFollowersUriPath}`;
         await axios.put(restoreSinglePlaylistUri, requestData, requestOptions);
 
         // No response message for this endpoint, just return successfully
@@ -365,7 +351,7 @@ exports.restoreSinglePlaylist = async function(req, res)
     }
     catch (error)
     {
-        logger.logError("Failed to restore playlist: " + error.message);
+        logger.logError(`Failed to restore playlist: ${error.message}`);
         return Promise.reject(error);
     }
 };
@@ -374,31 +360,31 @@ exports.addTracksToPlaylist = async function(req, res)
 {
     try
     {
-        var playlistId = req.body.playlistId || null;
-        if (playlistId === undefined || playlistId === null)
+        const playlistId = req.body.playlistId;
+        if (!playlistId || typeof playlistId !== "string")
         {
             throw new Error(`Invalid playlist ID of "${playlistId}" to add songs to`);
         }
 
-        var trackUris = req.body.trackUris || null;
-        if (trackUris === undefined || trackUris === null)
+        const trackUris = req.body.trackUris;
+        if (!trackUris || typeof trackUris !== "object")
         {
             throw new Error(`Invalid track URIs of "${trackUris}" to add to playlist`);
         }
 
-        var requestData = {
+        const requestData = {
             uris: trackUris
         };
 
         // Make the request to add songs to the playlist
-        var requestOptions = {
+        const requestOptions = {
             headers: {
                 "Authorization": await authorize.getAccessToken(req, res),
                 "Content-Type": "application/json"
             }
         };
 
-        var addTracksToPlaylistUri = spotifyBaseUri + spotifyPlaylistsUriPath + "/" + playlistId + spotifyTracksUriPath;
+        const addTracksToPlaylistUri = `${spotifyBaseUri}${spotifyPlaylistsUriPath}/${playlistId}${spotifyTracksUriPath}`;
         await axios.post(addTracksToPlaylistUri, requestData, requestOptions);
 
         // No response message for this endpoint, just return successfully
@@ -406,7 +392,7 @@ exports.addTracksToPlaylist = async function(req, res)
     }
     catch (error)
     {
-        logger.logError("Failed to add tracks to playlist: " + error.message);
+        logger.logError(`Failed to add tracks to playlist: ${error.message}`);
         return Promise.reject(error);
     }
 };
@@ -415,65 +401,59 @@ exports.getTopArtists = async function(req, res)
 {
     try
     {
-        var artistRequestLimit = req.query.artistsPerPage;
-        var artistPageNumber = req.query.pageNumber;
-        var artistTimeRange = req.query.timeRange;
+        // Handle the case where the invalid parameters were passed to the artist limit
+        const artistRequestLimit = req.query.artistsPerPage
+            ? parseInt(req.query.artistsPerPage, 10) // User specified value is present
+            : artistRequestLimitDefault; // Value not specified, use default
 
-        // Handle the case where the invalid parameters were passed
-        if (artistRequestLimit === undefined || artistRequestLimit === null)
+        if (isNaN(artistRequestLimit) || artistRequestLimit <= 0 || artistRequestLimit > artistRequestLimitMax)
         {
-            logger.logInfo("User requested invalid artist limit: Value not found. Overwriting with default value.");
-            artistRequestLimit = artistRequestLimitDefault;
+            throw new Error(`Invalid artists per page limit of "${artistRequestLimit}" requested`);
         }
 
-        if (artistRequestLimit <= 0 || artistRequestLimit > 50)
+        // Handle the case where the invalid parameters were passed to the artist page number
+        const artistPageNumber = req.query.pageNumber
+            ? parseInt(req.query.pageNumber) // User specified value is present
+            : artistPageNumberDefault; // Value not specified, use default
+
+        if (isNaN(artistPageNumber) || artistPageNumber <= 0)
         {
-            logger.logWarn(`User requested invalid artist limit: "${artistRequestLimit}". Overwriting with default value.`);
-            artistRequestLimit = artistRequestLimitDefault;
+            throw new Error(`Invalid artist page number of "${artistPageNumber}" requested`);
         }
 
-        if (artistPageNumber === undefined || artistPageNumber === null)
-        {
-            logger.logInfo("User requested invalid artist page: Value not found. Overwriting with default value.");
-            artistPageNumber = artistPageNumberDefault;
-        }
-
-        if (artistPageNumber <= 0)
-        {
-            logger.logWarn(`User requested invalid artist page: "${artistPageNumber}". Overwriting with default value.`);
-            artistPageNumber = artistPageNumberDefault;
-        }
-
-        if (artistTimeRange !== "short_term" &&
+        // Handle the case where the invalid parameters were passed to the artist time range
+        const artistTimeRange = req.query.timeRange || artistTimeRangeDefault;
+        if (typeof artistTimeRange !== "string" ||
+            (artistTimeRange !== "short_term" &&
             artistTimeRange !== "medium_term" &&
-            artistTimeRange !== "long_term")
+            artistTimeRange !== "long_term"))
         {
-            logger.logWarn(`User requested invalid artist time range: "${artistTimeRange}". Overwriting with default value.`);
-            artistTimeRange = artistTimeRangeDefault;
+            throw new Error(`Invalid artist time range of "${artistTimeRange}" requested`);
         }
 
-        var artistRequestOffset = (artistPageNumber - 1) * artistRequestLimit;
-        var requestData = {
+        // Convert page number to offset (basically an index) for API usage
+        const artistRequestOffset = (artistPageNumber - 1) * artistRequestLimit;
+
+        // Make the request to get the artist data
+        const requestType = "artists";
+        const requestData = {
             limit: artistRequestLimit,
             offset: artistRequestOffset,
             time_range: artistTimeRange
         };
 
-        var requestType = "artists";
-
-        // Make the request to get the artist data
-        var requestOptions = {
+        const requestOptions = {
             headers: {
-                "Authorization": await authorize.getAccessToken(req, res)
+                Authorization: await authorize.getAccessToken(req, res)
             }
         };
 
-        var spotifyGetTopDataUri = spotifyBaseUri + spotifyCurrentUserUriPath + spotifyTopUriPath + "/" + requestType;
-        var spotifyGetTopDataRequestQuery = "?" + querystring.stringify(requestData);
-        var response = await axios.get(spotifyGetTopDataUri + spotifyGetTopDataRequestQuery, requestOptions);
+        const spotifyGetTopDataUri = `${spotifyBaseUri}${spotifyCurrentUserUriPath}${spotifyTopUriPath}/${requestType}`;
+        const spotifyGetTopDataRequestQuery = `?${querystring.stringify(requestData)}`;
+        const response = await axios.get(spotifyGetTopDataUri + spotifyGetTopDataRequestQuery, requestOptions);
 
         // Extract only the data from the successful response that the user will care to see
-        var spotifyPagedResponse = {
+        const spotifyPagedResponse = {
             items: response.data.items,
             limit: response.data.limit,
             offset: response.data.offset,
@@ -484,7 +464,7 @@ exports.getTopArtists = async function(req, res)
     }
     catch (error)
     {
-        logger.logError("Failed to get top artists: " + error.message);
+        logger.logError(`Failed to get top artists: ${error.message}`);
         return Promise.reject(error);
     }
 };
@@ -493,40 +473,35 @@ exports.getAllArtists = async function(req, res)
 {
     try
     {
-        var artistRequestLimit = req.query.artistsPerPage;
+        // Handle the case where the invalid parameters were passed to artist limit
+        const artistRequestLimit = req.query.artistsPerPage
+            ? parseInt(req.query.artistsPerPage) // User specified value is present
+            : artistRequestLimitDefault; // Value not specified, use default
 
-        // Handle the case where the invalid parameters were passed
-        if (artistRequestLimit === undefined || artistRequestLimit === null)
+        if (isNaN(artistRequestLimit) || artistRequestLimit <= 0 || artistRequestLimit > artistRequestLimitMax)
         {
-            logger.logInfo("User requested invalid artist limit: Value not found. Using default value.");
-            artistRequestLimit = artistRequestLimitDefault;
+            throw new Error(`Invalid artists per page limit of "${artistRequestLimit}" requested`);
         }
-
-        if (artistRequestLimit <= 0 || artistRequestLimit > 50)
-        {
-            logger.logWarn(`User requested invalid artist limit: "${artistRequestLimit}". Overwriting with default value.`);
-            artistRequestLimit = artistRequestLimitDefault;
-        }
-
-        var requestType = "artist";
-        var requestData = {
-            type: requestType,
-            limit: artistRequestLimit
-        };
 
         // Make the request to get the artist data
-        var requestOptions = {
+        const requestType = "artist";
+        const requestData = {
+            limit: artistRequestLimit,
+            type: requestType
+        };
+
+        const requestOptions = {
             headers: {
-                "Authorization": await authorize.getAccessToken(req, res)
+                Authorization: await authorize.getAccessToken(req, res)
             }
         };
 
-        var spotifyGetAllArtistsUri = spotifyBaseUri + spotifyCurrentUserUriPath + spotifyFollowingUriPath;
-        var spotifyGetAllArtistsRequestQuery = "?" + querystring.stringify(requestData);
-        var response = await axios.get(spotifyGetAllArtistsUri + spotifyGetAllArtistsRequestQuery, requestOptions);
+        const spotifyGetAllArtistsUri = spotifyBaseUri + spotifyCurrentUserUriPath + spotifyFollowingUriPath;
+        const spotifyGetAllArtistsRequestQuery = `?${querystring.stringify(requestData)}`;
+        const response = await axios.get(spotifyGetAllArtistsUri + spotifyGetAllArtistsRequestQuery, requestOptions);
 
         // Extract only the data from the successful response that the user will care to see
-        var spotifyPagedResponse = {
+        const spotifyPagedResponse = {
             items: response.data.artists.items,
             limit: response.data.artists.limit,
             total: response.data.artists.total
@@ -536,7 +511,7 @@ exports.getAllArtists = async function(req, res)
     }
     catch (error)
     {
-        logger.logError("Failed to get all artists: " + error.message);
+        logger.logError(`Failed to get all artists: ${error.message}`);
         return Promise.reject(error);
     }
 };
@@ -545,54 +520,47 @@ exports.getAllTracks = async function(req, res)
 {
     try
     {
-        var tracksRequestLimit = req.query.tracksPerPage;
-        var tracksPageNumber = req.query.pageNumber;
+        // Handle the case where the invalid parameters were passed to tracks limit
+        const tracksRequestLimit = req.query.tracksPerPage
+            ? parseInt(req.query.tracksPerPage) // User specified value is present
+            : tracksRequestLimitDefault; // Value not specified, use default
 
-        // Handle the case where the invalid parameters were passed
-        if (tracksRequestLimit === undefined ||
-            tracksRequestLimit === null)
+        if (isNaN(tracksRequestLimit) || tracksRequestLimit <= 0 || tracksRequestLimit > tracksRequestLimitMax)
         {
-            logger.logInfo("User requested invalid tracks limit: Value not found. Overwriting with default value.");
-            tracksRequestLimit = tracksRequestLimitDefault;
+            throw new Error(`Invalid tracks per page limit of "${tracksRequestLimit}" requested`);
         }
 
-        if (tracksRequestLimit <= 0 || tracksRequestLimit > 50)
+        // Handle the case where the invalid parameters were passed to tracks page number
+        const tracksPageNumber = req.query.pageNumber
+            ? parseInt(req.query.pageNumber) // User specified value is present
+            : tracksPageNumberDefault; // Value not specified, use default
+
+        if (isNaN(tracksPageNumber) || tracksPageNumber <= 0)
         {
-            logger.logWarn(`User requested invalid tracks limit: "${tracksRequestLimit}". Overwriting with default value.`);
-            tracksRequestLimit = tracksRequestLimitDefault;
+            throw new Error(`Invalid tracks page number of "${tracksPageNumber}" requested`);
         }
 
-        if (tracksPageNumber === undefined || tracksPageNumber === null)
-        {
-            logger.logInfo("User requested invalid tracks page: Value not found. Overwriting with default value.");
-            tracksPageNumber = tracksPageNumberDefault;
-        }
+        // Convert page number to offset (basically an index) for API data retrieval
+        const tracksRequestOffset = (tracksPageNumber - 1) * tracksRequestLimit;
 
-        if (tracksPageNumber <= 0)
-        {
-            logger.logWarn(`User requested invalid tracks page: "${tracksPageNumber}". Overwriting with default value.`);
-            tracksPageNumber = tracksPageNumberDefault;
-        }
-
-        var tracksRequestOffset = (tracksPageNumber - 1) * tracksRequestLimit;
-        var requestData = {
+        // Make the request to get the track data
+        const requestData = {
             limit: tracksRequestLimit,
             offset: tracksRequestOffset
         };
 
-        // Make the request to get the track data
-        var requestOptions = {
+        const requestOptions = {
             headers: {
-                "Authorization": await authorize.getAccessToken(req, res)
+                Authorization: await authorize.getAccessToken(req, res)
             }
         };
 
-        var spotifyGetAllTracksUri = spotifyBaseUri + spotifyCurrentUserUriPath + spotifyTracksUriPath;
-        var spotifyGetAllTracksRequestQuery = "?" + querystring.stringify(requestData);
-        var response = await axios.get(spotifyGetAllTracksUri + spotifyGetAllTracksRequestQuery, requestOptions);
+        const spotifyGetAllTracksUri = spotifyBaseUri + spotifyCurrentUserUriPath + spotifyTracksUriPath;
+        const spotifyGetAllTracksRequestQuery = `?${querystring.stringify(requestData)}`;
+        const response = await axios.get(spotifyGetAllTracksUri + spotifyGetAllTracksRequestQuery, requestOptions);
 
         // Extract only the data from the successful response that the user will care to see
-        var spotifyPagedResponse = {
+        const spotifyPagedResponse = {
             items: response.data.items,
             limit: response.data.limit,
             offset: response.data.offset,
@@ -603,7 +571,7 @@ exports.getAllTracks = async function(req, res)
     }
     catch (error)
     {
-        logger.logError("Failed to get all tracks: " + error.message);
+        logger.logError(`Failed to get all tracks: ${error.message}`);
         return Promise.reject(error);
     }
 };
@@ -612,65 +580,59 @@ exports.getTopTracks = async function(req, res)
 {
     try
     {
-        var tracksRequestLimit = req.query.tracksPerPage;
-        var tracksPageNumber = req.query.pageNumber;
-        var tracksTimeRange = req.query.timeRange;
+        // Handle the case where the invalid parameters were passed to track limit
+        const tracksRequestLimit = req.query.tracksPerPage
+            ? parseInt(req.query.tracksPerPage) // User specified value is present
+            : tracksRequestLimitDefault; // Value not specified, use default
 
-        // Handle the case where the invalid parameters were passed
-        if (tracksRequestLimit === undefined || tracksRequestLimit === null)
+        if (isNaN(tracksRequestLimit) || tracksRequestLimit <= 0 || tracksRequestLimit > tracksRequestLimitMax)
         {
-            logger.logInfo("User requested invalid tracks limit: Value not found. Overwriting with default value.");
-            tracksRequestLimit = tracksRequestLimitDefault;
+            throw new Error(`Invalid tracks per page limit of "${tracksRequestLimit}" requested`);
         }
 
-        if (tracksRequestLimit <= 0 || tracksRequestLimit > 50)
+        // Handle the case where the invalid parameters were passed to track page number
+        const tracksPageNumber = req.query.pageNumber
+            ? parseInt(req.query.pageNumber, 10) // User specified value is present
+            : tracksPageNumberDefault; // Value not specified, use default
+
+        if (isNaN(tracksPageNumber) || tracksPageNumber <= 0)
         {
-            logger.logWarn(`User requested invalid tracks limit: "${tracksRequestLimit}". Overwriting with default value.`);
-            tracksRequestLimit = tracksRequestLimitDefault;
+            throw new Error(`Invalid tracks page number of "${tracksPageNumber}" requested`);
         }
 
-        if (tracksPageNumber === undefined || tracksPageNumber === null)
-        {
-            logger.logInfo("User requested invalid tracks page: Value not found. Overwriting with default value.");
-            tracksPageNumber = tracksPageNumberDefault;
-        }
-
-        if (tracksPageNumber <= 0)
-        {
-            logger.logWarn(`User requested invalid tracks page: "${tracksPageNumber}". Overwriting with default value.`);
-            tracksPageNumber = tracksPageNumberDefault;
-        }
-
-        if (tracksTimeRange !== "short_term" &&
+        // Handle the case where the invalid parameters were passed to track time range
+        const tracksTimeRange = req.query.timeRange || tracksTimeRangeDefault;
+        if (typeof tracksTimeRange !== "string" ||
+            (tracksTimeRange !== "short_term" &&
             tracksTimeRange !== "medium_term" &&
-            tracksTimeRange !== "long_term")
+            tracksTimeRange !== "long_term"))
         {
-            logger.logWarn(`User requested invalid tracks time range: "${tracksTimeRange}". Overwriting with default value.`);
-            tracksTimeRange = tracksTimeRangeDefault;
+            throw new Error(`Invalid tracks time range of "${tracksTimeRange}" requested`);
         }
 
-        var tracksRequestOffset = (tracksPageNumber - 1) * tracksRequestLimit;
-        var requestData = {
+        // Convert page number to offset (basically an index) for API data retrieval
+        const tracksRequestOffset = (tracksPageNumber - 1) * tracksRequestLimit;
+
+        // Make the request to get the track data
+        const requestType = "tracks";
+        const requestData = {
             limit: tracksRequestLimit,
             offset: tracksRequestOffset,
             time_range: tracksTimeRange
         };
 
-        var requestType = "tracks";
-
-        // Make the request to get the track data
-        var requestOptions = {
+        const requestOptions = {
             headers: {
-                "Authorization": await authorize.getAccessToken(req, res)
+                Authorization: await authorize.getAccessToken(req, res)
             }
         };
 
-        var spotifyGetTopDataUri = spotifyBaseUri + spotifyCurrentUserUriPath + spotifyTopUriPath + "/" + requestType;
-        var spotifyGetTopDataRequestQuery = "?" + querystring.stringify(requestData);
-        var response = await axios.get(spotifyGetTopDataUri + spotifyGetTopDataRequestQuery, requestOptions);
+        const spotifyGetTopDataUri = `${spotifyBaseUri}${spotifyCurrentUserUriPath}${spotifyTopUriPath}/${requestType}`;
+        const spotifyGetTopDataRequestQuery = `?${querystring.stringify(requestData)}`;
+        const response = await axios.get(spotifyGetTopDataUri + spotifyGetTopDataRequestQuery, requestOptions);
 
         // Extract only the data from the successful response that the user will care to see
-        var spotifyPagedResponse = {
+        const spotifyPagedResponse = {
             items: response.data.items,
             limit: response.data.limit,
             offset: response.data.offset,
@@ -681,7 +643,7 @@ exports.getTopTracks = async function(req, res)
     }
     catch (error)
     {
-        logger.logError("Failed to get top tracks: " + error.message);
+        logger.logError(`Failed to get top tracks: ${error.message}`);
         return Promise.reject(error);
     }
 };

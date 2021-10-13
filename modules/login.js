@@ -1,14 +1,16 @@
+"use strict";
+
 // Dependencies
-var path = require("path"); // URI and local file paths
-var querystring = require("querystring"); // URI query string manipulation
+const path = require("path"); // URI and local file paths
+const querystring = require("querystring"); // URI query string manipulation
 
 // Custom Modules
 const customModulePath = __dirname;
-var authorize = require(path.join(customModulePath, "authorize.js"));
-var environment = require(path.join(customModulePath, "environment.js"));
-var redirect = require(path.join(customModulePath, "redirect.js"));
-var cookie = require(path.join(customModulePath, "cookie.js"));
-var logger = require(path.join(customModulePath, "logger.js"));
+const authorize = require(path.join(customModulePath, "authorize.js"));
+const environment = require(path.join(customModulePath, "environment.js"));
+const redirect = require(path.join(customModulePath, "redirect.js"));
+const cookie = require(path.join(customModulePath, "cookie.js"));
+const logger = require(path.join(customModulePath, "logger.js"));
 
 // Login Logic
 const spotifyAuthorizeUri = "https://accounts.spotify.com/authorize";
@@ -23,29 +25,28 @@ exports.getLoginPage = async function(req, res, next)
     try
     {
         // Set state token locally for logging in to be validated against Spotify returned state token
-        var stateToken = generateRandomString(stateLength);
+        const stateToken = generateRandomString(stateLength);
         cookie.setCookie(req, res, stateKey, stateToken); // Session cookie (no explicit expiration)
 
-        var clientId = await environment.getClientId();
-        var redirectUri = redirect.getValidateLoginRedirectUri(req);
+        const clientId = await environment.getClientId();
+        const redirectUri = redirect.getValidateLoginRedirectUri(req);
 
-        var requestParameters = {
-            response_type: "code",
+        const requestParameters = {
             client_id: clientId,
-            scope: scopes,
             redirect_uri: redirectUri,
+            response_type: "code",
+            scope: scopes,
             state: stateToken
         };
 
         // Request authorization for this application via a Spotify login page
-        var spotifyAuthorizeFullUri = spotifyAuthorizeUri + "?" + querystring.stringify(requestParameters);
+        const spotifyAuthorizeFullUri = `${spotifyAuthorizeUri}?${querystring.stringify(requestParameters)}`;
         res.redirect(spotifyAuthorizeFullUri);
     }
     catch (error)
     {
-        logger.logError("Failed to get login page: " + error.message);
+        logger.logError(`Failed to get login page: ${error.message}`);
         next(error);
-        return;
     }
 };
 
@@ -54,19 +55,20 @@ exports.validateLogin = async function(req, res)
     try
     {
         // Check for errors after the response page from Spotify
-        if (req.query.error !== undefined)
+        const validationError = req.query.error;
+        if (validationError)
         {
-            throw new Error(req.query.error);
+            throw new Error(validationError);
         }
 
         // Validate state token from Spotify callback request is the same from the request made locally
-        var stateToken = req.query.state || null;
-        if (stateToken === undefined || stateToken === null)
+        const stateToken = req.query.state;
+        if (!stateToken)
         {
             throw new Error("Failed to find state token in request object");
         }
 
-        var storedStateToken = await cookie.getCookie(req, stateKey);
+        const storedStateToken = await cookie.getCookie(req, stateKey);
         if (stateToken !== storedStateToken)
         {
             throw new Error("Failed to match state token of browser to Spotify state token");
@@ -76,7 +78,7 @@ exports.validateLogin = async function(req, res)
         await cookie.clearCookie(res, stateKey);
 
         // Redirect to authorization handling
-        var authorizationResponse = await authorize.getAuthorizationTokens(req);
+        const authorizationResponse = await authorize.getAuthorizationTokens(req);
 
         // Use the access token and refresh token to validate access to Spotify's API
         await authorize.setAuthorizationCookies(req, res, authorizationResponse);
@@ -91,9 +93,8 @@ exports.validateLogin = async function(req, res)
         await cookie.clearCookie(res, stateKey);
         await authorize.deleteAuthorizationCookies(res);
 
-        logger.logError("Failed to authorize user with Spotify: " + error.message);
+        logger.logError(`Failed to authorize user with Spotify: ${error.message}`);
         res.redirect("/accessDenied");
-        return;
     }
 };
 
@@ -115,15 +116,16 @@ exports.isUserLoggedIn = async function(req, res)
 };
 
 // Helper Functions
-var generateRandomString = function(length)
+function generateRandomString(targetLength)
 {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let text = "";
+    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-    for (var i = 0; i < length; i++) {
+    for (let i = 0; i < targetLength; i++)
+    {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
-};
+}
 
 // TODO - Figure out how to make it so that user can login with different Spotify account from login screen
