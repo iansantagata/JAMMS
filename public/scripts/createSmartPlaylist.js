@@ -1,12 +1,11 @@
 "use strict";
 
 // Script Logic
-let lastActiveRuleIndex = 0;
+let ruleCounter = 0;
 
 addOnClickEventListenerToElementById("playlistLimitEnabledInput", controlEnablementOfLimitElements);
 addOnClickEventListenerToElementById("playlistOrderEnabledInput", controlEnablementOfOrderElements);
 
-addOnClickEventListenerToElementById(`removeRuleButton-${lastActiveRuleIndex}`, removeRuleFormFields);
 addOnClickEventListenerToElementById("addRuleButton", addRuleFormFields);
 
 addOnClickEventListenerToElementById("generateSmartPlaylistPreviewButton", previewSmartPlaylist);
@@ -326,7 +325,7 @@ function displayPreviewOutOfDateAlert()
 
 function addRuleFormFields()
 {
-    const ruleIndex = lastActiveRuleIndex + 1;
+    ruleCounter++;
 
     // Create pieces of the form row needed for the new rule
     // Rule Type Selection
@@ -353,7 +352,7 @@ function addRuleFormFields()
     songOptionRuleType.innerText = "Song Name";
 
     const selectRuleType = document.createElement("select");
-    selectRuleType.setAttribute("name", `playlistRuleType-${ruleIndex}`);
+    selectRuleType.setAttribute("name", `playlistRuleType-${ruleCounter}`);
     selectRuleType.setAttribute("class", "form-control");
     selectRuleType.setAttribute("required", "");
     selectRuleType.appendChild(albumOptionRuleType);
@@ -398,7 +397,7 @@ function addRuleFormFields()
     containsOptionRuleOperator.innerText = "contains";
 
     const selectRuleOperator = document.createElement("select");
-    selectRuleOperator.setAttribute("name", `playlistRuleOperator-${ruleIndex}`);
+    selectRuleOperator.setAttribute("name", `playlistRuleOperator-${ruleCounter}`);
     selectRuleOperator.setAttribute("class", "form-control");
     selectRuleOperator.setAttribute("required", "");
     selectRuleOperator.appendChild(equalOptionRuleOperator);
@@ -416,7 +415,7 @@ function addRuleFormFields()
     // Rule Text Data
     const inputRuleTextData = document.createElement("input");
     inputRuleTextData.setAttribute("type", "text");
-    inputRuleTextData.setAttribute("name", `playlistRuleData-${ruleIndex}`);
+    inputRuleTextData.setAttribute("name", `playlistRuleData-${ruleCounter}`);
     inputRuleTextData.setAttribute("class", "form-control");
     inputRuleTextData.setAttribute("placeholder", "Your Rule Data");
     inputRuleTextData.setAttribute("required", "");
@@ -429,7 +428,7 @@ function addRuleFormFields()
     const removeRuleButton = document.createElement("button");
     removeRuleButton.setAttribute("type", "button");
     removeRuleButton.setAttribute("name", "removeRuleButton");
-    removeRuleButton.setAttribute("id", `removeRuleButton-${ruleIndex}`);
+    removeRuleButton.setAttribute("id", `removeRuleButton-${ruleCounter}`);
     removeRuleButton.setAttribute("class", "btn btn-outline-danger btn-sm form-control");
     removeRuleButton.innerText = "Remove Rule";
 
@@ -440,7 +439,7 @@ function addRuleFormFields()
     // Add all the components to the top level rule div
     const ruleDiv = document.createElement("div");
     ruleDiv.setAttribute("class", "form-row my-2");
-    ruleDiv.setAttribute("id", `rule-${ruleIndex}`);
+    ruleDiv.setAttribute("id", `rule-${ruleCounter}`);
     ruleDiv.appendChild(ruleTypeDiv);
     ruleDiv.appendChild(ruleOperatorDiv);
     ruleDiv.appendChild(ruleTextDataDiv);
@@ -450,11 +449,8 @@ function addRuleFormFields()
     const rulesContainerElement = document.getElementById("rulesContainer");
     rulesContainerElement.appendChild(ruleDiv);
 
-    // Add an event listener to the remove rule button that has been added
+    // Finally, add an event listener to the remove rule button that has been added
     addOnClickEventListenerToElement(removeRuleButton, removeRuleFormFields);
-
-    // Finally, update the index of the last rule in case more are created
-    lastActiveRuleIndex = ruleIndex;
 }
 
 function removeRuleFormFields()
