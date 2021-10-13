@@ -14,37 +14,7 @@
           </div>
 
           <h4 class="my-3">Rules</h4>
-          <div id="rulesContainer">
-            <div class="form-row my-2" id="rule-0">
-              <div class="col-3">
-                <select name="playlistRuleType-0" class="form-control" required >
-                  <option value="album">Album Name</option>
-                  <option value="artist" selected>Artist Name</option>
-                  <!-- TODO - Add genre back in when it is ready to be used (developed) -->
-                  <!-- <option value="genre">Genre</option> -->
-                  <option value="year">Release Year</option>
-                  <option value="song">Song Name</option>
-                </select>
-              </div>
-              <div class="col-4">
-                <select name="playlistRuleOperator-0" class="form-control" required>
-                  <option value="equal" selected>is</option>
-                  <option value="notEqual">is not</option>
-                  <option value="greaterThan">is greater than</option>
-                  <option value="greaterThanOrEqual">is greater than or equal to</option>
-                  <option value="lessThan">is less than</option>
-                  <option value="lessThanOrEqual">is less than or equal to</option>
-                  <option value="contains">contains</option>
-                </select>
-              </div>
-              <div class="col-3">
-                <input type="text" name="playlistRuleData-0" class="form-control" placeholder="Your Rule Data" required />
-              </div>
-              <div class="col-2">
-                <button type="button" name="removeRuleButton" id="removeRuleButton-0" class="btn btn-outline-danger btn-sm form-control">Remove Rule</button>
-              </div>
-            </div>
-          </div>
+          <div id="rulesContainer"></div>
           <button type="button" name="addRuleButton" id="addRuleButton" class="btn btn-outline-info btn-sm my-3">Add Rule</button>
 
           <h4 class="my-3">Optional Settings</h4>
