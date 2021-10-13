@@ -1,5 +1,5 @@
 @html.extend('layout', function(model) {
-	@html.block('content', function(model) {
+  @html.block('content', function(model) {
 
     <script defer src="scripts/viewPlaylist.js"></script>
 
@@ -13,26 +13,22 @@
     <div id="playlist" class="row align-items-center justify-content-around">
       <div class="col my-5">
         @{
-          // Images are ordered from widest to smallest width, so start at the beginning to keep images large-ish for single playlist view
-          var playlistImageIndex = 0;
-          // We want images that are at most less than 400 pixels in both dimensions for the image to not take up too much screen space
-          // If there are none, we will end up using the first and biggest image
-          while (playlistImageIndex <= model.images.length &&
-            model.images[playlistImageIndex] !== undefined &&
-            (model.images[playlistImageIndex].width > 400 ||
-            model.images[playlistImageIndex].height > 400))
-          {
-            playlistImageIndex = playlistImageIndex + 1;
-          }
+          // Have to manually JSON stringify this object
+          // This is being done so that Vash at compile time can transfer data to JavaScript at run-time
+          // If we did not utilize JSON.stringify(), the default string output would be [object Object]
+          var imagesJson = JSON.stringify(model.images);
+
+          var playlistImageId = "imageForPlaylist";
+          var minimumPixelsPerSide = 300;
+          var defaultImagePath = "images/question.png";
         }
-        @if(model.images[playlistImageIndex] !== undefined)
-        {
-          <img src="@model.images[playlistImageIndex].url" class="img-fluid" alt="Playlist Named @model.playlistName" />
-        }
-        else
-        {
-          <img src="images/question.png" class="img-fluid" alt="Playlist Named @model.playlistName" />
-        }
+        <img id="@playlistImageId" class="img-fluid" alt="Playlist Named @model.playlistName" />
+        <script type="text/javascript">
+          var images = @html.raw(imagesJson);
+          var playlistImagePath = getImagePath(images, @minimumPixelsPerSide, "@defaultImagePath");
+
+          setImageSourceAttributeById("@playlistImageId", playlistImagePath);
+        </script>
       </div>
 
       <div class="col text-wrap">

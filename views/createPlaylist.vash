@@ -1,5 +1,5 @@
 @html.extend('layout', function(model) {
-	@html.block('content', function(model) {
+  @html.block('content', function(model) {
     <h2>Create Playlist</h2>
 
     <script defer src="scripts/createPlaylist.js"></script>

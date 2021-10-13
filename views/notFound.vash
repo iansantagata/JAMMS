@@ -1,5 +1,5 @@
 @html.extend('layout', function(model) {
-	@html.block('content', function(model) {
+  @html.block('content', function(model) {
     <h2>Page Not Found</h2>
     <p>
       We apologize, but we cannot seem to find what you are looking for.
