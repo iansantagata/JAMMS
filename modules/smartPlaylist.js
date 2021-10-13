@@ -49,13 +49,12 @@ exports.getSmartPlaylistPreview = async function(req, res, next)
         // Set that this is to be a playlist preview (which will short circuit some extra work not needed for a preview)
         req.body.isPlaylistPreview = true;
 
-        const smartPlaylistData = await getSmartPlaylistData(req, res, next);
+        const smartPlaylistData = await getSmartPlaylistData(req, res);
         const playlistPreviewData = smartPlaylistData.trackData;
 
         // Send the preview data back to the caller without reloading the page
         res.set("Content-Type", "application/json");
         res.send(playlistPreviewData);
-        return;
     }
     catch (error)
     {
@@ -69,7 +68,7 @@ exports.createSmartPlaylist = async function(req, res, next)
     try
     {
         // Get track data and information needed to create the smart playlist
-        const smartPlaylistData = await getSmartPlaylistData(req, res, next);
+        const smartPlaylistData = await getSmartPlaylistData(req, res);
 
         // Only thing we do not have supplied from the user is their user ID
         // The app has to get their user ID first to attach this new playlist to their profile
@@ -116,7 +115,7 @@ exports.createSmartPlaylist = async function(req, res, next)
 // Local Helper Functions
 
 // Track Retrieval Functions
-async function getSmartPlaylistData(req, res, next)
+async function getSmartPlaylistData(req, res)
 {
     try
     {
@@ -240,13 +239,12 @@ async function getSmartPlaylistData(req, res, next)
             trackData: orderedTracksInPlaylist
         };
 
-        return smartPlaylistData;
+        return Promise.resolve(smartPlaylistData);
     }
     catch (error)
     {
         logger.logError(`Failed to get smart playlist tracks: ${error.message}`);
-        next(error);
-        return null;
+        return Promise.reject(error);
     }
 }
 
@@ -277,16 +275,14 @@ function getPlaylistLimits(req)
     {
         return defaultPlaylistLimitData;
     }
-
-    if (playlistLimitData.value <= 0)
+    else if (playlistLimitData.value <= 0)
     {
-        logger.logWarn(`Playlist limit value entered is zero or negative: "${playlistLimitData.value}".  Overwriting to disable limit.`);
+        logger.logWarn(`Playlist limit value entered is zero or negative: "${playlistLimitData.value}". Falling back to using no limit.`);
         return defaultPlaylistLimitData;
     }
-
-    if (playlistLimitData.value > maximumPlaylistSongLimit)
+    else if (playlistLimitData.value > maximumPlaylistSongLimit)
     {
-        logger.logWarn(`Playlist limit value entered is greater than ten thosand: "${playlistLimitData.value}".  Overwriting value to ${maximumPlaylistSongLimit}.`);
+        logger.logWarn(`Playlist limit value entered is greater than ten thosand: "${playlistLimitData.value}". Falling back to using limit of ${maximumPlaylistSongLimit}.`);
         playlistLimitData.value = maximumPlaylistSongLimit;
     }
 
