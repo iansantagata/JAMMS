@@ -1,5 +1,6 @@
 [![Continuous Integration](https://github.com/iansantagata/jamms/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/continuous-integration.yml)
 [![Code QL Scan](https://github.com/iansantagata/jamms/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/codeql-analysis.yml)
+[![Code Linter](https://github.com/iansantagata/jamms/actions/workflows/linter.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/linter.yml)
 
 ## Overview
 
