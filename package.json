@@ -8,7 +8,9 @@
   "repository": "github:iansantagata/jamms",
   "scripts": {
     "lintjs": "eslint .",
-    "lint": "npm run lintjs"
+    "linthtml": "htmllint '{,!(node_modules)/**/}*.html'",
+    "lintvash": "htmllint '{,!(node_modules)/**/}*.vash'",
+    "lint": "npm run lintjs && npm run linthtml && npm run lintvash"
   },
   "dependencies": {
     "axios": "^0.21.4",
@@ -21,6 +23,8 @@
     "vash": "^0.13.0"
   },
   "devDependencies": {
-    "eslint": "^8.0.0"
+    "eslint": "^8.0.0",
+    "htmllint": "^0.7.2",
+    "htmllint-cli": "^0.0.7"
   }
 }

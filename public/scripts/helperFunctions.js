@@ -159,6 +159,18 @@ function replaceElementContentsWithText(element, text)
     element.appendChild(textNode);
 }
 
+function setImageSourceAttributeById(id, sourceValue)
+{
+    const element = document.getElementById(id);
+    element.setAttribute("src", sourceValue);
+}
+
+function setTextInElementById(id, text)
+{
+    const element = document.getElementById(id);
+    element.innerText = text;
+}
+
 // Spotify Object Specific Functions
 function getCommaSeparatedArtistNames(artists)
 {
@@ -191,6 +203,8 @@ function getCommaSeparatedArtistNames(artists)
 
 function getImagePath(images, minimumPixelsPerSide, defaultImagePath)
 {
+    // TODO - This function should be fixed and the <img> objects adjusted so that they display relatively the same size images for all <img> tags on a page or in a group
+
     // Make sure we actually have images, or else we can short circuit
     if (!Array.isArray(images) || images.length === 0)
     {
@@ -202,7 +216,7 @@ function getImagePath(images, minimumPixelsPerSide, defaultImagePath)
 
     // We want images that are at least over the minimum pixels in both dimensions for the user to see them
     // If there are none, we will end up using the first and biggest image
-    while (imageIndex < 0)
+    while (imageIndex >= 0)
     {
         // If the image is not valid, keep going to the next image
         const image = images[imageIndex];
