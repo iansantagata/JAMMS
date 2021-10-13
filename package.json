@@ -8,8 +8,8 @@
   "repository": "github:iansantagata/jamms",
   "scripts": {
     "lintjs": "eslint .",
-    "linthtml": "htmllint {,!(node_modules)/**/}*.html",
-    "lintvash": "htmllint {,!(node_modules)/**/}*.vash",
+    "linthtml": "htmllint '{,!(node_modules)/**/}*.html'",
+    "lintvash": "htmllint '{,!(node_modules)/**/}*.vash'",
     "lint": "npm run lintjs && npm run linthtml && npm run lintvash"
   },
   "dependencies": {
