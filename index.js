@@ -2,35 +2,38 @@
  * Main Node Application and Event Handler for JAMMS App
  */
 
+"use strict";
+
 console.log("Starting application");
 
 // Dependencies
-var express = require("express"); // Express web server framework
-var path = require("path"); // URI and local file paths
-var cors = require("cors"); // Cross-origin resource sharing
-var cookieParser = require("cookie-parser"); // Parsing and storing encrypted cookies
+const express = require("express"); // Express web server framework
+const path = require("path"); // URI and local file paths
+const cors = require("cors"); // Cross-origin resource sharing
+const cookieParser = require("cookie-parser"); // Parsing and storing encrypted cookies
 
 console.log("Imported major dependencies");
 
 // Custom Modules
 const customModulePath = path.join(__dirname, "modules");
-var error = require(path.join(customModulePath, "error.js"));
-var home = require(path.join(customModulePath, "home.js"));
-var landing = require(path.join(customModulePath, "landing.js"));
-var login = require(path.join(customModulePath, "login.js"));
-var logout = require(path.join(customModulePath, "logout.js"));
-var playlist = require(path.join(customModulePath, "playlist.js"));
-var smartPlaylist = require(path.join(customModulePath, "smartPlaylist.js"));
-var logger = require(path.join(customModulePath, "logger.js"));
-var environment = require(path.join(customModulePath, "environment.js"));
+const error = require(path.join(customModulePath, "error.js"));
+const home = require(path.join(customModulePath, "home.js"));
+const landing = require(path.join(customModulePath, "landing.js"));
+const login = require(path.join(customModulePath, "login.js"));
+const logout = require(path.join(customModulePath, "logout.js"));
+const playlist = require(path.join(customModulePath, "playlist.js"));
+const smartPlaylist = require(path.join(customModulePath, "smartPlaylist.js"));
+const logger = require(path.join(customModulePath, "logger.js"));
+const environment = require(path.join(customModulePath, "environment.js"));
 
 logger.logInfo("Imported custom modules");
 
 // Inject Environment Variables from File (Development Only)
-var isDevelopmentEnvironment = environment.isDevelopmentEnvironmentSync();
+const isDevelopmentEnvironment = environment.isDevelopmentEnvironmentSync();
 if (isDevelopmentEnvironment)
 {
-    require("dotenv").config();
+    const dotenv = require("dotenv");
+    dotenv.config();
     logger.logInfo("Injected environment variables");
 }
 
@@ -39,9 +42,9 @@ const staticFilesPath = path.join(__dirname, "public");
 const viewsFilesPath = path.join(__dirname, "views");
 
 // Setup Application
-var cookieSigningKey = environment.getCookieSigningKeySync();
+const cookieSigningKey = environment.getCookieSigningKeySync();
 
-var app = express();
+const app = express();
 app.use(express.static(staticFilesPath))
     .use(cors())
     .use(cookieParser(cookieSigningKey))
@@ -88,7 +91,7 @@ app.use(error.handleUnexpectedError);
 logger.logInfo("Set up error handling");
 
 // Listening Port
-var port = environment.getPortSync();
+const port = environment.getPortSync();
 
-logger.logInfo("Listening for requests on port " + port);
+logger.logInfo(`Listening for requests on port ${port}`);
 app.listen(port);
