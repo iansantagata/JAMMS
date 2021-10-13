@@ -1,10 +1,10 @@
 # ESLint overrides for public facing JavaScript files utilized within HTML
 rules:
 
-  # Silence unused variable error since variables and functions can be used across files
-  no-unused-vars:
-    - off
-
   # Silence undefined usage error since variables and functions can be used across files
   no-undef:
+    - off
+
+  # Silence unused variable error since variables and functions can be used across files
+  no-unused-vars:
     - off
