@@ -26,3 +26,9 @@ jobs:
 
     - name: Lint JavaScript Files
       run: npm run lintjs
+
+    - name: Lint HTML Files
+      run: npm run linthtml
+
+    - name: Lint Vash Files
+      run: npm run lintvash
