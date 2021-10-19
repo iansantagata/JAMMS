@@ -392,6 +392,10 @@ function addRuleFormFields()
     containsOptionRuleOperator.setAttribute("value", "contains");
     containsOptionRuleOperator.innerText = "contains";
 
+    const doesNotContainOptionRuleOperator = document.createElement("option");
+    doesNotContainOptionRuleOperator.setAttribute("value", "doesNotContain");
+    doesNotContainOptionRuleOperator.innerText = "does not contain";
+
     const selectRuleOperator = document.createElement("select");
     selectRuleOperator.setAttribute("name", `playlistRuleOperator-${ruleCounter}`);
     selectRuleOperator.setAttribute("class", "form-control");
@@ -403,6 +407,7 @@ function addRuleFormFields()
     selectRuleOperator.appendChild(lessThanOptionRuleOperator);
     selectRuleOperator.appendChild(lessThanOrEqualToOptionRuleOperator);
     selectRuleOperator.appendChild(containsOptionRuleOperator);
+    selectRuleOperator.appendChild(doesNotContainOptionRuleOperator);
 
     const ruleOperatorDiv = document.createElement("div");
     ruleOperatorDiv.setAttribute("class", "col-4");
