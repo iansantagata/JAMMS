@@ -1,3 +1,5 @@
+"use strict";
+
 // Generic Helper Functions
 function getArrayChunks(inputArray, chunkSize)
 {
