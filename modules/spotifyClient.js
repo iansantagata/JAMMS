@@ -35,6 +35,7 @@ const artistRequestLimitDefault = 10;
 const artistRequestLimitMax = 50;
 const artistIdsLimitMax = 50;
 const artistPageNumberDefault = 1;
+const trackAddToPlaylistLimitMax = 100;
 const tracksRequestLimitDefault = 10;
 const tracksRequestLimitMax = 50;
 const tracksPageNumberDefault = 1;
@@ -374,9 +375,14 @@ exports.addTracksToPlaylist = async function(req, res)
         }
 
         const trackUris = req.body.trackUris;
-        if (!trackUris || typeof trackUris !== "object")
+        if (!trackUris || !Array.isArray(trackUris))
         {
             throw new Error(`Invalid track URIs of "${trackUris}" to add to playlist`);
+        }
+
+        if (trackUris.length <= 0 || trackUris.length > trackAddToPlaylistLimitMax)
+        {
+            throw new Error(`Invalid number of track URIs of "${trackUris.length}"`);
         }
 
         const requestData = {

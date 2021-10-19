@@ -23,6 +23,7 @@ const tracksPerPageDefault = 50;
 const maximumPlaylistSongLimit = 10000;
 
 const artistGenreRetrievalLimit = 50;
+const trackAddPlaylistLimit = 100;
 
 const secondsToMsecConversion = 1000;
 const minutesToSecondsConversion = 60;
@@ -71,6 +72,13 @@ exports.createSmartPlaylist = async function(req, res, next)
     {
         // Get track data and information needed to create the smart playlist
         const smartPlaylistData = await getSmartPlaylistData(req, res);
+        if (!smartPlaylistData ||
+            !smartPlaylistData.trackData ||
+            !Array.isArray(smartPlaylistData.trackData) ||
+            smartPlaylistData.trackData.length <= 0)
+        {
+            throw new Error("Failed to get valid smart playlist data");
+        }
 
         // Only thing we do not have supplied from the user is their user ID
         // The app has to get their user ID first to attach this new playlist to their profile
@@ -83,9 +91,16 @@ exports.createSmartPlaylist = async function(req, res, next)
 
         // Now that we have created the playlist, we want to add the valid songs to it based on the smart playlist rules
         const playlistId = createPlaylistResponse.id;
+        const trackUris = smartPlaylistData.trackData.map(getUriFromSavedTrack);
+        const trackUriChunks = getArrayChunks(trackUris, trackAddPlaylistLimit);
         req.body.playlistId = playlistId;
-        req.body.trackUris = smartPlaylistData.trackData.map(getUriFromSavedTrack);
-        await spotifyClient.addTracksToPlaylist(req, res);
+
+        // Add songs to the playlist in batches since there is a limit to how many can be added at once
+        for (const trackUriChunk of trackUriChunks)
+        {
+            req.body.trackUris = trackUriChunk;
+            await spotifyClient.addTracksToPlaylist(req, res);
+        }
 
         // Finally, we want to show the user info about their new playlist, so retrieve that data after songs were inserted
         req.query.playlistId = playlistId;
@@ -1103,19 +1118,13 @@ async function getArtistIdToGenreMap(req, res, savedTracks, existingArtistIdToGe
 
         // With a set of unique unmapped artist IDs, group them into chunks to get genre data for artists in batches
         const artistIds = Array.from(unmappedArtistIds);
+        const artistIdChunks = getArrayChunks(artistIds, artistGenreRetrievalLimit);
         const artistIdToGenresMap = new Map();
 
-        const numberOfArtists = artistIds.length;
-        let batchStartingIndexInclusive = 0;
-        let batchEndingIndexExclusive = Math.min(artistGenreRetrievalLimit, numberOfArtists - 1);
-
-        while (batchStartingIndexInclusive < batchEndingIndexExclusive)
+        for (const artistIdChunk of artistIdChunks)
         {
-            // Grab batches of unique artists to get their genres from Spotify
-            const artistIdsBatch = artistIds.slice(batchStartingIndexInclusive, batchEndingIndexExclusive);
-
             // Call out to Spotify to get genre information for not already mapped artist
-            req.query.artistIds = artistIdsBatch;
+            req.query.artistIds = artistIdChunk;
             const response = await spotifyClient.getMultipleArtists(req, res);
             if (!response || !response.artists)
             {
@@ -1147,9 +1156,6 @@ async function getArtistIdToGenreMap(req, res, savedTracks, existingArtistIdToGe
                 // Add the genres array into the map corresponding to the artist ID
                 artistIdToGenresMap.set(artist.id, genresForArtist);
             }
-
-            batchStartingIndexInclusive = Math.min(batchStartingIndexInclusive + artistGenreRetrievalLimit, numberOfArtists - 1);
-            batchEndingIndexExclusive = Math.min(batchEndingIndexExclusive + artistGenreRetrievalLimit, numberOfArtists - 1);
         }
 
         // Finally, take the artist IDs to genres we found with this run
@@ -1210,4 +1216,38 @@ function enrichTrackWithGenres(savedTracks, artistIdToGenresMap)
         logger.logError(`Failed to enrich tracks with genres: ${error.message}`);
         return Promise.reject(error);
     }
+}
+
+// Generic Functions
+function getArrayChunks(inputArray, chunkSize)
+{
+    if (!Array.isArray(inputArray))
+    {
+        throw new Error("Cannot chunk a non-array input");
+    }
+
+    if (chunkSize <= 0)
+    {
+        throw new Error("Cannot chunk array input into chunks of size less than one");
+    }
+
+    if (inputArray.length === 0)
+    {
+        return inputArray;
+    }
+
+    const arrayInChunks = [];
+
+    const inputLength = inputArray.length;
+    let index = 0;
+
+    while (index < inputLength)
+    {
+        const chunk = inputArray.slice(index, index + chunkSize);
+        arrayInChunks.push(chunk);
+
+        index += chunkSize;
+    }
+
+    return arrayInChunks;
 }
