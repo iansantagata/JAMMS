@@ -22,6 +22,8 @@ const playlistPreviewLimit = 25;
 const tracksPerPageDefault = 50;
 const maximumPlaylistSongLimit = 10000;
 
+const artistGenreRetrievalLimit = 50;
+
 const secondsToMsecConversion = 1000;
 const minutesToSecondsConversion = 60;
 const hoursToMinutesConversion = 60;
@@ -125,6 +127,12 @@ async function getSmartPlaylistData(req, res)
         const playlistOrderData = getPlaylistOrdering(req);
         const playlistRules = getPlaylistRules(req);
 
+        // Make sure that any special rules are extracted and any additional structures are setup
+        // This is done so that if a track does not have the data we need,
+        // Then the app can retrieve that data and enrich the track with the data manually
+        const playlistSpecialRuleFlags = getPlaylistSpecialRuleFlags(playlistRules);
+        let artistIdToGenresMap = new Map();
+
         // Keep track of the tracks to be in the playlist and the order of them as well
         const tracksInPlaylist = [];
         let trackOrderingInPlaylist = [];
@@ -144,6 +152,7 @@ async function getSmartPlaylistData(req, res)
             // Get data on the tracks processed
             const tracksProcessed = getAllTracksBatchedResponse.offset + getAllTracksBatchedResponse.limit;
             const totalTracks = getAllTracksBatchedResponse.total;
+            let tracksInBatch = getAllTracksBatchedResponse.items;
 
             // Increment the page number to retrieve the next batch of tracks when ready
             req.query.pageNumber++;
@@ -154,8 +163,14 @@ async function getSmartPlaylistData(req, res)
                 canRetrieveMoreBatches = false;
             }
 
+            // Handle any special rules required before track processing begins
+            if (playlistSpecialRuleFlags.has("genre"))
+            {
+                artistIdToGenresMap = await getArtistIdToGenreMap(req, res, tracksInBatch, artistIdToGenresMap);
+                tracksInBatch = await enrichTrackWithGenres(tracksInBatch, artistIdToGenresMap);
+            }
+
             // Process each track in the batch
-            const tracksInBatch = getAllTracksBatchedResponse.items;
             for (const trackInBatch of tracksInBatch)
             {
                 // Ensure that this track should go into the playlist based on the rules
@@ -412,6 +427,26 @@ function getPlaylistRules(req)
     return rules;
 }
 
+function getPlaylistSpecialRuleFlags(rules)
+{
+    const flags = new Set();
+    if (!Array.isArray(rules) || rules.length <= 0)
+    {
+        return flags;
+    }
+
+    // Loop through every rule to check if there are any special cases to account for
+    for (const rule of rules)
+    {
+        if (rule.function === ruleByGenre)
+        {
+            flags.add("genre");
+        }
+    }
+
+    return flags;
+}
+
 function getPlaylistDescription(playlistLimitData, playlistOrderData)
 {
     let playlistDescription = playlistDescriptionPrefix;
@@ -494,9 +529,19 @@ function getPopularityFromSavedTrack(savedTrack)
     return savedTrack.track.popularity;
 }
 
+function getGenresFromSavedTrack(savedTrack)
+{
+    return savedTrack.track.genres;
+}
+
 function getArtistNameFromArtist(artist)
 {
     return artist.name.toUpperCase();
+}
+
+function getArtistIdFromArtist(artist)
+{
+    return artist.id;
 }
 
 // Operator Functions
@@ -530,6 +575,13 @@ function lessThanOrEqualTo(a, b)
     return lessThan(a, b) || equals(a, b);
 }
 
+// TODO - Change this so it's a few different things based on the case:
+// TODO - 1. If A is an array, contains B as an element within A
+// TODO - 2. If A is a string, contains a substring B within A
+// TODO - 3. If A is an object, contains a value B within A
+// TODO - 4. If A is a map, contains a key B within A
+// TODO - 5. If A is undefined or null, return false (rather than throwing an error)
+// TODO - 6. If A is an array and its elements A` are strings, contains a substring B within element A`
 function contains(a, b)
 {
     return a.includes(b);
@@ -566,7 +618,13 @@ function ruleByArtistName(track, artistNameRuleData, operatorFunction)
     return operatorFunction(trackArtistNames, normalizedArtistNameRuleData);
 }
 
-// TODO - Rule for genre
+function ruleByGenre(track, genreNameRuleData, operatorFunction)
+{
+    const trackGenres = getGenresFromSavedTrack(track);
+    const normalizedGenreNameRuleData = genreNameRuleData.toUpperCase();
+
+    return operatorFunction(trackGenres, normalizedGenreNameRuleData);
+}
 
 function getRuleOperatorFunction(operator)
 {
@@ -607,16 +665,16 @@ function getRuleFunction(ruleType)
 
     switch (ruleType)
     {
-        // TODO - Rule by genre function
-        // TODO - case "genre":
-        // TODO - break;
-
         case "artist":
             ruleFunction = ruleByArtistName;
             break;
 
         case "album":
             ruleFunction = ruleByAlbumName;
+            break;
+
+        case "genre":
+            ruleFunction = ruleByGenre;
             break;
 
         case "year":
@@ -1009,4 +1067,147 @@ function compareByPopularityDescending(targetTrack, existingTrack)
     }
 
     return 0;
+}
+
+// Special Rule Functions
+async function getArtistIdToGenreMap(req, res, savedTracks, existingArtistIdToGenresMap)
+{
+    try
+    {
+        // First, get a set of all unique artist IDs that do not exist in our map already
+        const unmappedArtistIds = new Set();
+        for (const savedTrack of savedTracks)
+        {
+            // If we cannot find data about a track or artists for a song, just skip the track
+            if (!savedTrack || !savedTrack.track || !savedTrack.track.artists)
+            {
+                continue;
+            }
+
+            for (const artist of savedTrack.track.artists)
+            {
+                // Look to see that the ID is present and valid and does not already exist in our map
+                // If it does exist in the map, we can safely skip it (since we already know that artist's genres)
+                if (artist.id && !existingArtistIdToGenresMap.has(artist.id))
+                {
+                    unmappedArtistIds.add(artist.id);
+                }
+            }
+        }
+
+        // If it turns out all of the artists we have are already mapped, then we can just return the existing map
+        if (unmappedArtistIds.size <= 0)
+        {
+            return Promise.resolve(existingArtistIdToGenresMap);
+        }
+
+        // With a set of unique unmapped artist IDs, group them into chunks to get genre data for artists in batches
+        const artistIds = Array.from(unmappedArtistIds);
+        const artistIdToGenresMap = new Map();
+
+        const numberOfArtists = artistIds.length;
+        let batchStartingIndexInclusive = 0;
+        let batchEndingIndexExclusive = Math.min(artistGenreRetrievalLimit, numberOfArtists - 1);
+
+        while (batchStartingIndexInclusive < batchEndingIndexExclusive)
+        {
+            // Grab batches of unique artists to get their genres from Spotify
+            const artistIdsBatch = artistIds.slice(batchStartingIndexInclusive, batchEndingIndexExclusive);
+
+            // Call out to Spotify to get genre information for not already mapped artist
+            req.query.artistIds = artistIdsBatch;
+            const response = await spotifyClient.getMultipleArtists(req, res);
+            if (!response || !response.artists)
+            {
+                throw new Error("Failed to get valid artists response data");
+            }
+
+            // Loop through all of the artists and their respective genres (likely multiple)
+            // The result will be a set of unique non-duplicated genres
+            for (const artist of response.artists)
+            {
+                if (!artist)
+                {
+                    continue;
+                }
+
+                const genresForArtist = [];
+                for (const artistGenre of artist.genres)
+                {
+                    if (!artistGenre)
+                    {
+                        continue;
+                    }
+
+                    // Collect one genre at a time for the artist into an array
+                    const upperCaseArtistGenre = artistGenre.toUpperCase();
+                    genresForArtist.push(upperCaseArtistGenre);
+                }
+
+                // Add the genres array into the map corresponding to the artist ID
+                artistIdToGenresMap.set(artist.id, genresForArtist);
+            }
+
+            batchStartingIndexInclusive = Math.min(batchStartingIndexInclusive + artistGenreRetrievalLimit, numberOfArtists - 1);
+            batchEndingIndexExclusive = Math.min(batchEndingIndexExclusive + artistGenreRetrievalLimit, numberOfArtists - 1);
+        }
+
+        // Finally, take the artist IDs to genres we found with this run
+        // Then add them to the existing map to return
+        const updatedArtistIdToGenreMap = new Map([...existingArtistIdToGenresMap, ...artistIdToGenresMap]);
+        return Promise.resolve(updatedArtistIdToGenreMap);
+    }
+    catch (error)
+    {
+        // If there is a problem with getting artist data, then a user's playlist request related to genre data cannot realistically succeed
+        // Best to log the error and reject to avoid a situation where users are built an undesireable smart playlist
+        logger.logError(`Failed to build artist to genres map: ${error.message}`);
+        return Promise.reject(error);
+    }
+}
+
+// Enrichment Functions
+function enrichTrackWithGenres(savedTracks, artistIdToGenresMap)
+{
+    try
+    {
+        for (const savedTrack of savedTracks)
+        {
+            // Genre is only defined within Spotify on the artist object
+            // Convert a track's artists to their artist IDs to begin the process
+            const artistIds = getArtistsFromSavedTrack(savedTrack)
+                .map(getArtistIdFromArtist);
+
+            // For every artist ID, check the map for artist IDs to genres
+            let genresForTrack = [];
+
+            for (const artistId of artistIds)
+            {
+                if (artistIdToGenresMap.has(artistId))
+                {
+                    // We already have a mapping from this artist ID to genres, so use those genres
+                    const mappedGenresForArtist = artistIdToGenresMap.get(artistId);
+                    genresForTrack = genresForTrack.concat(mappedGenresForArtist);
+                }
+            }
+
+            // De-duplicate all the genres already found from artists for this track
+            const genresForTrackSet = new Set(genresForTrack);
+
+            // Finally, set the genres onto the track object
+            // If there are no genres found, this will set an empty array in this property
+            const uniqueGenresForTrack = Array.from(genresForTrackSet);
+            savedTrack.track.genres = uniqueGenresForTrack;
+        }
+
+        // When finished adding genres to the tracks, return the modified tracks
+        return Promise.resolve(savedTracks);
+    }
+    catch (error)
+    {
+        // If there is a problem with the enrichment, then a user's request related to genre data cannot realistically succeed
+        // Best to log the error and reject to avoid a situation where users are built an undesireable smart playlist
+        logger.logError(`Failed to enrich tracks with genres: ${error.message}`);
+        return Promise.reject(error);
+    }
 }

@@ -20,6 +20,12 @@ const spotifyTracksUriPath = "/tracks";
 const spotifyFollowingUriPath = "/following";
 const spotifyFollowersUriPath = "/followers";
 const spotifyPlaylistsUriPath = "/playlists";
+const spotifyArtistsUriPath = "/artists";
+
+// Spotify Constants
+const spotifyShortTerm = "short_term";
+const spotifyMediumTerm = "medium_term";
+const spotifyLongTerm = "long_term";
 
 // Default Constant Values
 const playlistRequestLimitDefault = 10;
@@ -27,13 +33,14 @@ const playlistRequestLimitMax = 50;
 const playlistPageNumberDefault = 1;
 const artistRequestLimitDefault = 10;
 const artistRequestLimitMax = 50;
+const artistIdsLimitMax = 50;
 const artistPageNumberDefault = 1;
 const tracksRequestLimitDefault = 10;
 const tracksRequestLimitMax = 50;
 const tracksPageNumberDefault = 1;
 
-const artistTimeRangeDefault = "long_term";
-const tracksTimeRangeDefault = "long_term";
+const artistTimeRangeDefault = spotifyLongTerm;
+const tracksTimeRangeDefault = spotifyLongTerm;
 const createdPlaylistDescription = "Playlist created with JAMMS.app!";
 
 // Spotify Client Logic
@@ -77,7 +84,7 @@ exports.getUserData = async function(req, res)
         // Get sample top artists from the user
         req.query.artistsPerPage = defaultDataPointsPerPage;
         req.query.pageNumber = 1;
-        req.query.timeRange = "long_term";
+        req.query.timeRange = spotifyLongTerm;
         const topArtistsResponse = await exports.getTopArtists(req, res);
 
         // Get number of artists from the user
@@ -88,7 +95,7 @@ exports.getUserData = async function(req, res)
         // Get sample top tracks from the user
         req.query.tracksPerPage = defaultDataPointsPerPage;
         req.query.pageNumber = 1;
-        req.query.timeRange = "long_term";
+        req.query.timeRange = spotifyLongTerm;
         const topTracksResponse = await exports.getTopTracks(req, res);
 
         // Get number of tracks from the user
@@ -424,9 +431,9 @@ exports.getTopArtists = async function(req, res)
         // Handle the case where the invalid parameters were passed to the artist time range
         const artistTimeRange = req.query.timeRange || artistTimeRangeDefault;
         if (typeof artistTimeRange !== "string" ||
-            (artistTimeRange !== "short_term" &&
-            artistTimeRange !== "medium_term" &&
-            artistTimeRange !== "long_term"))
+            (artistTimeRange !== spotifyShortTerm &&
+            artistTimeRange !== spotifyMediumTerm &&
+            artistTimeRange !== spotifyLongTerm))
         {
             throw new Error(`Invalid artist time range of "${artistTimeRange}" requested`);
         }
@@ -465,6 +472,60 @@ exports.getTopArtists = async function(req, res)
     catch (error)
     {
         logger.logError(`Failed to get top artists: ${error.message}`);
+        return Promise.reject(error);
+    }
+};
+
+exports.getMultipleArtists = async function(req, res)
+{
+    try
+    {
+        // Handle the case where the invalid parameters were passed to artist ID
+        const artistIds = req.query.artistIds;
+        if (!Array.isArray(artistIds))
+        {
+            throw new Error(`Invalid artist IDs requested: "${artistIds}"`);
+        }
+
+        if (artistIds.length <= 0 || artistIds.length > artistIdsLimitMax)
+        {
+            throw new Error(`Invalid number of artist IDs requested: ${artistIds.length}`);
+        }
+
+        const concatenatedArtistIds = artistIds
+            .filter(id => Boolean(id))
+            .join(",");
+
+        if (!concatenatedArtistIds)
+        {
+            throw new Error(`Invalid artist IDs requested after concatenating: ${concatenatedArtistIds}`);
+        }
+
+        // Make the request to get each artist's data
+        const requestData = {
+            ids: concatenatedArtistIds
+        };
+
+        const requestOptions = {
+            headers: {
+                Authorization: await authorize.getAccessToken(req, res)
+            }
+        };
+
+        const spotifyGetMultipleArtistsUri = `${spotifyBaseUri}${spotifyArtistsUriPath}`;
+        const spotifyGetMultipleArtistsRequestQuery = `?${querystring.stringify(requestData)}`;
+        const response = await axios.get(spotifyGetMultipleArtistsUri + spotifyGetMultipleArtistsRequestQuery, requestOptions);
+
+        // Extract only the data from the successful response that the user will care to see
+        const spotifyResponse = {
+            artists: response.data.artists
+        };
+
+        return Promise.resolve(spotifyResponse);
+    }
+    catch (error)
+    {
+        logger.logError(`Failed to get artist: ${error.message}`);
         return Promise.reject(error);
     }
 };
@@ -603,9 +664,9 @@ exports.getTopTracks = async function(req, res)
         // Handle the case where the invalid parameters were passed to track time range
         const tracksTimeRange = req.query.timeRange || tracksTimeRangeDefault;
         if (typeof tracksTimeRange !== "string" ||
-            (tracksTimeRange !== "short_term" &&
-            tracksTimeRange !== "medium_term" &&
-            tracksTimeRange !== "long_term"))
+            (tracksTimeRange !== spotifyShortTerm &&
+            tracksTimeRange !== spotifyMediumTerm &&
+            tracksTimeRange !== spotifyLongTerm))
         {
             throw new Error(`Invalid tracks time range of "${tracksTimeRange}" requested`);
         }

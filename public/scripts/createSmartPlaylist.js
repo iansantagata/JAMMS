@@ -141,7 +141,7 @@ function displaySmartPlaylistPreview(data)
     headerElement.setAttribute("class", "my-3");
     headerElement.innerText = "Smart Playlist Track Preview";
 
-    const textElement = document.createTextNode("Note - All playlist previews are generated on request and limited to the first 25 matching tracks.  Any created smart playlist may differ from the tracks shown in the preview.");
+    const textElement = document.createTextNode("Note - All playlist previews are generated on request. On top of the limits set above, previews are also limitied to the first 25 matching tracks found. Any created smart playlist may differ from the tracks shown in the preview.");
 
     const alertImageElement = document.createElement("i");
     alertImageElement.setAttribute("class", "bi-info-circle-fill mx-2");
@@ -338,10 +338,9 @@ function addRuleFormFields()
     artistOptionRuleType.setAttribute("selected", "");
     artistOptionRuleType.innerText = "Artist Name";
 
-    // TODO - Add Genre back in when it is fully developed
-    // TODO - var genreOptionRuleType = document.createElement("option");
-    // TODO - genreOptionRuleType.setAttribute("value", "genre");
-    // TODO - genreOptionRuleType.innerText = "Genre";
+    const genreOptionRuleType = document.createElement("option");
+    genreOptionRuleType.setAttribute("value", "genre");
+    genreOptionRuleType.innerText = "Genre";
 
     const yearOptionRuleType = document.createElement("option");
     yearOptionRuleType.setAttribute("value", "year");
@@ -357,8 +356,7 @@ function addRuleFormFields()
     selectRuleType.setAttribute("required", "");
     selectRuleType.appendChild(albumOptionRuleType);
     selectRuleType.appendChild(artistOptionRuleType);
-    // TODO - Add Genre back in when it is fully developed
-    // TODO - selectRuleType.appendChild(genreOptionRuleType);
+    selectRuleType.appendChild(genreOptionRuleType);
     selectRuleType.appendChild(yearOptionRuleType);
     selectRuleType.appendChild(songOptionRuleType);
 
