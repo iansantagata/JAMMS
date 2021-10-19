@@ -1030,8 +1030,11 @@ function compareByReleaseDescending(targetTrack, existingTrack)
 
 function compareByArtistAscending(targetTrack, existingTrack)
 {
-    const targetTrackArtists = getArtistNamesFromSavedTrack(targetTrack).join(", ");
-    const existingTrackArtists = getArtistNamesFromSavedTrack(existingTrack).join(", ");
+    const targetTrackArtists = getArtistNamesFromSavedTrack(targetTrack)
+        .join(", ");
+
+    const existingTrackArtists = getArtistNamesFromSavedTrack(existingTrack)
+        .join(", ");
 
     if (targetTrackArtists < existingTrackArtists)
     {
@@ -1048,8 +1051,11 @@ function compareByArtistAscending(targetTrack, existingTrack)
 
 function compareByArtistDescending(targetTrack, existingTrack)
 {
-    const targetTrackArtists = getArtistNamesFromSavedTrack(targetTrack).join(", ");
-    const existingTrackArtists = getArtistNamesFromSavedTrack(existingTrack).join(", ");
+    const targetTrackArtists = getArtistNamesFromSavedTrack(targetTrack)
+        .join(", ");
+
+    const existingTrackArtists = getArtistNamesFromSavedTrack(existingTrack)
+        .join(", ");
 
     if (targetTrackArtists < existingTrackArtists)
     {
