@@ -203,8 +203,6 @@ function getCommaSeparatedArtistNames(artists)
 
 function getImagePath(images, minimumPixelsPerSide, defaultImagePath)
 {
-    // TODO - This function should be fixed and the <img> objects adjusted so that they display relatively the same size images for all <img> tags on a page or in a group
-
     // Make sure we actually have images, or else we can short circuit
     if (!Array.isArray(images) || images.length === 0)
     {

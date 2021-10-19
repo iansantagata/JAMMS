@@ -127,5 +127,3 @@ function generateRandomString(targetLength)
     }
     return text;
 }
-
-// TODO - Figure out how to make it so that user can login with different Spotify account from login screen

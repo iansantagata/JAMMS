@@ -25,5 +25,3 @@ exports.logOut = async function(req, res, next)
         next(error);
     }
 };
-
-// TODO - Should this clear Spotify cookies too so users can login to a different account if they choose?
