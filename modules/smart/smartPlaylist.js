@@ -4,7 +4,7 @@
 const path = require("path"); // URI and local file paths
 
 // Custom Modules
-const customModulePath = __dirname;
+const customModulePath = path.join(__dirname, "..");
 const spotifyClient = require(path.join(customModulePath, "spotifyClient.js"));
 const logger = require(path.join(customModulePath, "logger.js"));
 
