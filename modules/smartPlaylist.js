@@ -652,6 +652,11 @@ function contains(a, b, recurseDepth = 0)
     return false;
 }
 
+function doesNotContain(a, b)
+{
+    return !contains(a, b);
+}
+
 // Rule Functions
 function ruleBySongName(track, songNameRuleData, operatorFunction)
 {
@@ -714,6 +719,9 @@ function getRuleOperatorFunction(operator)
             break;
         case "contains":
             operatorFunction = contains;
+            break;
+        case "doesNotContain":
+            operatorFunction = doesNotContain;
             break;
         case "equal":
         default:
