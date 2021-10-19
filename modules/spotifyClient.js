@@ -80,29 +80,36 @@ exports.getUserData = async function(req, res)
         // Get number of playlists and sample playlists from the user
         req.query.playlistsPerPage = defaultDataPointsPerPage;
         req.query.pageNumber = 1;
-        const playlistResponse = await exports.getAllPlaylists(req, res);
+        const playlistResponseAwaitable = exports.getAllPlaylists(req, res);
 
         // Get sample top artists from the user
         req.query.artistsPerPage = defaultDataPointsPerPage;
         req.query.pageNumber = 1;
         req.query.timeRange = spotifyLongTerm;
-        const topArtistsResponse = await exports.getTopArtists(req, res);
+        const topArtistsResponseAwaitable = exports.getTopArtists(req, res);
 
         // Get number of artists from the user
         req.query.artistsPerPage = 1;
         req.query.pageNumber = 1;
-        const artistsResponse = await exports.getAllArtists(req, res);
+        const artistsResponseAwaitable = exports.getAllArtists(req, res);
 
         // Get sample top tracks from the user
         req.query.tracksPerPage = defaultDataPointsPerPage;
         req.query.pageNumber = 1;
         req.query.timeRange = spotifyLongTerm;
-        const topTracksResponse = await exports.getTopTracks(req, res);
+        const topTracksResponseAwaitable = exports.getTopTracks(req, res);
 
         // Get number of tracks from the user
         req.query.tracksPerPage = 1;
         req.query.pageNumber = 1;
-        const tracksResponse = await exports.getAllTracks(req, res);
+        const tracksResponseAwaitable = exports.getAllTracks(req, res);
+
+        // Resolve all the promises so that we have actual data returned after firing each request off
+        const playlistResponse = await playlistResponseAwaitable;
+        const topArtistsResponse = await topArtistsResponseAwaitable;
+        const artistsResponse = await artistsResponseAwaitable;
+        const topTracksResponse = await topTracksResponseAwaitable;
+        const tracksResponse = await tracksResponseAwaitable;
 
         // Now aggregate all of the responses together to a single block of user data
         const fullSpotifyResponse = {
