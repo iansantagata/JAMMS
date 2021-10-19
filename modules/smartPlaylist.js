@@ -590,16 +590,53 @@ function lessThanOrEqualTo(a, b)
     return lessThan(a, b) || equals(a, b);
 }
 
-// TODO - Change this so it's a few different things based on the case:
-// TODO - 1. If A is an array, contains B as an element within A
-// TODO - 2. If A is a string, contains a substring B within A
-// TODO - 3. If A is an object, contains a value B within A
-// TODO - 4. If A is a map, contains a key B within A
-// TODO - 5. If A is undefined or null, return false (rather than throwing an error)
-// TODO - 6. If A is an array and its elements A` are strings, contains a substring B within element A`
-function contains(a, b)
+// Note - The verb "contains" implies a lot of different possibilities
+// This function means to address as many of them as possible
+function contains(a, b, recurseDepth = 0)
 {
-    return a.includes(b);
+    if (!a || recurseDepth > 3)
+    {
+        return false;
+    }
+
+    if (typeof a === "string")
+    {
+        return a.includes(b);
+    }
+
+    if (a instanceof Map || a instanceof Set)
+    {
+        return a.has(b);
+    }
+
+    if (Array.isArray(a))
+    {
+        // If input is an array and it simply has the data name exactly, then we have found our target
+        if (a.includes(b))
+        {
+            return true;
+        }
+
+        // When input does not have exact data name, try recursion for sub-strings and sub-arrays and sub-objects as applicable
+        // Break if a positive result is found to prevent further processing
+        for (const elementOfA of a)
+        {
+            if (contains(elementOfA, b, recurseDepth + 1))
+            {
+                return true;
+            }
+        }
+
+        // If no result came back positive for the array, then the target does not exist within the array
+        return false;
+    }
+
+    if (typeof a === "object")
+    {
+        return Object.values(a).includes(b);
+    }
+
+    return false;
 }
 
 // Rule Functions
