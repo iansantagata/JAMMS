@@ -21,6 +21,7 @@ const playlistDescriptionPeriod = ".";
 const playlistPreviewLimit = 25;
 const tracksPerPageDefault = 50;
 const maximumPlaylistSongLimit = 10000;
+const maximumRecursionLimit = 3;
 
 const artistGenreRetrievalLimit = 50;
 const trackAddPlaylistLimit = 100;
@@ -509,10 +510,9 @@ function getArtistsFromSavedTrack(savedTrack)
 function getArtistNamesFromSavedTrack(savedTrack)
 {
     // A track can have multiple artists and is usually in a particular order
-    // Take all the artists on a track and join them into a single comma separated string
+    // Take all the artists on a track in array form to get all of the artists
     return getArtistsFromSavedTrack(savedTrack)
-        .map(getArtistNameFromArtist)
-        .join(", ");
+        .map(getArtistNameFromArtist);
 }
 
 function getReleaseDateFromSavedTrack(savedTrack)
@@ -562,12 +562,33 @@ function getArtistIdFromArtist(artist)
 // Operator Functions
 function equals(a, b)
 {
+    // If a is an array, we want to look for an exact match in the array only
+    if (Array.isArray(a))
+    {
+        return a.includes(b);
+    }
+
+    // If a is a set, we want to look for an exact match of the values in the set only
+    if (a instanceof Set)
+    {
+        return a.has(b);
+    }
+
+    // If a is an object, we want to look for an exact match of the values of the object only
+    if (typeof a === "object")
+    {
+        return Object
+            .values(a)
+            .includes(b);
+    }
+
+    // Otherwise, check exact equivalence (for strings and numerics and the like)
     return a === b;
 }
 
 function notEquals(a, b)
 {
-    return a !== b;
+    return !equals(a, b);
 }
 
 function greaterThan(a, b)
@@ -590,16 +611,47 @@ function lessThanOrEqualTo(a, b)
     return lessThan(a, b) || equals(a, b);
 }
 
-// TODO - Change this so it's a few different things based on the case:
-// TODO - 1. If A is an array, contains B as an element within A
-// TODO - 2. If A is a string, contains a substring B within A
-// TODO - 3. If A is an object, contains a value B within A
-// TODO - 4. If A is a map, contains a key B within A
-// TODO - 5. If A is undefined or null, return false (rather than throwing an error)
-// TODO - 6. If A is an array and its elements A` are strings, contains a substring B within element A`
-function contains(a, b)
+// Note - The verb "contains" implies a lot of different possibilities
+// This function means to address as many of them as possible
+function contains(a, b, recurseDepth = 0)
 {
-    return a.includes(b);
+    // Base case exits if a is null or undefined or otherwise falsy, or if recurse depth is too large
+    if (!a || recurseDepth > maximumRecursionLimit)
+    {
+        return false;
+    }
+
+    // Check for complete equivalence first (in objects, sets, arrays, and primitives) using equals
+    if (equals(a, b))
+    {
+        return true;
+    }
+
+    // Without complete equivalence, now we want to check partial equivalence
+    if (typeof a === "string")
+    {
+        return a.includes(b);
+    }
+
+    // Check partial equivalence in array elements as well
+    if (Array.isArray(a))
+    {
+        // When input does not have exact data name, try recursion for sub-strings and sub-arrays and sub-objects as applicable
+        for (const elementOfA of a)
+        {
+            if (contains(elementOfA, b, recurseDepth + 1))
+            {
+                // Break if a positive result is found to prevent further processing
+                return true;
+            }
+        }
+
+        // If no result came back positive for the array, then the target does not exist within the array
+        return false;
+    }
+
+    // No case above applies, so fall back to a negative default case
+    return false;
 }
 
 // Rule Functions
@@ -978,8 +1030,11 @@ function compareByReleaseDescending(targetTrack, existingTrack)
 
 function compareByArtistAscending(targetTrack, existingTrack)
 {
-    const targetTrackArtists = getArtistNamesFromSavedTrack(targetTrack);
-    const existingTrackArtists = getArtistNamesFromSavedTrack(existingTrack);
+    const targetTrackArtists = getArtistNamesFromSavedTrack(targetTrack)
+        .join(", ");
+
+    const existingTrackArtists = getArtistNamesFromSavedTrack(existingTrack)
+        .join(", ");
 
     if (targetTrackArtists < existingTrackArtists)
     {
@@ -996,8 +1051,11 @@ function compareByArtistAscending(targetTrack, existingTrack)
 
 function compareByArtistDescending(targetTrack, existingTrack)
 {
-    const targetTrackArtists = getArtistNamesFromSavedTrack(targetTrack);
-    const existingTrackArtists = getArtistNamesFromSavedTrack(existingTrack);
+    const targetTrackArtists = getArtistNamesFromSavedTrack(targetTrack)
+        .join(", ");
+
+    const existingTrackArtists = getArtistNamesFromSavedTrack(existingTrack)
+        .join(", ");
 
     if (targetTrackArtists < existingTrackArtists)
     {
