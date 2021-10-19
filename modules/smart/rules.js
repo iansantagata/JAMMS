@@ -8,6 +8,43 @@ const customModulePath = path.join(__dirname, "..");
 const logger = require(path.join(customModulePath, "logger.js"));
 
 // Rules Logic
+function getPlaylistRules(req)
+{
+    const rules = [];
+    const parsedRules = [];
+
+    for (const parameter in req.body)
+    {
+        if (parameter.startsWith("playlistRule"))
+        {
+            const parameterSplit = parameter.split("-");
+            const ruleNumber = parameterSplit[parameterSplit.length - 1];
+
+            if (!parsedRules.includes(ruleNumber))
+            {
+                const ruleType = req.body[`playlistRuleType-${ruleNumber}`];
+                const ruleOperator = req.body[`playlistRuleOperator-${ruleNumber}`];
+                const ruleData = req.body[`playlistRuleData-${ruleNumber}`];
+
+                const ruleOperatorFunction = getRuleOperatorFunction(ruleOperator);
+                const ruleFunction = getRuleFunction(ruleType);
+
+                const ruleFromParameters =
+                {
+                    data: ruleData,
+                    function: ruleFunction,
+                    operator: ruleOperatorFunction
+                };
+
+                rules.push(ruleFromParameters);
+                parsedRules.push(ruleNumber);
+            }
+        }
+    }
+
+    return rules;
+}
+
 function ruleBySongName(track, songNameRuleData, operatorFunction)
 {
     const trackSongName = getTrackNameFromSavedTrack(track);

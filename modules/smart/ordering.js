@@ -8,6 +8,66 @@ const customModulePath = path.join(__dirname, "..");
 const logger = require(path.join(customModulePath, "logger.js"));
 
 // Ordering Logic
+function getPlaylistOrdering(req)
+{
+    // Default object to return if playlist ordering is disabled or errors arise
+    const defaultPlaylistOrderData = {
+        comparisonFunction: null,
+        direction: null,
+        enabled: false,
+        field: null
+    };
+
+    // Create a new object to build and return (cannot use same object because of shallow references)
+    const playlistOrderData = {
+        ...defaultPlaylistOrderData
+    };
+
+    playlistOrderData.enabled = Boolean(req.body.playlistOrderEnabled);
+    if (!playlistOrderData)
+    {
+        return defaultPlaylistOrderData;
+    }
+
+    playlistOrderData.field = req.body.playlistOrderField;
+    switch (playlistOrderData.field)
+    {
+        case "artist":
+        case "album":
+        case "release date":
+        case "duration":
+        case "library add date":
+        case "popularity":
+        case "song":
+            break;
+
+        // If order field is not provided or value is unknown, disable ordering
+        default:
+            return defaultPlaylistOrderData;
+    }
+
+    playlistOrderData.direction = req.body.playlistOrderDirection;
+    switch (playlistOrderData.direction)
+    {
+        case "descending":
+        case "ascending":
+            break;
+
+        // If order direction is not provided or value is unknown, disable ordering
+        default:
+            return defaultPlaylistOrderData;
+    }
+
+    // After parsing all the inputs to ensure they are valid, now we can get a valid ordering function
+    playlistOrderData.comparisonFunction = getOrderingFunction(playlistOrderData.field, playlistOrderData.direction);
+    if (!playlistOrderData.comparisonFunction)
+    {
+        return defaultPlaylistOrderData;
+    }
+
+    return playlistOrderData;
+}
+
 function getOrderForTracks(targetTrackIndex, tracks, orderOfTracks, orderComparisonFunction)
 {
     if (!Array.isArray(orderOfTracks))
