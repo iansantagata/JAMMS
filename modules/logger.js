@@ -1,24 +1,27 @@
+"use strict";
+
 // Logger Logic
 exports.logInfo = function(logMessage)
 {
-    var timeStamp = getTimeStamp();
-    console.log('[' + timeStamp + '] INFO: ' + logMessage);
-}
+    const timeStamp = getTimeStamp();
+    console.log(`[${timeStamp}] INFO: ${logMessage}`);
+};
 
 exports.logWarn = function(logMessage)
 {
-    var timeStamp = getTimeStamp();
-    console.warn('[' + timeStamp + '] WARN: ' + logMessage);
-}
+    const timeStamp = getTimeStamp();
+    console.warn(`[${timeStamp}] WARN: ${logMessage}`);
+};
 
 exports.logError = function(logMessage)
 {
-    var timeStamp = getTimeStamp();
-    console.error('[' + timeStamp + '] ERROR: ' + logMessage);
-}
+    const timeStamp = getTimeStamp();
+    console.error(`[${timeStamp}] ERROR: ${logMessage}`);
+};
 
 // Local Helper Functions
-getTimeStamp = function()
+function getTimeStamp()
 {
-    return new Date().toISOString();
+    const currentDate = new Date();
+    return currentDate.toISOString();
 }

@@ -1,5 +1,5 @@
 @html.extend('layout', function(model) {
-	@html.block('content', function(model) {
+  @html.block('content', function(model) {
 
     <script defer src="scripts/landing.js"></script>
 
@@ -23,7 +23,7 @@
 
         <div id="faqWhatIsJammsResponse" class="collapse" aria-labelledby="faqWhatIsJamms" data-parent="#faq">
           <div class="card-body">
-            <p><b>JAMMS</b> is <i>Just a Music Maintainer for Spotify.</i></p>
+            <p><strong>JAMMS</strong> is <em>Just a Music Maintainer for Spotify.</em></p>
           </div>
         </div>
       </div>
@@ -81,19 +81,19 @@
             <p>Smart playlists come with some advantages over regular playlists that users may desire as well.</p>
             <ul>
               <li>
-                <b>Smart playlists can be more dynamic than regular playlists.</b>
+                <strong>Smart playlists can be more dynamic than regular playlists.</strong>
                 <br/>
-                <i>My 50 Most Popular Rock Songs Smart Playlist</i> can easily be created by specifying popularity, genre, and song limit rules for your smart playlist. To create and maintain the same playlist manually would be incredibly intensive.
+                <em>My 50 Most Popular Rock Songs Smart Playlist</em> can easily be created by specifying popularity, genre, and song limit rules for your smart playlist. To create and maintain the same playlist manually would be incredibly intensive.
               </li>
               <li>
-                <b>Smart playlists can be automatically updated to refresh the music within them since the rules governing them are fixed.</b>
+                <strong>Smart playlists can be automatically updated to refresh the music within them since the rules governing them are fixed.</strong>
                 <br/>
-                <i>My Newest 100 Liked Songs Smart Playlist</i> could be constantly changing as you discover more music, but <i>My 100 Songs From That One Time Playlist</i> is not going to change unless you update it manually.
+                <em>My Newest 100 Liked Songs Smart Playlist</em> could be constantly changing as you discover more music, but <em>My 100 Songs From That One Time Playlist</em> is not going to change unless you update it manually.
               </li>
               <li>
-                <b>Smart playlists allow you to quickly build complex playlists with a variety of different parameters and conditions.</b>
+                <strong>Smart playlists allow you to quickly build complex playlists with a variety of different parameters and conditions.</strong>
                 <br/>
-                <i>My Happy Vibes Smart Playlist</i> might take into account beats per minute, how acoustic a song sounds, how upbeat it sounds, what key the song is in, and other audio features from a variety of artists and genres that you have liked to compile a playlist together for you.  Imagine how long that would take to analyze and build that same playlist yourself.
+                <em>My Happy Vibes Smart Playlist</em> might take into account beats per minute, how acoustic a song sounds, how upbeat it sounds, what key the song is in, and other audio features from a variety of artists and genres that you have liked to compile a playlist together for you.  Imagine how long that would take to analyze and build that same playlist yourself.
               </li>
             </ul>
           </div>

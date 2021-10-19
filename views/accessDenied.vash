@@ -1,8 +1,9 @@
 @html.extend('layout', function(model) {
-	@html.block('content', function(model) {
+  @html.block('content', function(model) {
     <h2>Acess Denied</h2>
     <p>
       We apologize, but we cannot let you access what you are requesting.
     </p>
+    <a id="landingButton" href="/" role="button" class="btn btn-info btn-sm">Return Home</a>
   })
 })

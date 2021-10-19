@@ -1,3 +1,5 @@
+"use strict";
+
 // Script Logic
 addOnClickEventListenerToElementById("editPlaylistDetailsButton", controlLoadingIndicatorWithText);
 addOnClickEventListenerToElementById("restorePlaylistButton", controlLoadingIndicatorWithText);

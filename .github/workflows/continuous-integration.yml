@@ -1,4 +1,4 @@
-name: Build and Deploy via Sync
+name: Continuous Integration
 
 on:
   push:
@@ -9,14 +9,19 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     name: 'Build and Deploy'
+
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
     - name: Setup Node.js
       uses: actions/setup-node@v1
       with:
         node-version: '12.x'
-    - run: npm ci
-    - run: npm run build --if-present
+
+    - name: Install Projects via NPM
+      run: npm ci
+
     - name: Sync Repository to Remote
       uses: up9cloud/action-rsync@v1.3
       env:

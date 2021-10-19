@@ -1,0 +1,63 @@
+name: Code Linter
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  lintjs:
+    runs-on: ubuntu-latest
+    name: Lint JavaScript Files
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+
+    - name: Install Projects via NPM
+      run: npm ci
+
+    - name: Lint JS
+      run: npm run lintjs
+
+  linthtml:
+    runs-on: ubuntu-latest
+    name: Lint HTML Files
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+
+    - name: Install Projects via NPM
+      run: npm ci
+
+    - name: Lint HTML
+      run: npm run linthtml
+
+  lintvash:
+    runs-on: ubuntu-latest
+    name: Lint Vash Files
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+
+    - name: Install Projects via NPM
+      run: npm ci
+
+    - name: Lint Vash
+      run: npm run lintvash

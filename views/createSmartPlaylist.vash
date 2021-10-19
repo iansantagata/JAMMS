@@ -1,5 +1,5 @@
 @html.extend('layout', function(model) {
-	@html.block('content', function(model) {
+  @html.block('content', function(model) {
     <h2>Create Smart Playlist</h2>
 
     <script defer src="scripts/createSmartPlaylist.js"></script>
@@ -14,45 +14,14 @@
           </div>
 
           <h4 class="my-3">Rules</h4>
-          <div id="rulesContainer">
-            <div class="form-row my-2" id="rule-0">
-              <div class="col-3">
-                <select name="playlistRuleType-0" class="form-control" required >
-                  <option value="album">Album Name</option>
-                  <option value="artist" selected>Artist Name</option>
-                  <!-- TODO - Add genre back in when it is ready to be used (developed) -->
-                  <!-- <option value="genre">Genre</option> -->
-                  <option value="year">Release Year</option>
-                  <option value="song">Song Name</option>
-                </select>
-              </div>
-              <div class="col-4">
-                <select name="playlistRuleOperator-0" class="form-control" required>
-                  <option value="equal" selected>is</option>
-                  <option value="notEqual">is not</option>
-                  <option value="greaterThan">is greater than</option>
-                  <option value="greaterThanOrEqual">is greater than or equal to</option>
-                  <option value="lessThan">is less than</option>
-                  <option value="lessThanOrEqual">is less than or equal to</option>
-                  <!-- TODO - Add contains back in when it is ready to be used (developed) -->
-                  <!-- <option value="contains">contains</option> -->
-                </select>
-              </div>
-              <div class="col-3">
-                <input type="text" name="playlistRuleData-0" class="form-control" placeholder="Your Rule Data" required />
-              </div>
-              <div class="col-2">
-                <button type="button" name="removeRuleButton" id="removeRuleButton-0" class="btn btn-outline-danger btn-sm form-control">Remove Rule</button>
-              </div>
-            </div>
-          </div>
+          <div id="rulesContainer"></div>
           <button type="button" name="addRuleButton" id="addRuleButton" class="btn btn-outline-info btn-sm my-3">Add Rule</button>
 
           <h4 class="my-3">Optional Settings</h4>
           <div class="form-row my-2">
             <div class="col-1">
               <div class="form-check-inline">
-                <input type="checkbox" name="playlistLimitEnabled" class="form-check-input" id="playlistLimitEnabledInput" value="false" />
+                <input type="checkbox" name="playlistLimitEnabled" class="form-check-input" id="playlistLimitEnabledInput" defaultValue="false" />
               </div>
             </div>
             <div class="col-3">
@@ -73,7 +42,7 @@
           <div class="form-row my-2">
             <div class="col-1">
               <div class="form-check-inline">
-                <input type="checkbox" name="playlistOrderEnabled" class="form-check-input" id="playlistOrderEnabledInput" value="false" />
+                <input type="checkbox" name="playlistOrderEnabled" class="form-check-input" id="playlistOrderEnabledInput" defaultValue="false" />
               </div>
             </div>
             <div class="col-3">
@@ -112,8 +81,8 @@
             </div>
           </div>
 
-          <div class="mt-3">
-            <button id="createSmartPlaylistButton" type="submit" class="btn btn-info">Create Smart Playlist</button>
+          <div class="my-3">
+            <button id="generateSmartPlaylistPreviewButton" type="submit" class="btn btn-info">Preview Smart Playlist Tracks</button>
           </div>
         </form>
       </div>

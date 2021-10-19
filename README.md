@@ -1,4 +1,6 @@
-[![Build and Deploy via Sync](https://github.com/iansantagata/jamms/actions/workflows/main.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/main.yml)
+[![Continuous Integration](https://github.com/iansantagata/jamms/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/continuous-integration.yml)
+[![Code QL Scan](https://github.com/iansantagata/jamms/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/codeql-analysis.yml)
+[![Code Linter](https://github.com/iansantagata/jamms/actions/workflows/linter.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/linter.yml)
 
 ## Overview
 
@@ -18,9 +20,13 @@ Although PLYLST is [open source](https://github.com/Shpigford/plylst), JAMMS is 
 
 ## The Future
 
-For bugs, issues, and features to be developed, see the [TRACKER.md](TRACKER.md) file.
+For bugs, issues, and features to be developed, see the [Issues](https://github.com/iansantagata/jamms/issues) section of this repository.
 
 ## Installation
+
+The following is a small guide on how to run this application from source locally. This section is not necessary for users to interact with the hosted version of this web application currently deployed.
+
+For anyone looking to clone or fork this repository, this is a good place to start to get up and running quickly!
 
 ### Secrets
 

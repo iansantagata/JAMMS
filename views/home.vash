@@ -1,13 +1,13 @@
 @html.extend('layout', function(model) {
-	@html.block('content', function(model) {
+  @html.block('content', function(model) {
 
     <script defer src="scripts/home.js"></script>
 
-		<h3 class="mb-3">Your Playlists</h3>
-		<p>You currently have <b>@model.numberOfPlaylists</b> playlists saved in Spotify!</p>
+    <h3 class="mb-3">Your Playlists</h3>
+    <p>You currently have <strong>@model.numberOfPlaylists</strong> playlists saved in Spotify!</p>
 
     @if(model.samplePlaylistData.length > 0)
-		{
+    {
       <p>Some of your playlists are listed below!</p>
 
       <div id="playlists" class="table-responsive">
@@ -23,11 +23,13 @@
           </thead>
           <tbody>
             @{
-              var playlistCount = 1;
+              var playlistCount = 0;
             }
 
             @model.samplePlaylistData.forEach(function(item)
             {
+              playlistCount++;
+
               <tr>
                 <th scope="row" class="align-middle">@playlistCount</th>
                 <td class="align-middle text-capitalize">@item.name</td>
@@ -40,38 +42,29 @@
                 </td>
                 <td class="align-middle col-md-2">
                   @{
-                    // Images are ordered from widest to smallest width, so start at the end to keep images small-ish yet reasonably visible
-                    var playlistImageIndex = item.images.length - 1;
-                    // We want images that are at least over 50 pixels in both dimensions for the user to see them
-                    // If there are none, we will end up using the first and biggest image
+                    // Have to manually JSON stringify this object
+                    // This is being done so that Vash at compile time can transfer data to JavaScript at run-time
+                    // If we did not utilize JSON.stringify(), the default string output would be [object Object]
+                    var imagesJson = JSON.stringify(item.images);
 
-                    while (playlistImageIndex > 0 &&
-                      item.images[playlistImageIndex] !== undefined &&
-                      (item.images[playlistImageIndex].width < 50 ||
-                      item.images[playlistImageIndex].height < 50))
-                    {
-                      playlistImageIndex = playlistImageIndex - 1;
-                    }
+                    var playlistImageId = `imageForPlaylist-${playlistCount}`;
+                    var minimumPixelsPerSide = 50;
+                    var defaultImagePath = "images/question_small.png";
                   }
+                  <img id="@playlistImageId" class="img-fluid" alt="Playlist Named @item.name" />
+                  <script type="text/javascript">
+                    var images = @html.raw(imagesJson);
+                    var playlistImagePath = getImagePath(images, @minimumPixelsPerSide, "@defaultImagePath");
 
-                  @if(item.images[playlistImageIndex] !== undefined)
-                  {
-                    <img src="@item.images[playlistImageIndex].url" class="img-fluid" alt="Playlist Named @item.name" />
-                  }
-                  else
-                  {
-                    <img src="images/question_small.png" class="img-fluid" alt="Playlist Named @item.name" />
-                  }
+                    setImageSourceAttributeById("@playlistImageId", playlistImagePath);
+                  </script>
                 </td>
               </tr>
-              @{
-                playlistCount++;
-              }
             })
           </tbody>
         </table>
       </div>
-		}
+    }
 
     <div id="interact" class="row align-middle mt-3 mb-5">
       <div class="col">
@@ -89,7 +82,7 @@
     </div>
 
     <h3 class="my-3">Your Library</h3>
-    <p>You currently have <b>@model.numberOfTracks</b> songs saved in Spotify!</p>
+    <p>You currently have <strong>@model.numberOfTracks</strong> songs saved in Spotify!</p>
 
     @if(model.sampleTrackData.length > 0)
     {
@@ -108,55 +101,53 @@
           </thead>
           <tbody>
             @{
-              var trackCount = 1;
+              var trackCount = 0;
             }
             @model.sampleTrackData.forEach(function(item)
             {
+              trackCount++;
+
               <tr>
                 <th scope="row" class="align-middle">@trackCount</th>
                 <td class="align-middle text-capitalize">@item.name</td>
+
                 @{
-                  var artistNames = "";
-
-                  // Smush all the artists of a track together into a comma separated string
-                  for (var artist of item.artists)
-                  {
-                    artistNames = artistNames + artist.name + ", ";
-                  }
-
-                  // Remove the trailing comma and space
-                  artistNames = artistNames.substring(0, artistNames.length - 2);
+                  // Have to manually JSON stringify this object
+                  // This is being done so that Vash at compile time can transfer data to JavaScript at run-time
+                  // If we did not utilize JSON.stringify(), the default string output would be [object Object]
+                  var artistsJson = JSON.stringify(item.artists);
+                  var artistNamesId = `artistNamesForTrack-${trackCount}`;
                 }
-                <td class="align-middle text-capitalize">@artistNames</td>
+                <td id="@artistNamesId" class="align-middle text-capitalize"></td>
+                <script type="text/javascript">
+                  var artists = @html.raw(artistsJson);
+                  var commaSeparatedArtistNames = getCommaSeparatedArtistNames(artists);
+
+                  setTextInElementById("@artistNamesId", commaSeparatedArtistNames);
+                </script>
+
                 <td class="align-middle text-capitalize">@item.album.name</td>
                 <td class="align-middle col-md-2">
                   @{
-                    // Images are ordered from widest to smallest width, so start at the end to keep images small-ish yet reasonably visible
-                    var trackImageIndex = item.album.images.length - 1;
-                    // We want images that are at least over 64 pixels in both dimensions for the user to see them
-                    // If there are none, we will end up using the first and biggest image
-                    while (trackImageIndex > 0 &&
-                      item.album.images[trackImageIndex] !== undefined &&
-                      (item.album.images[trackImageIndex].width < 64 ||
-                      item.album.images[trackImageIndex].height < 64))
-                    {
-                      trackImageIndex = trackImageIndex - 1;
-                    }
-                  }
+                    // Have to manually JSON stringify this object
+                    // This is being done so that Vash at compile time can transfer data to JavaScript at run-time
+                    // If we did not utilize JSON.stringify(), the default string output would be [object Object]
+                    var album = item.album || {};
+                    var imagesJson = JSON.stringify(album.images);
 
-                  @if(item.album.images[trackImageIndex] !== undefined)
-                  {
-                    <img src="@item.album.images[trackImageIndex].url" class="img-fluid" alt="Album Named @item.album.name" />
+                    var albumImageId = `albumImageForTrack-${trackCount}`;
+                    var minimumPixelsPerSide = 64;
+                    var defaultImagePath = "images/question.png";
                   }
-                  else
-                  {
-                    <img src="images/question.png" class="img-fluid" alt="Album Named @item.album.name" />
-                  }
+                  <img id="@albumImageId" class="img-fluid" alt="Album Named @album.name" />
+                  <script type="text/javascript">
+                    var images = @html.raw(imagesJson);
+                    var albumImagePath = getImagePath(images, @minimumPixelsPerSide, "@defaultImagePath");
+
+                    setImageSourceAttributeById("@albumImageId", albumImagePath);
+                  </script>
                 </td>
               </tr>
-              @{
-                trackCount++;
-              }
             })
           </tbody>
         </table>
@@ -164,10 +155,10 @@
     }
 
     <h3 class="my-3">Your Artists</h3>
-    <p>You currently have <b>@model.numberOfArtists</b> artists saved in Spotify!</p>
+    <p>You currently have <strong>@model.numberOfArtists</strong> artists saved in Spotify!</p>
 
     @if(model.sampleArtistData.length > 0)
-		{
+    {
       <h6 class="my-4">Your Top Artists</h6>
 
       <div id="artists" class="table-responsive">
@@ -182,10 +173,12 @@
           </thead>
           <tbody>
             @{
-              var artistCount = 1;
+              var artistCount = 0;
             }
             @model.sampleArtistData.forEach(function(item)
             {
+              artistCount++;
+
               <tr>
                 <th scope="row" class="align-middle">@artistCount</th>
                 <td class="align-middle text-capitalize">@item.name</td>
@@ -198,36 +191,28 @@
                 </td>
                 <td class="align-middle col-md-2">
                   @{
-                    // Images are ordered from widest to smallest width, so start at the end to keep images small-ish yet reasonably visible
-                    var artistImageIndex = item.images.length - 1;
-                    // We want images that are at least over 100 pixels in both dimensions for the user to see them
-                    // If there are none, we will end up using the first and biggest image
-                    while (artistImageIndex > 0 &&
-                      item.images[artistImageIndex] !== undefined &&
-                      (item.images[artistImageIndex].width < 100 ||
-                      item.images[artistImageIndex].height < 100))
-                    {
-                      artistImageIndex = artistImageIndex - 1;
-                    }
-                  }
+                    // Have to manually JSON stringify this object
+                    // This is being done so that Vash at compile time can transfer data to JavaScript at run-time
+                    // If we did not utilize JSON.stringify(), the default string output would be [object Object]
+                    var imagesJson = JSON.stringify(item.images);
 
-                  @if(item.images[artistImageIndex] !== undefined)
-                  {
-                    <img src="@item.images[artistImageIndex].url" class="img-fluid" alt="Artist Named @item.name" />
+                    var artistImageId = `imageForArtist-${artistCount}`;
+                    var minimumPixelsPerSide = 100;
+                    var defaultImagePath = "images/question.png";
                   }
-                  else
-                  {
-                    <img src="images/question.png" class="img-fluid" alt="Artist Named @item.name" />
-                  }
+                  <img id="@artistImageId" class="img-fluid" alt="Artist Named @item.name" />
+                  <script type="text/javascript">
+                    var images = @html.raw(imagesJson);
+                    var artistImagePath = getImagePath(images, @minimumPixelsPerSide, "@defaultImagePath");
+
+                    setImageSourceAttributeById("@artistImageId", artistImagePath);
+                  </script>
                 </td>
               </tr>
-              @{
-                artistCount++;
-              }
             })
           </tbody>
         </table>
       </div>
-		}
+    }
   })
 })

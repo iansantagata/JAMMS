@@ -1,60 +1,63 @@
+"use strict";
+
 // Dependencies
-var axios = require('axios'); // Make HTTP requests
-var path = require('path'); // URI and local file paths
-var querystring = require('querystring'); // URI query string manipulation
+const axios = require("axios"); // Make HTTP requests
+const path = require("path"); // URI and local file paths
+const querystring = require("querystring"); // URI query string manipulation
 
 // Custom Modules
 const customModulePath = __dirname;
-var home = require(path.join(customModulePath, 'home.js'));
-var redirect = require(path.join(customModulePath, 'redirect.js'));
-var secrets = require(path.join(customModulePath, 'secrets.js'));
-var cookie = require(path.join(customModulePath, 'cookie.js'));
-var logger = require(path.join(customModulePath, 'logger.js'));
+const redirect = require(path.join(customModulePath, "redirect.js"));
+const secrets = require(path.join(customModulePath, "secrets.js"));
+const cookie = require(path.join(customModulePath, "cookie.js"));
+const logger = require(path.join(customModulePath, "logger.js"));
 
 // Authorize Logic
-const spotifyAccessTokenUri = 'https://accounts.spotify.com/api/token';
+const spotifyAccessTokenUri = "https://accounts.spotify.com/api/token";
 
-const accessKey = 'AccessToken';
-const refreshKey = 'RefreshToken';
+const accessKey = "AccessToken";
+const refreshKey = "RefreshToken";
 
-exports.getAuthorizationTokens = async function(req, res)
+const secondToMsecConversion = 1000;
+
+exports.getAuthorizationTokens = async function(req)
 {
     try
     {
         // Make sure we have the data we need to get authorization tokens from Spotify
-        var authorizationCode = req.query.code || null;
-        if (authorizationCode === undefined || authorizationCode === null)
+        const authorizationCode = req.query.code;
+        if (!authorizationCode)
         {
-            throw new Error('Failed to locate authorization code from Spotify');
+            throw new Error("Failed to locate authorization code from Spotify");
         }
 
-        var redirectUri = redirect.getValidateLoginRedirectUri(req);
+        const redirectUri = redirect.getValidateLoginRedirectUri(req);
 
         // Make the request to get access and refresh tokens
-        var requestData = {
+        const requestData = {
             code: authorizationCode,
-            redirect_uri: redirectUri,
-            grant_type: 'authorization_code'
+            grant_type: "authorization_code",
+            redirect_uri: redirectUri
         };
 
-        var authorizationToken = await secrets.getBase64EncodedAuthorizationToken();
+        const authorizationToken = await secrets.getBase64EncodedAuthorizationToken();
 
-        var requestOptions = {
+        const requestOptions = {
             headers: {
-                'Authorization': 'Basic ' + authorizationToken,
-                'Content-Type': 'application/x-www-form-urlencoded'
+                "Authorization": `Basic ${authorizationToken}`,
+                "Content-Type": "application/x-www-form-urlencoded"
             }
         };
 
         // Trigger the authorization request
-        var response = await axios.post(spotifyAccessTokenUri, querystring.stringify(requestData), requestOptions);
+        const response = await axios.post(spotifyAccessTokenUri, querystring.stringify(requestData), requestOptions);
 
         // Extract only the data from the successful response that is needed
-        var authorizationResponse = {
+        const authorizationResponse = {
             accessToken: response.data.access_token,
             refreshToken: response.data.refresh_token,
             scopes: response.data.scope,
-            tokenExpirationInMsec: response.data.expires_in * 1000,
+            tokenExpirationInMsec: response.data.expires_in * secondToMsecConversion,
             tokenType: response.data.token_type
         };
 
@@ -64,7 +67,7 @@ exports.getAuthorizationTokens = async function(req, res)
     catch (error)
     {
         // Handle if there was an error for any reason
-        logger.logError('Failed to get authorization tokens: ' + error.message);
+        logger.logError(`Failed to get authorization tokens: ${error.message}`);
         return Promise.reject(error);
     }
 };
@@ -74,39 +77,42 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
     try
     {
         // Get the refresh token from cookies
-        var refreshToken = await cookie.getCookie(req, refreshKey);
+        const refreshToken = await cookie.getCookie(req, refreshKey);
 
         // Request the access token from the refresh token
-        var requestData = {
-            grant_type: 'refresh_token',
+        const requestData = {
+            grant_type: "refresh_token",
             refresh_token: refreshToken
         };
 
-        var authToken = await secrets.getBase64EncodedAuthorizationToken();
-        var requestOptions = {
+        const authToken = await secrets.getBase64EncodedAuthorizationToken();
+        const requestOptions = {
             headers: {
-                'Authorization': 'Basic ' + authToken
+                Authorization: `Basic ${authToken}`
             }
         };
 
         // Make the request to Spotify to get a new access token
-        var response = await axios.post(spotifyAccessTokenUri, querystring.stringify(requestData), requestOptions);
+        const response = await axios.post(spotifyAccessTokenUri, querystring.stringify(requestData), requestOptions);
 
         // Got a new access token successfully
-        var refreshAuthorizationResponse = {
+        const refreshAuthorizationResponse = {
             accessToken: response.data.access_token,
             refreshToken: response.data.refresh_token,
             scopes: response.data.scope,
-            tokenExpirationInMsec: response.data.expires_in * 1000,
+            tokenExpirationInMsec: response.data.expires_in * secondToMsecConversion,
             tokenType: response.data.token_type
         };
 
         // Throw the new token back into a cookie for the user to use
-        var accessTypeAndToken = refreshAuthorizationResponse.tokenType + ' ' + refreshAuthorizationResponse.accessToken;
-        cookie.setCookie(req, res, accessKey, accessTypeAndToken, refreshAuthorizationResponse.tokenExpirationInMsec);
+        const accessTypeAndToken = `${refreshAuthorizationResponse.tokenType} ${refreshAuthorizationResponse.accessToken}`;
+        const cookieSettings = {
+            maxAge: refreshAuthorizationResponse.tokenExpirationInMsec
+        };
+        cookie.setCookie(req, res, accessKey, accessTypeAndToken, cookieSettings);
 
         // If the request did return a new refresh token, make sure we overwrite the old token
-        if (refreshAuthorizationResponse.refreshToken !== undefined && refreshAuthorizationResponse.refreshToken !== null)
+        if (refreshAuthorizationResponse.refreshToken)
         {
             cookie.setCookie(req, res, refreshKey, refreshAuthorizationResponse.refreshToken); // Session cookie (no explicit expiration)
         }
@@ -117,7 +123,7 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
     catch (error)
     {
         // Failed to re-authorize, return failure
-        logger.logError('Failed to refresh authorization tokens: ' + error.message);
+        logger.logError(`Failed to refresh authorization tokens: ${error.message}`);
         return Promise.reject(error);
     }
 };
@@ -127,34 +133,35 @@ exports.getAccessToken = async function(req, res)
     try
     {
         // Try to get a valid access token from cookies if it exists and has not expired
-        var accessToken = await exports.getAccessTokenFromCookies(req, res);
-        return Promise.resolve(accessToken);
+        const accessTokenFromCookies = await exports.getAccessTokenFromCookies(req);
+        return Promise.resolve(accessTokenFromCookies);
     }
-    catch
+    catch (cookieError)
     {
         // If a valid access token cookie does not exist, then try to refresh to get a valid one
         try
         {
-            var response = await exports.getAuthorizationTokensViaRefresh(req, res);
+            const response = await exports.getAuthorizationTokensViaRefresh(req, res);
 
             // Use the response rather than going to newly refreshed cookies to retrieve the token again
-            accessToken = response.tokenType + ' ' + response.accessToken;
-            return Promise.resolve(accessToken);
+            const accessTokenFromRefresh = `${response.tokenType} ${response.accessToken}`;
+            return Promise.resolve(accessTokenFromRefresh);
         }
-        catch (error)
+        catch (refreshError)
         {
             // Did not successfully set cookie
-            logger.logError('Failed to get access token: ' + error.message);
-            return Promise.reject(error);
+            logger.logError(`Failed to get access token: ${cookieError.message}`);
+            logger.logError(`Failed to get access token: ${refreshError.message}`);
+            return Promise.reject(refreshError);
         }
     }
-}
+};
 
-exports.getAccessTokenFromCookies = async function(req, res)
+exports.getAccessTokenFromCookies = async function(req)
 {
     try
     {
-        var accessToken = await cookie.getCookie(req, accessKey);
+        const accessToken = await cookie.getCookie(req, accessKey);
         return Promise.resolve(accessToken);
     }
     catch (error)
@@ -162,13 +169,13 @@ exports.getAccessTokenFromCookies = async function(req, res)
         // Do not log an error here because it is potentially legitimate that a cookie expired or does not yet exist
         return Promise.reject(error);
     }
-}
+};
 
-exports.getRefreshTokenFromCookies = async function(req, res)
+exports.getRefreshTokenFromCookies = async function(req)
 {
     try
     {
-        var refreshToken = await cookie.getCookie(req, refreshKey);
+        const refreshToken = await cookie.getCookie(req, refreshKey);
         return Promise.resolve(refreshToken);
     }
     catch (error)
@@ -176,40 +183,43 @@ exports.getRefreshTokenFromCookies = async function(req, res)
         // Do not log an error here because it is potentially legitimate that a cookie expired or does not yet exist
         return Promise.reject(error);
     }
-}
+};
 
 exports.setAuthorizationCookies = function(req, res, auth)
 {
     try
     {
         // Make sure that we have all the needed authorization data to set the cookies
-        if (auth === undefined || auth === null)
+        if (!auth)
         {
             throw new Error("Authorization data not provided");
         }
 
-        if (auth.tokenExpirationInMsec === undefined || auth.tokenExpirationInMsec === null)
+        if (!auth.tokenExpirationInMsec)
         {
             throw new Error("Expiration time not found");
         }
 
-        if (auth.tokenType === undefined || auth.tokenType === null)
+        if (!auth.tokenType)
         {
             throw new Error("Token type not found");
         }
 
-        if (auth.accessToken === undefined || auth.accessToken === null)
+        if (!auth.accessToken)
         {
             throw new Error("Access token not found");
         }
 
-        if (auth.refreshToken === undefined || auth.refreshToken === null)
+        if (!auth.refreshToken)
         {
             throw new Error("Refresh token not found");
         }
 
-        var accessTypeAndToken = auth.tokenType + ' ' + auth.accessToken;
-        cookie.setCookie(req, res, accessKey, accessTypeAndToken, auth.tokenExpirationInMsec);
+        const accessTypeAndToken = `${auth.tokenType} ${auth.accessToken}`;
+        const cookieSettings = {
+            maxAge: auth.tokenExpirationInMsec
+        };
+        cookie.setCookie(req, res, accessKey, accessTypeAndToken, cookieSettings);
         cookie.setCookie(req, res, refreshKey, auth.refreshToken); // Session cookie (no explicit expiration);
 
         // No return value, just indicate success
@@ -217,12 +227,12 @@ exports.setAuthorizationCookies = function(req, res, auth)
     }
     catch (error)
     {
-        logger.logError('Failed to set authorization cookies: ' + error.message);
+        logger.logError(`Failed to set authorization cookies: ${error.message}`);
         return Promise.reject(error);
     }
-}
+};
 
-exports.deleteAuthorizationCookies = async function(req, res)
+exports.deleteAuthorizationCookies = async function(res)
 {
     try
     {
@@ -233,7 +243,7 @@ exports.deleteAuthorizationCookies = async function(req, res)
     }
     catch (error)
     {
-        logger.logError('Failed to delete authorization cookies: ' + error.message);
+        logger.logError(`Failed to delete authorization cookies: ${error.message}`);
         return Promise.reject(error);
     }
-}
+};

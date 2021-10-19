@@ -1,16 +1,17 @@
 @html.extend('layout', function(model) {
-	@html.block('content', function(model) {
+  @html.block('content', function(model) {
 
-    <script defer src="scripts/viewPlaylists.js"></script>
+    <script src="scripts/viewPlaylists.js"></script>
 
     <h2 class="mb-3">Your Playlists</h2>
-    <p>You currently have <b>@model.totalNumberOfPlaylists</b> playlists saved in Spotify!</p>
+    <p>You currently have <strong>@model.totalNumberOfPlaylists</strong> playlists saved in Spotify!</p>
 
     <div id="playlistsPerPageSelector" class="align-items-center mb-4">
       <div class="input-group justify-content-center">
         <div class="dropdown input-group-prepend">
           <button id="playlistsPerPageDropdown" class="btn btn-outline-info btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Playlists Per Page</button>
           <div class="dropdown-menu">
+            <!-- TODO - Refactor this in JS instead of Vash -->
             @if(model.numberOfPlaylistsPerPage !== 10)
             {
               <a id="playlistsPerPageLink-10" class="dropdown-item" href="/playlists?playlistsPerPage=10">10</a>
@@ -78,11 +79,13 @@
           </thead>
           <tbody>
             @{
-              var playlistCount = ((model.currentPage - 1) * model.numberOfPlaylistsPerPage) + 1;
+              var playlistCount = (model.currentPage - 1) * model.numberOfPlaylistsPerPage;
             }
 
             @model.playlists.forEach(function(item)
             {
+              playlistCount++;
+
               <tr>
                 <th scope="row" class="align-middle">@playlistCount</th>
                 <td class="align-middle text-capitalize">@item.name</td>
@@ -95,32 +98,24 @@
                 </td>
                 <td class="align-middle col-md-2">
                   @{
-                    // Images are ordered from widest to smallest width, so start at the end to keep images small-ish yet reasonably visible
-                    var playlistImageIndex = item.images.length - 1;
-                    // We want images that are at least over 100 pixels in both dimensions for the user to see them
-                    // If there are none, we will end up using the first and biggest image
-                    while (playlistImageIndex > 0 &&
-                      item.images[playlistImageIndex] !== undefined &&
-                      (item.images[playlistImageIndex].width < 100 ||
-                      item.images[playlistImageIndex].height < 100))
-                    {
-                      playlistImageIndex = playlistImageIndex - 1;
-                    }
-                  }
+                    // Have to manually JSON stringify this object
+                    // This is being done so that Vash at compile time can transfer data to JavaScript at run-time
+                    // If we did not utilize JSON.stringify(), the default string output would be [object Object]
+                    var imagesJson = JSON.stringify(item.images);
 
-                  @if(item.images[playlistImageIndex] !== undefined)
-                  {
-                    <img src="@item.images[playlistImageIndex].url" class="img-fluid" alt="Playlist Named @item.name" />
+                    var playlistImageId = `imageForPlaylist-${playlistCount}`;
+                    var minimumPixelsPerSide = 60;
+                    var defaultImagePath = "images/question_small.png";
                   }
-                  else
-                  {
-                    <img src="images/question.png" class="img-fluid" alt="Playlist Named @item.name" />
-                  }
+                  <img id="@playlistImageId" class="img-fluid" alt="Playlist Named @item.playlistName" />
+                  <script type="text/javascript">
+                    var images = @html.raw(imagesJson);
+                    var playlistImagePath = getImagePath(images, @minimumPixelsPerSide, "@defaultImagePath");
+
+                    setImageSourceAttributeById("@playlistImageId", playlistImagePath);
+                  </script>
                 </td>
               </tr>
-              @{
-                playlistCount++;
-              }
             })
           </tbody>
         </table>
@@ -128,89 +123,11 @@
     }
 
     <nav id="pages" class="my-5">
-      <ul class="pagination justify-content-center">
-        @{
-          var isPreviousPageDisabled = model.currentPage <= 1;
-          var previousPageDisabledClass = "disabled";
-          var previousPageUrl = "#";
-
-          if (!isPreviousPageDisabled)
-          {
-            previousPageDisabledClass = "";
-
-            var previousPageNumber = model.currentPage - 1;
-            previousPageUrl = "/playlists?pageNumber=" + previousPageNumber + "&playlistsPerPage=" + model.numberOfPlaylistsPerPage;
-          }
-        }
-        <li class="page-item @previousPageDisabledClass">
-          <a id="playlistsPageNavigation-previous" class="page-link" href="@previousPageUrl">Previous</a>
-        </li>
-
-        @if(model.currentPage - 2 >= 1)
-        {
-          @{
-            var twoPagesBack = model.currentPage - 2;
-            var twoPagesBackUrl = "/playlists?pageNumber=" + twoPagesBack + "&playlistsPerPage=" + model.numberOfPlaylistsPerPage;
-          }
-          <li class="page-item">
-            <a id="playlistsPageNavigation-backTwo" class="page-link" href="@twoPagesBackUrl">@twoPagesBack</a>
-          </li>
-        }
-
-        @if(model.currentPage - 1 >= 1)
-        {
-          @{
-            var onePageBack = model.currentPage - 1;
-            var onePageBackUrl = "/playlists?pageNumber=" + onePageBack + "&playlistsPerPage=" + model.numberOfPlaylistsPerPage;
-          }
-          <li class="page-item">
-            <a id="playlistsPageNavigation-backOne" class="page-link" href="@onePageBackUrl">@onePageBack</a>
-          </li>
-        }
-
-        <li class="page-item">
-          <a class="page-link" href="#"><b>@model.currentPage</b></a>
-        </li>
-
-        @if(model.currentPage + 1 <= model.numberOfPages)
-        {
-          @{
-            var onePageForward = model.currentPage + 1;
-            var onePageForwardUrl = "/playlists?pageNumber=" + onePageForward + "&playlistsPerPage=" + model.numberOfPlaylistsPerPage;
-          }
-          <li class="page-item">
-            <a id="playlistsPageNavigation-forwardOne" class="page-link" href="@onePageForwardUrl">@onePageForward</a>
-          </li>
-        }
-
-        @if(model.currentPage + 2 <= model.numberOfPages)
-        {
-          @{
-            var twoPagesForward = model.currentPage + 2;
-            var twoPagesForwardUrl = "/playlists?pageNumber=" + twoPagesForward + "&playlistsPerPage=" + model.numberOfPlaylistsPerPage;
-          }
-          <li class="page-item">
-            <a id="playlistsPageNavigation-forwardTwo" class="page-link" href="@twoPagesForwardUrl">@twoPagesForward</a>
-          </li>
-        }
-
-        @{
-          var isNextPageDisabled = model.currentPage >= model.numberOfPages;
-          var nextPageDisabledClass = "disabled";
-          var nextPageUrl = "#";
-
-          if (!isNextPageDisabled)
-          {
-            nextPageDisabledClass = "";
-
-            var nextPageNumber = model.currentPage + 1;
-            nextPageUrl = "/playlists?pageNumber=" + nextPageNumber + "&playlistsPerPage=" + model.numberOfPlaylistsPerPage;
-          }
-        }
-        <li class="page-item @nextPageDisabledClass">
-          <a id="playlistsPageNavigation-next" class="page-link" href="@nextPageUrl">Next</a>
-        </li>
+      <ul id="pageNavigationContainer" class="pagination justify-content-center">
+        <script type="text/javascript">
+          addPageNavigationButtons(@model.currentPage, @model.numberOfPlaylistsPerPage, @model.numberOfPages);
+        </script>
       </ul>
     </nav>
-	})
+  })
 })
