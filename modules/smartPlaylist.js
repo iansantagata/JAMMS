@@ -159,7 +159,6 @@ async function getSmartPlaylistData(req, res)
         req.query.tracksPerPage = tracksPerPageDefault; // Maximum value of tracks to retrieve per page
 
         // Loop over all songs in the library in batches
-        // TODO - Make the song retrieval area configurable (library, playlist, etc)
         while (canRetrieveMoreBatches)
         {
             // Get all the tracks in this batch
@@ -193,7 +192,6 @@ async function getSmartPlaylistData(req, res)
                 let trackFollowsAllRules = true;
                 for (const playlistRule of playlistRules)
                 {
-                    // TODO - Figure out a way to make AND and OR rules work here
                     if (!playlistRule.function(trackInBatch, playlistRule.data, playlistRule.operator))
                     {
                         trackFollowsAllRules = false;

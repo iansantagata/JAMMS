@@ -108,8 +108,6 @@ function handlePlaylistPreviewError(error)
 
 function displaySmartPlaylistPreview(data)
 {
-    // TODO - Might be a good idea to throw the preview into a modal of its own instead of on the same page
-    // TODO - That does come with some pros and cons however (editing rules in place, regenerating previews, etc)
     if (!data)
     {
         const dataNotFoundError = new Error("Failed to find AJAX response data");

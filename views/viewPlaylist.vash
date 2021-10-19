@@ -54,11 +54,6 @@
     </div>
 
     <div id="interact" class="row align-items-center justify-content-center mb-5">
-      <!-- TODO - Add endpoint for playlist detail editing, including playlist image -->
-      <div class="col">
-        <a id="editPlaylistDetailsButton" href="/editPlaylist?playlistId=@model.playlistId"
-            role="button" class="btn btn-info btn-sm disabled">Edit Playlist Details - Coming Soon!</a>
-      </div>
       @if(model.deleted)
       {
         <div class="col">
