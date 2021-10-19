@@ -148,9 +148,9 @@ async function getSmartPlaylistData(req, res)
     {
         // First, process all of the rules and optional settings from the request
         const isPlaylistPreview = Boolean(req.body.isPlaylistPreview);
-        const playlistLimitData = getPlaylistLimits(req);
-        const playlistOrderData = getPlaylistOrdering(req);
-        const playlistRules = getPlaylistRules(req);
+        const playlistLimitData = limits.getPlaylistLimits(req);
+        const playlistOrderData = ordering.getPlaylistOrdering(req);
+        const playlistRules = rules.getPlaylistRules(req);
 
         // Make sure that any special rules are extracted and any additional structures are setup
         // This is done so that if a track does not have the data we need,
@@ -217,12 +217,12 @@ async function getSmartPlaylistData(req, res)
                 // Put the track in the list of tracks to go in the playlist and keep a running tally of how long the playlist is
                 tracksInPlaylist.push(trackInBatch);
                 const lastTrackAddedIndex = tracksInPlaylist.length - 1;
-                timeOfTracksInPlaylistInMsec += getDurationFromSavedTrack(trackInBatch);
+                timeOfTracksInPlaylistInMsec += dataRetrieval.getDurationFromSavedTrack(trackInBatch);
 
                 // Figure out where this track should be ordered in the playlist
                 if (playlistOrderData.enabled)
                 {
-                    trackOrderingInPlaylist = getOrderForTracks(lastTrackAddedIndex, tracksInPlaylist, trackOrderingInPlaylist, playlistOrderData.comparisonFunction);
+                    trackOrderingInPlaylist = ordering.getOrderForTracks(lastTrackAddedIndex, tracksInPlaylist, trackOrderingInPlaylist, playlistOrderData.comparisonFunction);
                 }
                 else
                 {
@@ -250,7 +250,7 @@ async function getSmartPlaylistData(req, res)
             // If we have to remove something, it should be the last track in the list based on ordering
             const trackIndexToRemoveBySongLimit = trackOrderingInPlaylist.pop();
             const trackToRemoveBySongLimit = tracksInPlaylist[trackIndexToRemoveBySongLimit];
-            timeOfTracksInPlaylistInMsec -= getDurationFromSavedTrack(trackToRemoveBySongLimit);
+            timeOfTracksInPlaylistInMsec -= dataRetrieval.getDurationFromSavedTrack(trackToRemoveBySongLimit);
             tracksInPlaylist[trackIndexToRemoveBySongLimit] = null;
         }
 
@@ -260,7 +260,7 @@ async function getSmartPlaylistData(req, res)
             // If we have to remove something, it should be the last track in the list based on ordering
             const trackIndexToRemoveByTimeLimit = trackOrderingInPlaylist.pop();
             const trackToRemoveByTimeLimit = tracksInPlaylist[trackIndexToRemoveByTimeLimit];
-            timeOfTracksInPlaylistInMsec -= getDurationFromSavedTrack(trackToRemoveByTimeLimit);
+            timeOfTracksInPlaylistInMsec -= dataRetrieval.getDurationFromSavedTrack(trackToRemoveByTimeLimit);
             tracksInPlaylist[trackIndexToRemoveByTimeLimit] = null;
         }
 
