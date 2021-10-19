@@ -18,20 +18,24 @@ const comparisons = require(path.join(smartPlaylistModulesPath, "comparisons.js"
 const limits = require(path.join(smartPlaylistModulesPath, "limits.js"));
 const operators = require(path.join(smartPlaylistModulesPath, "operators.js"));
 const ordering = require(path.join(smartPlaylistModulesPath, "ordering.js"));
+const rules = require(path.join(smartPlaylistModulesPath, "rules.js"));
+
+// Default Constant Values
+const artistGenreRetrievalLimit = 50;
 
 // Special Rules Logic
-function getPlaylistSpecialRuleFlags(rules)
+exports.getPlaylistSpecialRuleFlags = function(inputRules)
 {
     const flags = new Set();
-    if (!Array.isArray(rules) || rules.length <= 0)
+    if (!Array.isArray(inputRules) || inputRules.length <= 0)
     {
         return flags;
     }
 
     // Loop through every rule to check if there are any special cases to account for
-    for (const rule of rules)
+    for (const inputRule of inputRules)
     {
-        if (rule.function === ruleByGenre)
+        if (inputRule.function === rules.ruleByGenre)
         {
             flags.add("genre");
         }
@@ -40,7 +44,7 @@ function getPlaylistSpecialRuleFlags(rules)
     return flags;
 }
 
-async function getArtistIdToGenreMap(req, res, savedTracks, existingArtistIdToGenresMap)
+exports.getArtistIdToGenreMap = async function(req, res, savedTracks, existingArtistIdToGenresMap)
 {
     try
     {

@@ -17,9 +17,13 @@ const comparisons = require(path.join(smartPlaylistModulesPath, "comparisons.js"
 const limits = require(path.join(smartPlaylistModulesPath, "limits.js"));
 const operators = require(path.join(smartPlaylistModulesPath, "operators.js"));
 const ordering = require(path.join(smartPlaylistModulesPath, "ordering.js"));
+const rules = require(path.join(smartPlaylistModulesPath, "rules.js"));
+
+// Default Constant Values
+const maximumRecursionLimit = 3;
 
 // Operators Logic
-function equals(a, b)
+exports.equals = function(a, b)
 {
     // If a is an array, we want to look for an exact match in the array only
     if (Array.isArray(a))
@@ -45,34 +49,34 @@ function equals(a, b)
     return a === b;
 }
 
-function notEquals(a, b)
+exports.notEquals = function(a, b)
 {
-    return !equals(a, b);
+    return !exports.equals(a, b);
 }
 
-function greaterThan(a, b)
+exports.greaterThan = function(a, b)
 {
     return a > b;
 }
 
-function greaterThanOrEqualTo(a, b)
+exports.greaterThanOrEqualTo = function(a, b)
 {
-    return greaterThan(a, b) || equals(a, b);
+    return exports.greaterThan(a, b) || exports.equals(a, b);
 }
 
-function lessThan(a, b)
+exports.lessThan = function(a, b)
 {
     return a < b;
 }
 
-function lessThanOrEqualTo(a, b)
+exports.lessThanOrEqualTo = function(a, b)
 {
-    return lessThan(a, b) || equals(a, b);
+    return exports.lessThan(a, b) || exports.equals(a, b);
 }
 
 // Note - The verb "contains" implies a lot of different possibilities
 // This function means to address as many of them as possible
-function contains(a, b, recurseDepth = 0)
+exports.contains = function(a, b, recurseDepth = 0)
 {
     // Base case exits if a is null or undefined or otherwise falsy, or if recurse depth is too large
     if (!a || recurseDepth > maximumRecursionLimit)
@@ -81,7 +85,7 @@ function contains(a, b, recurseDepth = 0)
     }
 
     // Check for complete equivalence first (in objects, sets, arrays, and primitives) using equals
-    if (equals(a, b))
+    if (exports.equals(a, b))
     {
         return true;
     }
@@ -98,7 +102,7 @@ function contains(a, b, recurseDepth = 0)
         // When input does not have exact data name, try recursion for sub-strings and sub-arrays and sub-objects as applicable
         for (const elementOfA of a)
         {
-            if (contains(elementOfA, b, recurseDepth + 1))
+            if (exports.contains(elementOfA, b, recurseDepth + 1))
             {
                 // Break if a positive result is found to prevent further processing
                 return true;
@@ -113,7 +117,7 @@ function contains(a, b, recurseDepth = 0)
     return false;
 }
 
-function doesNotContain(a, b)
+exports.doesNotContain = function(a, b)
 {
-    return !contains(a, b);
+    return !exports.contains(a, b);
 }

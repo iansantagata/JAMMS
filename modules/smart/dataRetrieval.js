@@ -17,76 +17,77 @@ const comparisons = require(path.join(smartPlaylistModulesPath, "comparisons.js"
 const limits = require(path.join(smartPlaylistModulesPath, "limits.js"));
 const operators = require(path.join(smartPlaylistModulesPath, "operators.js"));
 const ordering = require(path.join(smartPlaylistModulesPath, "ordering.js"));
+const rules = require(path.join(smartPlaylistModulesPath, "rules.js"));
 
 // Data Retrieval Logic
-function getUriFromSavedTrack(savedTrack)
+exports.getUriFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.uri;
 }
 
-function getTrackNameFromSavedTrack(savedTrack)
+exports.getTrackNameFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.name.toUpperCase();
 }
 
-function getAlbumNameFromSavedTrack(savedTrack)
+exports.getAlbumNameFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.album.name.toUpperCase();
 }
 
-function getArtistsFromSavedTrack(savedTrack)
+exports.getArtistsFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.artists;
 }
 
-function getArtistNamesFromSavedTrack(savedTrack)
+exports.getArtistNamesFromSavedTrack = function(savedTrack)
 {
     // A track can have multiple artists and is usually in a particular order
     // Take all the artists on a track in array form to get all of the artists
-    return getArtistsFromSavedTrack(savedTrack)
-        .map(getArtistNameFromArtist);
+    return exports.getArtistsFromSavedTrack(savedTrack)
+        .map(exports.getArtistNameFromArtist);
 }
 
-function getReleaseDateFromSavedTrack(savedTrack)
+exports.getReleaseDateFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.album.release_date;
 }
 
-function getReleaseYearFromSavedTrack(savedTrack)
+exports.getReleaseYearFromSavedTrack = function(savedTrack)
 {
     // The release year is usually YYYY-MM-DD but can optionally have month or day level precision
     // Grab the first four characters present to get the year value only as it should always be present
     const yearCharactersLength = 4;
-    return getReleaseDateFromSavedTrack(savedTrack)
+    return exports.getReleaseDateFromSavedTrack(savedTrack)
         .substr(0, yearCharactersLength);
 }
 
-function getAddDateFromSavedTrack(savedTrack)
+exports.getAddDateFromSavedTrack = function(savedTrack)
 {
     return savedTrack.added_at;
 }
 
-function getDurationFromSavedTrack(savedTrack)
+exports.getDurationFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.duration_ms;
 }
 
-function getPopularityFromSavedTrack(savedTrack)
+exports.getPopularityFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.popularity;
 }
 
-function getGenresFromSavedTrack(savedTrack)
+exports.getGenresFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.genres;
 }
 
-function getArtistNameFromArtist(artist)
+exports.getArtistNameFromArtist = function(artist)
 {
     return artist.name.toUpperCase();
 }
 
-function getArtistIdFromArtist(artist)
+exports.getArtistIdFromArtist = function(artist)
 {
     return artist.id;
 }

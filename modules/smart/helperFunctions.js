@@ -1,7 +1,7 @@
 "use strict";
 
 // Generic Helper Functions
-function getArrayChunks(inputArray, chunkSize)
+exports.getArrayChunks = function(inputArray, chunkSize)
 {
     if (!Array.isArray(inputArray))
     {

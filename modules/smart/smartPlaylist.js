@@ -18,6 +18,7 @@ const comparisons = require(path.join(smartPlaylistModulesPath, "comparisons.js"
 const limits = require(path.join(smartPlaylistModulesPath, "limits.js"));
 const operators = require(path.join(smartPlaylistModulesPath, "operators.js"));
 const ordering = require(path.join(smartPlaylistModulesPath, "ordering.js"));
+const rules = require(path.join(smartPlaylistModulesPath, "rules.js"));
 
 // Default Constant Values
 const playlistNamePrefix = "JAMMS: ";
@@ -31,15 +32,7 @@ const playlistDescriptionPeriod = ".";
 
 const playlistPreviewLimit = 25;
 const tracksPerPageDefault = 50;
-const maximumPlaylistSongLimit = 10000;
-const maximumRecursionLimit = 3;
-
-const artistGenreRetrievalLimit = 50;
 const trackAddPlaylistLimit = 100;
-
-const secondsToMsecConversion = 1000;
-const minutesToSecondsConversion = 60;
-const hoursToMinutesConversion = 60;
 
 // Smart Playlist Logic
 exports.createSmartPlaylistPage = function(req, res, next)
@@ -103,7 +96,7 @@ exports.createSmartPlaylist = async function(req, res, next)
 
         // Now that we have created the playlist, we want to add the valid songs to it based on the smart playlist rules
         const playlistId = createPlaylistResponse.id;
-        const trackUris = smartPlaylistData.trackData.map(getUriFromSavedTrack);
+        const trackUris = smartPlaylistData.trackData.map(dataRetrieval.getUriFromSavedTrack);
         const trackUriChunks = helperFunctions.getArrayChunks(trackUris, trackAddPlaylistLimit);
         req.body.playlistId = playlistId;
 
@@ -191,7 +184,7 @@ async function getSmartPlaylistData(req, res)
             if (playlistSpecialRuleFlags.has("genre"))
             {
                 artistIdToGenresMap = await specialRules.getArtistIdToGenreMap(req, res, tracksInBatch, artistIdToGenresMap);
-                tracksInBatch = await enrichment.enrichTrackWithGenres(tracksInBatch, artistIdToGenresMap);
+                tracksInBatch = await enrichment.enrichTracksWithGenres(tracksInBatch, artistIdToGenresMap);
             }
 
             // Process each track in the batch

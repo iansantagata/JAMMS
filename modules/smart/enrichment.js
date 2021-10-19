@@ -17,9 +17,10 @@ const comparisons = require(path.join(smartPlaylistModulesPath, "comparisons.js"
 const limits = require(path.join(smartPlaylistModulesPath, "limits.js"));
 const operators = require(path.join(smartPlaylistModulesPath, "operators.js"));
 const ordering = require(path.join(smartPlaylistModulesPath, "ordering.js"));
+const rules = require(path.join(smartPlaylistModulesPath, "rules.js"));
 
 // Enrichment Logic
-function enrichTrackWithGenres(savedTracks, artistIdToGenresMap)
+exports.enrichTracksWithGenres = function(savedTracks, artistIdToGenresMap)
 {
     try
     {
@@ -27,8 +28,9 @@ function enrichTrackWithGenres(savedTracks, artistIdToGenresMap)
         {
             // Genre is only defined within Spotify on the artist object
             // Convert a track's artists to their artist IDs to begin the process
-            const artistIds = getArtistsFromSavedTrack(savedTrack)
-                .map(getArtistIdFromArtist);
+            const artistIds = dataRetrieval
+                .getArtistsFromSavedTrack(savedTrack)
+                .map(dataRetrieval.getArtistIdFromArtist);
 
             // For every artist ID, check the map for artist IDs to genres
             let genresForTrack = [];

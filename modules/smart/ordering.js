@@ -17,9 +17,10 @@ const comparisons = require(path.join(smartPlaylistModulesPath, "comparisons.js"
 const limits = require(path.join(smartPlaylistModulesPath, "limits.js"));
 const operators = require(path.join(smartPlaylistModulesPath, "operators.js"));
 const ordering = require(path.join(smartPlaylistModulesPath, "ordering.js"));
+const rules = require(path.join(smartPlaylistModulesPath, "rules.js"));
 
 // Ordering Logic
-function getPlaylistOrdering(req)
+exports.getPlaylistOrdering = function(req)
 {
     // Default object to return if playlist ordering is disabled or errors arise
     const defaultPlaylistOrderData = {
@@ -79,7 +80,7 @@ function getPlaylistOrdering(req)
     return playlistOrderData;
 }
 
-function getOrderForTracks(targetTrackIndex, tracks, orderOfTracks, orderComparisonFunction)
+exports.getOrderForTracks = function(targetTrackIndex, tracks, orderOfTracks, orderComparisonFunction)
 {
     if (!Array.isArray(orderOfTracks))
     {
@@ -146,6 +147,7 @@ function getOrderForTracks(targetTrackIndex, tracks, orderOfTracks, orderCompari
     return orderOfTracks;
 }
 
+// Local Helper Functions
 function getOrderingFunction(orderField, orderDirection)
 {
     let orderingFunction = () => {};
@@ -153,32 +155,53 @@ function getOrderingFunction(orderField, orderDirection)
     switch (orderField)
     {
         case "artist":
-            orderingFunction = getOrderingFunctionByDirection(compareByArtistAscending, compareByArtistDescending, orderDirection);
+            orderingFunction = getOrderingFunctionByDirection(
+                comparisons.compareByArtistAscending,
+                comparisons.compareByArtistDescending,
+                orderDirection);
             break;
 
         case "album":
-            orderingFunction = getOrderingFunctionByDirection(compareByAlbumAscending, compareByAlbumDescending, orderDirection);
+            orderingFunction = getOrderingFunctionByDirection(
+                comparisons.compareByAlbumAscending,
+                comparisons.compareByAlbumDescending,
+                orderDirection);
             break;
 
         case "release date":
-            orderingFunction = getOrderingFunctionByDirection(compareByReleaseAscending, compareByReleaseDescending, orderDirection);
+            orderingFunction = getOrderingFunctionByDirection(
+                comparisons.compareByReleaseAscending,
+                comparisons.compareByReleaseDescending,
+                orderDirection);
             break;
 
         case "duration":
-            orderingFunction = getOrderingFunctionByDirection(compareByDurationAscending, compareByDurationDescending, orderDirection);
+            orderingFunction = getOrderingFunctionByDirection(
+                comparisons.compareByDurationAscending,
+                comparisons.compareByDurationDescending,
+                orderDirection);
             break;
 
         case "library add date":
-            orderingFunction = getOrderingFunctionByDirection(compareByLibraryAscending, compareByLibraryDescending, orderDirection);
+            orderingFunction = getOrderingFunctionByDirection(
+                comparisons.compareByLibraryAscending,
+                comparisons.compareByLibraryDescending,
+                orderDirection);
             break;
 
         case "popularity":
-            orderingFunction = getOrderingFunctionByDirection(compareByPopularityAscending, compareByPopularityDescending, orderDirection);
+            orderingFunction = getOrderingFunctionByDirection(
+                comparisons.compareByPopularityAscending,
+                comparisons.compareByPopularityDescending,
+                orderDirection);
             break;
 
         case "song":
         default:
-            orderingFunction = getOrderingFunctionByDirection(compareBySongAscending, compareBySongDescending, orderDirection);
+            orderingFunction = getOrderingFunctionByDirection(
+                comparisons.compareBySongAscending,
+                comparisons.compareBySongDescending,
+                orderDirection);
             break;
     }
 

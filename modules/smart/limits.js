@@ -17,9 +17,17 @@ const comparisons = require(path.join(smartPlaylistModulesPath, "comparisons.js"
 const limits = require(path.join(smartPlaylistModulesPath, "limits.js"));
 const operators = require(path.join(smartPlaylistModulesPath, "operators.js"));
 const ordering = require(path.join(smartPlaylistModulesPath, "ordering.js"));
+const rules = require(path.join(smartPlaylistModulesPath, "rules.js"));
+
+// Default Constant Values
+const maximumPlaylistSongLimit = 10000;
+
+const secondsToMsecConversion = 1000;
+const minutesToSecondsConversion = 60;
+const hoursToMinutesConversion = 60;
 
 // Limits Logic
-function getPlaylistLimits(req)
+exports.getPlaylistLimits = function(req)
 {
     // Default object to return if playlist limiting is disabled or errors arise
     const defaultPlaylistLimitData = {

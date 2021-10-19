@@ -17,9 +17,10 @@ const comparisons = require(path.join(smartPlaylistModulesPath, "comparisons.js"
 const limits = require(path.join(smartPlaylistModulesPath, "limits.js"));
 const operators = require(path.join(smartPlaylistModulesPath, "operators.js"));
 const ordering = require(path.join(smartPlaylistModulesPath, "ordering.js"));
+const rules = require(path.join(smartPlaylistModulesPath, "rules.js"));
 
 // Rules Logic
-function getPlaylistRules(req)
+exports.getPlaylistRules = function(req)
 {
     const rules = [];
     const parsedRules = [];
@@ -56,44 +57,7 @@ function getPlaylistRules(req)
     return rules;
 }
 
-function ruleBySongName(track, songNameRuleData, operatorFunction)
-{
-    const trackSongName = getTrackNameFromSavedTrack(track);
-    const normalizedSongNameRuleData = songNameRuleData.toUpperCase();
-
-    return operatorFunction(trackSongName, normalizedSongNameRuleData);
-}
-
-function ruleByAlbumName(track, albumNameRuleData, operatorFunction)
-{
-    const trackAlbumName = getAlbumNameFromSavedTrack(track);
-    const normalizedAlbumNameRuleData = albumNameRuleData.toUpperCase();
-
-    return operatorFunction(trackAlbumName, normalizedAlbumNameRuleData);
-}
-
-function ruleByReleaseYear(track, releaseYearRuleData, operatorFunction)
-{
-    const trackReleaseYear = getReleaseYearFromSavedTrack(track);
-    return operatorFunction(trackReleaseYear, releaseYearRuleData);
-}
-
-function ruleByArtistName(track, artistNameRuleData, operatorFunction)
-{
-    const trackArtistNames = getArtistNamesFromSavedTrack(track);
-    const normalizedArtistNameRuleData = artistNameRuleData.toUpperCase();
-
-    return operatorFunction(trackArtistNames, normalizedArtistNameRuleData);
-}
-
-function ruleByGenre(track, genreNameRuleData, operatorFunction)
-{
-    const trackGenres = getGenresFromSavedTrack(track);
-    const normalizedGenreNameRuleData = genreNameRuleData.toUpperCase();
-
-    return operatorFunction(trackGenres, normalizedGenreNameRuleData);
-}
-
+// Local Helper Functions
 function getRuleOperatorFunction(operator)
 {
     let operatorFunction = () => {};
@@ -101,29 +65,29 @@ function getRuleOperatorFunction(operator)
     switch (operator)
     {
         case "notEqual":
-            operatorFunction = notEquals;
+            operatorFunction = operators.notEquals;
             break;
         case "greaterThan":
-            operatorFunction = greaterThan;
+            operatorFunction = operators.greaterThan;
             break;
         case "greaterThanOrEqual":
-            operatorFunction = greaterThanOrEqualTo;
+            operatorFunction = operators.greaterThanOrEqualTo;
             break;
         case "lessThan":
-            operatorFunction = lessThan;
+            operatorFunction = operators.lessThan;
             break;
         case "lessThanOrEqual":
-            operatorFunction = lessThanOrEqualTo;
+            operatorFunction = operators.lessThanOrEqualTo;
             break;
         case "contains":
-            operatorFunction = contains;
+            operatorFunction = operators.contains;
             break;
         case "doesNotContain":
-            operatorFunction = doesNotContain;
+            operatorFunction = operators.doesNotContain;
             break;
         case "equal":
         default:
-            operatorFunction = equals;
+            operatorFunction = operators.equals;
             break;
     }
 
@@ -145,7 +109,7 @@ function getRuleFunction(ruleType)
             break;
 
         case "genre":
-            ruleFunction = ruleByGenre;
+            ruleFunction = exports.ruleByGenre;
             break;
 
         case "year":
@@ -159,4 +123,43 @@ function getRuleFunction(ruleType)
     }
 
     return ruleFunction;
+}
+
+// Specific Rule By X Functions
+exports.ruleByGenre = function(track, genreNameRuleData, operatorFunction)
+{
+    const trackGenres = dataRetrieval.getGenresFromSavedTrack(track);
+    const normalizedGenreNameRuleData = genreNameRuleData.toUpperCase();
+
+    return operatorFunction(trackGenres, normalizedGenreNameRuleData);
+}
+
+function ruleBySongName(track, songNameRuleData, operatorFunction)
+{
+    const trackSongName = dataRetrieval.getTrackNameFromSavedTrack(track);
+    const normalizedSongNameRuleData = songNameRuleData.toUpperCase();
+
+    return operatorFunction(trackSongName, normalizedSongNameRuleData);
+}
+
+function ruleByAlbumName(track, albumNameRuleData, operatorFunction)
+{
+    const trackAlbumName = dataRetrieval.getAlbumNameFromSavedTrack(track);
+    const normalizedAlbumNameRuleData = albumNameRuleData.toUpperCase();
+
+    return operatorFunction(trackAlbumName, normalizedAlbumNameRuleData);
+}
+
+function ruleByReleaseYear(track, releaseYearRuleData, operatorFunction)
+{
+    const trackReleaseYear = dataRetrieval.getReleaseYearFromSavedTrack(track);
+    return operatorFunction(trackReleaseYear, releaseYearRuleData);
+}
+
+function ruleByArtistName(track, artistNameRuleData, operatorFunction)
+{
+    const trackArtistNames = dataRetrieval.getArtistNamesFromSavedTrack(track);
+    const normalizedArtistNameRuleData = artistNameRuleData.toUpperCase();
+
+    return operatorFunction(trackArtistNames, normalizedArtistNameRuleData);
 }

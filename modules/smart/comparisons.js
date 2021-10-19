@@ -17,12 +17,13 @@ const comparisons = require(path.join(smartPlaylistModulesPath, "comparisons.js"
 const limits = require(path.join(smartPlaylistModulesPath, "limits.js"));
 const operators = require(path.join(smartPlaylistModulesPath, "operators.js"));
 const ordering = require(path.join(smartPlaylistModulesPath, "ordering.js"));
+const rules = require(path.join(smartPlaylistModulesPath, "rules.js"));
 
 // Comparisons Logic
-function compareBySongAscending(targetTrack, existingTrack)
+exports.compareBySongAscending = function(targetTrack, existingTrack)
 {
-    const targetTrackSongName = getTrackNameFromSavedTrack(targetTrack);
-    const existingTrackSongName = getTrackNameFromSavedTrack(existingTrack);
+    const targetTrackSongName = dataRetrieval.getTrackNameFromSavedTrack(targetTrack);
+    const existingTrackSongName = dataRetrieval.getTrackNameFromSavedTrack(existingTrack);
 
     if (targetTrackSongName < existingTrackSongName)
     {
@@ -37,10 +38,10 @@ function compareBySongAscending(targetTrack, existingTrack)
     return 0;
 }
 
-function compareBySongDescending(targetTrack, existingTrack)
+exports.compareBySongDescending = function(targetTrack, existingTrack)
 {
-    const targetTrackSongName = getTrackNameFromSavedTrack(targetTrack);
-    const existingTrackSongName = getTrackNameFromSavedTrack(existingTrack);
+    const targetTrackSongName = dataRetrieval.getTrackNameFromSavedTrack(targetTrack);
+    const existingTrackSongName = dataRetrieval.getTrackNameFromSavedTrack(existingTrack);
 
     if (targetTrackSongName < existingTrackSongName)
     {
@@ -55,10 +56,10 @@ function compareBySongDescending(targetTrack, existingTrack)
     return 0;
 }
 
-function compareByLibraryAscending(targetTrack, existingTrack)
+exports.compareByLibraryAscending = function(targetTrack, existingTrack)
 {
-    const targetTrackLibraryAddTimeStamp = getAddDateFromSavedTrack(targetTrack);
-    const existingTrackLibraryAddTimeStamp = getAddDateFromSavedTrack(existingTrack);
+    const targetTrackLibraryAddTimeStamp = dataRetrieval.getAddDateFromSavedTrack(targetTrack);
+    const existingTrackLibraryAddTimeStamp = dataRetrieval.getAddDateFromSavedTrack(existingTrack);
 
     if (targetTrackLibraryAddTimeStamp < existingTrackLibraryAddTimeStamp)
     {
@@ -73,10 +74,10 @@ function compareByLibraryAscending(targetTrack, existingTrack)
     return 0;
 }
 
-function compareByLibraryDescending(targetTrack, existingTrack)
+exports.compareByLibraryDescending = function(targetTrack, existingTrack)
 {
-    const targetTrackLibraryAddTimeStamp = getAddDateFromSavedTrack(targetTrack);
-    const existingTrackLibraryAddTimeStamp = getAddDateFromSavedTrack(existingTrack);
+    const targetTrackLibraryAddTimeStamp = dataRetrieval.getAddDateFromSavedTrack(targetTrack);
+    const existingTrackLibraryAddTimeStamp = dataRetrieval.getAddDateFromSavedTrack(existingTrack);
 
     if (targetTrackLibraryAddTimeStamp < existingTrackLibraryAddTimeStamp)
     {
@@ -91,10 +92,10 @@ function compareByLibraryDescending(targetTrack, existingTrack)
     return 0;
 }
 
-function compareByAlbumAscending(targetTrack, existingTrack)
+exports.compareByAlbumAscending = function(targetTrack, existingTrack)
 {
-    const targetTrackAlbumName = getAlbumNameFromSavedTrack(targetTrack);
-    const existingTrackAlbumName = getAlbumNameFromSavedTrack(existingTrack);
+    const targetTrackAlbumName = dataRetrieval.getAlbumNameFromSavedTrack(targetTrack);
+    const existingTrackAlbumName = dataRetrieval.getAlbumNameFromSavedTrack(existingTrack);
 
     if (targetTrackAlbumName < existingTrackAlbumName)
     {
@@ -109,10 +110,10 @@ function compareByAlbumAscending(targetTrack, existingTrack)
     return 0;
 }
 
-function compareByAlbumDescending(targetTrack, existingTrack)
+exports.compareByAlbumDescending = function(targetTrack, existingTrack)
 {
-    const targetTrackAlbumName = getAlbumNameFromSavedTrack(targetTrack);
-    const existingTrackAlbumName = getAlbumNameFromSavedTrack(existingTrack);
+    const targetTrackAlbumName = dataRetrieval.getAlbumNameFromSavedTrack(targetTrack);
+    const existingTrackAlbumName = dataRetrieval.getAlbumNameFromSavedTrack(existingTrack);
 
     if (targetTrackAlbumName < existingTrackAlbumName)
     {
@@ -127,10 +128,10 @@ function compareByAlbumDescending(targetTrack, existingTrack)
     return 0;
 }
 
-function compareByReleaseAscending(targetTrack, existingTrack)
+exports.compareByReleaseAscending = function(targetTrack, existingTrack)
 {
-    const targetTrackReleaseDate = getReleaseDateFromSavedTrack(targetTrack);
-    const existingTrackReleaseDate = getReleaseDateFromSavedTrack(existingTrack);
+    const targetTrackReleaseDate = dataRetrieval.getReleaseDateFromSavedTrack(targetTrack);
+    const existingTrackReleaseDate = dataRetrieval.getReleaseDateFromSavedTrack(existingTrack);
 
     if (targetTrackReleaseDate < existingTrackReleaseDate)
     {
@@ -145,10 +146,10 @@ function compareByReleaseAscending(targetTrack, existingTrack)
     return 0;
 }
 
-function compareByReleaseDescending(targetTrack, existingTrack)
+exports.compareByReleaseDescending = function(targetTrack, existingTrack)
 {
-    const targetTrackReleaseDate = getReleaseDateFromSavedTrack(targetTrack);
-    const existingTrackReleaseDate = getReleaseDateFromSavedTrack(existingTrack);
+    const targetTrackReleaseDate = dataRetrieval.getReleaseDateFromSavedTrack(targetTrack);
+    const existingTrackReleaseDate = dataRetrieval.getReleaseDateFromSavedTrack(existingTrack);
 
     if (targetTrackReleaseDate < existingTrackReleaseDate)
     {
@@ -163,12 +164,14 @@ function compareByReleaseDescending(targetTrack, existingTrack)
     return 0;
 }
 
-function compareByArtistAscending(targetTrack, existingTrack)
+exports.compareByArtistAscending = function(targetTrack, existingTrack)
 {
-    const targetTrackArtists = getArtistNamesFromSavedTrack(targetTrack)
+    const targetTrackArtists = dataRetrieval
+        .getArtistNamesFromSavedTrack(targetTrack)
         .join(", ");
 
-    const existingTrackArtists = getArtistNamesFromSavedTrack(existingTrack)
+    const existingTrackArtists = dataRetrieval
+        .getArtistNamesFromSavedTrack(existingTrack)
         .join(", ");
 
     if (targetTrackArtists < existingTrackArtists)
@@ -184,12 +187,14 @@ function compareByArtistAscending(targetTrack, existingTrack)
     return 0;
 }
 
-function compareByArtistDescending(targetTrack, existingTrack)
+exports.compareByArtistDescending = function(targetTrack, existingTrack)
 {
-    const targetTrackArtists = getArtistNamesFromSavedTrack(targetTrack)
+    const targetTrackArtists = dataRetrieval
+        .getArtistNamesFromSavedTrack(targetTrack)
         .join(", ");
 
-    const existingTrackArtists = getArtistNamesFromSavedTrack(existingTrack)
+    const existingTrackArtists = dataRetrieval
+        .getArtistNamesFromSavedTrack(existingTrack)
         .join(", ");
 
     if (targetTrackArtists < existingTrackArtists)
@@ -205,10 +210,10 @@ function compareByArtistDescending(targetTrack, existingTrack)
     return 0;
 }
 
-function compareByDurationAscending(targetTrack, existingTrack)
+exports.compareByDurationAscending = function(targetTrack, existingTrack)
 {
-    const targetTrackDuration = getDurationFromSavedTrack(targetTrack);
-    const existingTrackDuration = getDurationFromSavedTrack(existingTrack);
+    const targetTrackDuration = dataRetrieval.getDurationFromSavedTrack(targetTrack);
+    const existingTrackDuration = dataRetrieval.getDurationFromSavedTrack(existingTrack);
 
     if (targetTrackDuration < existingTrackDuration)
     {
@@ -223,10 +228,10 @@ function compareByDurationAscending(targetTrack, existingTrack)
     return 0;
 }
 
-function compareByDurationDescending(targetTrack, existingTrack)
+exports.compareByDurationDescending = function(targetTrack, existingTrack)
 {
-    const targetTrackDuration = getDurationFromSavedTrack(targetTrack);
-    const existingTrackDuration = getDurationFromSavedTrack(existingTrack);
+    const targetTrackDuration = dataRetrieval.getDurationFromSavedTrack(targetTrack);
+    const existingTrackDuration = dataRetrieval.getDurationFromSavedTrack(existingTrack);
 
     if (targetTrackDuration < existingTrackDuration)
     {
@@ -241,10 +246,10 @@ function compareByDurationDescending(targetTrack, existingTrack)
     return 0;
 }
 
-function compareByPopularityAscending(targetTrack, existingTrack)
+exports.compareByPopularityAscending = function(targetTrack, existingTrack)
 {
-    const targetTrackPopularity = getPopularityFromSavedTrack(targetTrack);
-    const existingTrackPopularity = getPopularityFromSavedTrack(existingTrack);
+    const targetTrackPopularity = dataRetrieval.getPopularityFromSavedTrack(targetTrack);
+    const existingTrackPopularity = dataRetrieval.getPopularityFromSavedTrack(existingTrack);
 
     if (targetTrackPopularity < existingTrackPopularity)
     {
@@ -259,10 +264,10 @@ function compareByPopularityAscending(targetTrack, existingTrack)
     return 0;
 }
 
-function compareByPopularityDescending(targetTrack, existingTrack)
+exports.compareByPopularityDescending = function(targetTrack, existingTrack)
 {
-    const targetTrackPopularity = getPopularityFromSavedTrack(targetTrack);
-    const existingTrackPopularity = getPopularityFromSavedTrack(existingTrack);
+    const targetTrackPopularity = dataRetrieval.getPopularityFromSavedTrack(targetTrack);
+    const existingTrackPopularity = dataRetrieval.getPopularityFromSavedTrack(existingTrack);
 
     if (targetTrackPopularity < existingTrackPopularity)
     {
