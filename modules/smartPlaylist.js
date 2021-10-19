@@ -21,6 +21,7 @@ const playlistDescriptionPeriod = ".";
 const playlistPreviewLimit = 25;
 const tracksPerPageDefault = 50;
 const maximumPlaylistSongLimit = 10000;
+const maximumRecursionLimit = 3;
 
 const artistGenreRetrievalLimit = 50;
 const trackAddPlaylistLimit = 100;
@@ -562,12 +563,33 @@ function getArtistIdFromArtist(artist)
 // Operator Functions
 function equals(a, b)
 {
+    // If a is an array, we want to look for an exact match in the array only
+    if (Array.isArray(a))
+    {
+        return a.includes(b);
+    }
+
+    // If a is a set, we want to look for an exact match of the values in the set only
+    if (a instanceof Set)
+    {
+        return a.has(b);
+    }
+
+    // If a is an object, we want to look for an exact match of the values of the object only
+    if (typeof a === "object")
+    {
+        return Object
+            .values(a)
+            .includes(b);
+    }
+
+    // Otherwise, check exact equivalence (for strings and numerics and the like)
     return a === b;
 }
 
 function notEquals(a, b)
 {
-    return a !== b;
+    return !equals(a, b);
 }
 
 function greaterThan(a, b)
@@ -594,35 +616,33 @@ function lessThanOrEqualTo(a, b)
 // This function means to address as many of them as possible
 function contains(a, b, recurseDepth = 0)
 {
-    if (!a || recurseDepth > 3)
+    // Base case exits if a is null or undefined or otherwise falsy, or if recurse depth is too large
+    if (!a || recurseDepth > maximumRecursionLimit)
     {
         return false;
     }
 
+    // Check for complete equivalence first (in objects, sets, arrays, and primitives) using equals
+    if (equals(a, b))
+    {
+        return true;
+    }
+
+    // Without complete equivalence, now we want to check partial equivalence
     if (typeof a === "string")
     {
         return a.includes(b);
     }
 
-    if (a instanceof Map || a instanceof Set)
-    {
-        return a.has(b);
-    }
-
+    // Check partial equivalence in array elements as well
     if (Array.isArray(a))
     {
-        // If input is an array and it simply has the data name exactly, then we have found our target
-        if (a.includes(b))
-        {
-            return true;
-        }
-
         // When input does not have exact data name, try recursion for sub-strings and sub-arrays and sub-objects as applicable
-        // Break if a positive result is found to prevent further processing
         for (const elementOfA of a)
         {
             if (contains(elementOfA, b, recurseDepth + 1))
             {
+                // Break if a positive result is found to prevent further processing
                 return true;
             }
         }
@@ -631,11 +651,7 @@ function contains(a, b, recurseDepth = 0)
         return false;
     }
 
-    if (typeof a === "object")
-    {
-        return Object.values(a).includes(b);
-    }
-
+    // No case above applies, so fall back to a negative default case
     return false;
 }
 
