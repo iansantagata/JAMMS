@@ -144,9 +144,8 @@ rules:
     - error
   no-void:
     - error
-  # Help to keep track of TODOs until they can be removed and this be changed to error
   no-warning-comments:
-    - warn
+    - error
   no-whitespace-before-property:
     - error
 
