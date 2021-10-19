@@ -2,6 +2,8 @@
 [![Code QL Scan](https://github.com/iansantagata/jamms/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/codeql-analysis.yml)
 [![Code Linter](https://github.com/iansantagata/jamms/actions/workflows/linter.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/linter.yml)
 
+<!-- Test Addition for PR templates -->
+
 ## Overview
 
 JAMMS is Just A Music Maintainer for Spotify!
