@@ -32,4 +32,4 @@ exports.getArrayChunks = function(inputArray, chunkSize)
     }
 
     return arrayInChunks;
-}
+};

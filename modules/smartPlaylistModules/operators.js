@@ -1,24 +1,5 @@
 "use strict";
 
-// Dependencies
-const path = require("path"); // URI and local file paths
-
-// Custom Modules
-const customModulePath = path.join(__dirname, "..");
-const logger = require(path.join(customModulePath, "logger.js"));
-
-// Smart Playlist Modules
-const smartPlaylistModulesPath = __dirname;
-const helperFunctions = require(path.join(smartPlaylistModulesPath, "helperFunctions.js"));
-const enrichment = require(path.join(smartPlaylistModulesPath, "enrichment.js"));
-const specialRules = require(path.join(smartPlaylistModulesPath, "specialRules.js"));
-const dataRetrieval = require(path.join(smartPlaylistModulesPath, "dataRetrieval.js"));
-const comparisons = require(path.join(smartPlaylistModulesPath, "comparisons.js"));
-const limits = require(path.join(smartPlaylistModulesPath, "limits.js"));
-const operators = require(path.join(smartPlaylistModulesPath, "operators.js"));
-const ordering = require(path.join(smartPlaylistModulesPath, "ordering.js"));
-const rules = require(path.join(smartPlaylistModulesPath, "rules.js"));
-
 // Default Constant Values
 const maximumRecursionLimit = 3;
 
@@ -47,32 +28,32 @@ exports.equals = function(a, b)
 
     // Otherwise, check exact equivalence (for strings and numerics and the like)
     return a === b;
-}
+};
 
 exports.notEquals = function(a, b)
 {
     return !exports.equals(a, b);
-}
+};
 
 exports.greaterThan = function(a, b)
 {
     return a > b;
-}
+};
 
 exports.greaterThanOrEqualTo = function(a, b)
 {
     return exports.greaterThan(a, b) || exports.equals(a, b);
-}
+};
 
 exports.lessThan = function(a, b)
 {
     return a < b;
-}
+};
 
 exports.lessThanOrEqualTo = function(a, b)
 {
     return exports.lessThan(a, b) || exports.equals(a, b);
-}
+};
 
 // Note - The verb "contains" implies a lot of different possibilities
 // This function means to address as many of them as possible
@@ -115,9 +96,9 @@ exports.contains = function(a, b, recurseDepth = 0)
 
     // No case above applies, so fall back to a negative default case
     return false;
-}
+};
 
 exports.doesNotContain = function(a, b)
 {
     return !exports.contains(a, b);
-}
+};

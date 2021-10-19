@@ -3,21 +3,9 @@
 // Dependencies
 const path = require("path"); // URI and local file paths
 
-// Custom Modules
-const customModulePath = path.join(__dirname, "..");
-const logger = require(path.join(customModulePath, "logger.js"));
-
 // Smart Playlist Modules
 const smartPlaylistModulesPath = __dirname;
-const helperFunctions = require(path.join(smartPlaylistModulesPath, "helperFunctions.js"));
-const enrichment = require(path.join(smartPlaylistModulesPath, "enrichment.js"));
-const specialRules = require(path.join(smartPlaylistModulesPath, "specialRules.js"));
-const dataRetrieval = require(path.join(smartPlaylistModulesPath, "dataRetrieval.js"));
 const comparisons = require(path.join(smartPlaylistModulesPath, "comparisons.js"));
-const limits = require(path.join(smartPlaylistModulesPath, "limits.js"));
-const operators = require(path.join(smartPlaylistModulesPath, "operators.js"));
-const ordering = require(path.join(smartPlaylistModulesPath, "ordering.js"));
-const rules = require(path.join(smartPlaylistModulesPath, "rules.js"));
 
 // Ordering Logic
 exports.getPlaylistOrdering = function(req)
@@ -78,7 +66,7 @@ exports.getPlaylistOrdering = function(req)
     }
 
     return playlistOrderData;
-}
+};
 
 exports.getOrderForTracks = function(targetTrackIndex, tracks, orderOfTracks, orderComparisonFunction)
 {
@@ -145,7 +133,7 @@ exports.getOrderForTracks = function(targetTrackIndex, tracks, orderOfTracks, or
     targetOrderIndex = lowerBoundInclusive;
     orderOfTracks.splice(targetOrderIndex, 0, targetTrackIndex);
     return orderOfTracks;
-}
+};
 
 // Local Helper Functions
 function getOrderingFunction(orderField, orderDirection)
@@ -158,42 +146,48 @@ function getOrderingFunction(orderField, orderDirection)
             orderingFunction = getOrderingFunctionByDirection(
                 comparisons.compareByArtistAscending,
                 comparisons.compareByArtistDescending,
-                orderDirection);
+                orderDirection
+            );
             break;
 
         case "album":
             orderingFunction = getOrderingFunctionByDirection(
                 comparisons.compareByAlbumAscending,
                 comparisons.compareByAlbumDescending,
-                orderDirection);
+                orderDirection
+            );
             break;
 
         case "release date":
             orderingFunction = getOrderingFunctionByDirection(
                 comparisons.compareByReleaseAscending,
                 comparisons.compareByReleaseDescending,
-                orderDirection);
+                orderDirection
+            );
             break;
 
         case "duration":
             orderingFunction = getOrderingFunctionByDirection(
                 comparisons.compareByDurationAscending,
                 comparisons.compareByDurationDescending,
-                orderDirection);
+                orderDirection
+            );
             break;
 
         case "library add date":
             orderingFunction = getOrderingFunctionByDirection(
                 comparisons.compareByLibraryAscending,
                 comparisons.compareByLibraryDescending,
-                orderDirection);
+                orderDirection
+            );
             break;
 
         case "popularity":
             orderingFunction = getOrderingFunctionByDirection(
                 comparisons.compareByPopularityAscending,
                 comparisons.compareByPopularityDescending,
-                orderDirection);
+                orderDirection
+            );
             break;
 
         case "song":
@@ -201,7 +195,8 @@ function getOrderingFunction(orderField, orderDirection)
             orderingFunction = getOrderingFunctionByDirection(
                 comparisons.compareBySongAscending,
                 comparisons.compareBySongDescending,
-                orderDirection);
+                orderDirection
+            );
             break;
     }
 

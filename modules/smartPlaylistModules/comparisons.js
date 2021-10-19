@@ -3,21 +3,9 @@
 // Dependencies
 const path = require("path"); // URI and local file paths
 
-// Custom Modules
-const customModulePath = path.join(__dirname, "..");
-const logger = require(path.join(customModulePath, "logger.js"));
-
 // Smart Playlist Modules
 const smartPlaylistModulesPath = __dirname;
-const helperFunctions = require(path.join(smartPlaylistModulesPath, "helperFunctions.js"));
-const enrichment = require(path.join(smartPlaylistModulesPath, "enrichment.js"));
-const specialRules = require(path.join(smartPlaylistModulesPath, "specialRules.js"));
 const dataRetrieval = require(path.join(smartPlaylistModulesPath, "dataRetrieval.js"));
-const comparisons = require(path.join(smartPlaylistModulesPath, "comparisons.js"));
-const limits = require(path.join(smartPlaylistModulesPath, "limits.js"));
-const operators = require(path.join(smartPlaylistModulesPath, "operators.js"));
-const ordering = require(path.join(smartPlaylistModulesPath, "ordering.js"));
-const rules = require(path.join(smartPlaylistModulesPath, "rules.js"));
 
 // Comparisons Logic
 exports.compareBySongAscending = function(targetTrack, existingTrack)
@@ -36,7 +24,7 @@ exports.compareBySongAscending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
 exports.compareBySongDescending = function(targetTrack, existingTrack)
 {
@@ -54,7 +42,7 @@ exports.compareBySongDescending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
 exports.compareByLibraryAscending = function(targetTrack, existingTrack)
 {
@@ -72,7 +60,7 @@ exports.compareByLibraryAscending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
 exports.compareByLibraryDescending = function(targetTrack, existingTrack)
 {
@@ -90,7 +78,7 @@ exports.compareByLibraryDescending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
 exports.compareByAlbumAscending = function(targetTrack, existingTrack)
 {
@@ -108,7 +96,7 @@ exports.compareByAlbumAscending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
 exports.compareByAlbumDescending = function(targetTrack, existingTrack)
 {
@@ -126,7 +114,7 @@ exports.compareByAlbumDescending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
 exports.compareByReleaseAscending = function(targetTrack, existingTrack)
 {
@@ -144,7 +132,7 @@ exports.compareByReleaseAscending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
 exports.compareByReleaseDescending = function(targetTrack, existingTrack)
 {
@@ -162,7 +150,7 @@ exports.compareByReleaseDescending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
 exports.compareByArtistAscending = function(targetTrack, existingTrack)
 {
@@ -185,7 +173,7 @@ exports.compareByArtistAscending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
 exports.compareByArtistDescending = function(targetTrack, existingTrack)
 {
@@ -208,7 +196,7 @@ exports.compareByArtistDescending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
 exports.compareByDurationAscending = function(targetTrack, existingTrack)
 {
@@ -226,7 +214,7 @@ exports.compareByDurationAscending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
 exports.compareByDurationDescending = function(targetTrack, existingTrack)
 {
@@ -244,7 +232,7 @@ exports.compareByDurationDescending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
 exports.compareByPopularityAscending = function(targetTrack, existingTrack)
 {
@@ -262,7 +250,7 @@ exports.compareByPopularityAscending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};
 
 exports.compareByPopularityDescending = function(targetTrack, existingTrack)
 {
@@ -280,4 +268,4 @@ exports.compareByPopularityDescending = function(targetTrack, existingTrack)
     }
 
     return 0;
-}
+};

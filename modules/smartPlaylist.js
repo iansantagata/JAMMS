@@ -14,9 +14,7 @@ const helperFunctions = require(path.join(smartPlaylistModulesPath, "helperFunct
 const enrichment = require(path.join(smartPlaylistModulesPath, "enrichment.js"));
 const specialRules = require(path.join(smartPlaylistModulesPath, "specialRules.js"));
 const dataRetrieval = require(path.join(smartPlaylistModulesPath, "dataRetrieval.js"));
-const comparisons = require(path.join(smartPlaylistModulesPath, "comparisons.js"));
 const limits = require(path.join(smartPlaylistModulesPath, "limits.js"));
-const operators = require(path.join(smartPlaylistModulesPath, "operators.js"));
 const ordering = require(path.join(smartPlaylistModulesPath, "ordering.js"));
 const rules = require(path.join(smartPlaylistModulesPath, "rules.js"));
 

@@ -3,21 +3,10 @@
 // Dependencies
 const path = require("path"); // URI and local file paths
 
-// Custom Modules
-const customModulePath = path.join(__dirname, "..");
-const logger = require(path.join(customModulePath, "logger.js"));
-
 // Smart Playlist Modules
 const smartPlaylistModulesPath = __dirname;
-const helperFunctions = require(path.join(smartPlaylistModulesPath, "helperFunctions.js"));
-const enrichment = require(path.join(smartPlaylistModulesPath, "enrichment.js"));
-const specialRules = require(path.join(smartPlaylistModulesPath, "specialRules.js"));
 const dataRetrieval = require(path.join(smartPlaylistModulesPath, "dataRetrieval.js"));
-const comparisons = require(path.join(smartPlaylistModulesPath, "comparisons.js"));
-const limits = require(path.join(smartPlaylistModulesPath, "limits.js"));
 const operators = require(path.join(smartPlaylistModulesPath, "operators.js"));
-const ordering = require(path.join(smartPlaylistModulesPath, "ordering.js"));
-const rules = require(path.join(smartPlaylistModulesPath, "rules.js"));
 
 // Rules Logic
 exports.getPlaylistRules = function(req)
@@ -55,7 +44,7 @@ exports.getPlaylistRules = function(req)
     }
 
     return rules;
-}
+};
 
 // Local Helper Functions
 function getRuleOperatorFunction(operator)
@@ -132,7 +121,7 @@ exports.ruleByGenre = function(track, genreNameRuleData, operatorFunction)
     const normalizedGenreNameRuleData = genreNameRuleData.toUpperCase();
 
     return operatorFunction(trackGenres, normalizedGenreNameRuleData);
-}
+};
 
 function ruleBySongName(track, songNameRuleData, operatorFunction)
 {
