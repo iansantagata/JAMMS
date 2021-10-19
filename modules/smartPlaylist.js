@@ -23,6 +23,7 @@ const tracksPerPageDefault = 50;
 const maximumPlaylistSongLimit = 10000;
 
 const artistGenreRetrievalLimit = 50;
+const trackAddPlaylistLimit = 100;
 
 const secondsToMsecConversion = 1000;
 const minutesToSecondsConversion = 60;
@@ -71,6 +72,13 @@ exports.createSmartPlaylist = async function(req, res, next)
     {
         // Get track data and information needed to create the smart playlist
         const smartPlaylistData = await getSmartPlaylistData(req, res);
+        if (!smartPlaylistData ||
+            !smartPlaylistData.trackData ||
+            !Array.isArray(smartPlaylistData.trackData) ||
+            smartPlaylistData.trackData.length <= 0)
+        {
+            throw new Error("Failed to get valid smart playlist data");
+        }
 
         // Only thing we do not have supplied from the user is their user ID
         // The app has to get their user ID first to attach this new playlist to their profile
@@ -83,9 +91,16 @@ exports.createSmartPlaylist = async function(req, res, next)
 
         // Now that we have created the playlist, we want to add the valid songs to it based on the smart playlist rules
         const playlistId = createPlaylistResponse.id;
+        const trackUris = smartPlaylistData.trackData.map(getUriFromSavedTrack);
+        const trackUriChunks = getArrayChunks(trackUris, trackAddPlaylistLimit);
         req.body.playlistId = playlistId;
-        req.body.trackUris = smartPlaylistData.trackData.map(getUriFromSavedTrack);
-        await spotifyClient.addTracksToPlaylist(req, res);
+
+        // Add songs to the playlist in batches since there is a limit to how many can be added at once
+        for (const trackUriChunk of trackUriChunks)
+        {
+            req.body.trackUris = trackUriChunk;
+            await spotifyClient.addTracksToPlaylist(req, res);
+        }
 
         // Finally, we want to show the user info about their new playlist, so retrieve that data after songs were inserted
         req.query.playlistId = playlistId;
