@@ -8,6 +8,10 @@ const customModulePath = path.join(__dirname, "..");
 const spotifyClient = require(path.join(customModulePath, "spotifyClient.js"));
 const logger = require(path.join(customModulePath, "logger.js"));
 
+// Smart Playlist Modules
+const smartPlaylistModulesPath = __dirname;
+const helperFunctions = require(path.join(smartPlaylistModulesPath, "helperFunctions.js"));
+
 // Default Constant Values
 const playlistNamePrefix = "JAMMS: ";
 const playlistDescriptionPrefix = "Uses only songs I have liked. ";
@@ -93,7 +97,7 @@ exports.createSmartPlaylist = async function(req, res, next)
         // Now that we have created the playlist, we want to add the valid songs to it based on the smart playlist rules
         const playlistId = createPlaylistResponse.id;
         const trackUris = smartPlaylistData.trackData.map(getUriFromSavedTrack);
-        const trackUriChunks = getArrayChunks(trackUris, trackAddPlaylistLimit);
+        const trackUriChunks = helperFunctions.getArrayChunks(trackUris, trackAddPlaylistLimit);
         req.body.playlistId = playlistId;
 
         // Add songs to the playlist in batches since there is a limit to how many can be added at once
@@ -1182,7 +1186,7 @@ async function getArtistIdToGenreMap(req, res, savedTracks, existingArtistIdToGe
 
         // With a set of unique unmapped artist IDs, group them into chunks to get genre data for artists in batches
         const artistIds = Array.from(unmappedArtistIds);
-        const artistIdChunks = getArrayChunks(artistIds, artistGenreRetrievalLimit);
+        const artistIdChunks = helperFunctions.getArrayChunks(artistIds, artistGenreRetrievalLimit);
         const artistIdToGenresMap = new Map();
 
         for (const artistIdChunk of artistIdChunks)
@@ -1280,38 +1284,4 @@ function enrichTrackWithGenres(savedTracks, artistIdToGenresMap)
         logger.logError(`Failed to enrich tracks with genres: ${error.message}`);
         return Promise.reject(error);
     }
-}
-
-// Generic Functions
-function getArrayChunks(inputArray, chunkSize)
-{
-    if (!Array.isArray(inputArray))
-    {
-        throw new Error("Cannot chunk a non-array input");
-    }
-
-    if (chunkSize <= 0)
-    {
-        throw new Error("Cannot chunk array input into chunks of size less than one");
-    }
-
-    if (inputArray.length === 0)
-    {
-        return inputArray;
-    }
-
-    const arrayInChunks = [];
-
-    const inputLength = inputArray.length;
-    let index = 0;
-
-    while (index < inputLength)
-    {
-        const chunk = inputArray.slice(index, index + chunkSize);
-        arrayInChunks.push(chunk);
-
-        index += chunkSize;
-    }
-
-    return arrayInChunks;
 }
