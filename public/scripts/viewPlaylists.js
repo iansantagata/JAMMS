@@ -1,5 +1,10 @@
 "use strict";
 
+// Constants
+const playlistsPerPageIncrement = 10;
+const playlistsPerPageStart = 10;
+const playlistsPerPageMaximum = 50;
+
 // Script Logic
 addOnClickListenersForPlaylistPerPageLinks();
 addOnClickListenersForViewPlaylistLinks();
@@ -189,6 +194,33 @@ function addPageNavigationButtons(currentPageNumber, numberOfPlaylistsPerPage, m
 
     // Finally, make sure that all of the necessary elements have event handlers
     addOnClickListenersForPlaylistsPageNavigationLinks();
+}
+
+function addPlaylistsPerPageDropdownOptions(numberOfPlaylistsPerPageSelected)
+{
+    let playlistsPerPage = playlistsPerPageStart;
+    const containerElement = document.getElementById("playlistsPerPageDropdownOptionsContainer");
+
+    while (playlistsPerPage > 0 && playlistsPerPage <= playlistsPerPageMaximum)
+    {
+        const linkElement = document.createElement("a");
+        linkElement.innerText = playlistsPerPage;
+
+        if (playlistsPerPage === numberOfPlaylistsPerPageSelected)
+        {
+            linkElement.setAttribute("class", "dropdown-item disabled");
+            linkElement.setAttribute("href", "#");
+        }
+        else
+        {
+            linkElement.setAttribute("id", `playlistsPerPageLink-${playlistsPerPage}`);
+            linkElement.setAttribute("class", "dropdown-item");
+            linkElement.setAttribute("href", `/playlists?playlistsPerPage=${playlistsPerPage}`);
+        }
+
+        containerElement.appendChild(linkElement);
+        playlistsPerPage += playlistsPerPageIncrement;
+    }
 }
 
 function getPlaylistsPageNavigationUrl(targetPageNumber, numberOfPlaylistsPerPage)
