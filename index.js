@@ -24,7 +24,7 @@ const logout = require(path.join(customModulePath, "logout.js"));
 const playlist = require(path.join(customModulePath, "playlist.js"));
 const logger = require(path.join(customModulePath, "logger.js"));
 const environment = require(path.join(customModulePath, "environment.js"));
-const smartPlaylist = require(path.join(customModulePath, "/smart/smartPlaylist.js"));
+const smartPlaylist = require(path.join(customModulePath, "smartPlaylist.js"));
 
 logger.logInfo("Imported custom modules");
 

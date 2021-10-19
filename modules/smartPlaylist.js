@@ -4,12 +4,12 @@
 const path = require("path"); // URI and local file paths
 
 // Custom Modules
-const customModulePath = path.join(__dirname, "..");
+const customModulePath = __dirname;
 const spotifyClient = require(path.join(customModulePath, "spotifyClient.js"));
 const logger = require(path.join(customModulePath, "logger.js"));
 
 // Smart Playlist Modules
-const smartPlaylistModulesPath = __dirname;
+const smartPlaylistModulesPath = path.join(__dirname, "smartPlaylistModules");
 const helperFunctions = require(path.join(smartPlaylistModulesPath, "helperFunctions.js"));
 const enrichment = require(path.join(smartPlaylistModulesPath, "enrichment.js"));
 const specialRules = require(path.join(smartPlaylistModulesPath, "specialRules.js"));
