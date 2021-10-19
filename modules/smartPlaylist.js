@@ -510,10 +510,9 @@ function getArtistsFromSavedTrack(savedTrack)
 function getArtistNamesFromSavedTrack(savedTrack)
 {
     // A track can have multiple artists and is usually in a particular order
-    // Take all the artists on a track and join them into a single comma separated string
+    // Take all the artists on a track in array form to get all of the artists
     return getArtistsFromSavedTrack(savedTrack)
-        .map(getArtistNameFromArtist)
-        .join(", ");
+        .map(getArtistNameFromArtist);
 }
 
 function getReleaseDateFromSavedTrack(savedTrack)
@@ -1031,8 +1030,8 @@ function compareByReleaseDescending(targetTrack, existingTrack)
 
 function compareByArtistAscending(targetTrack, existingTrack)
 {
-    const targetTrackArtists = getArtistNamesFromSavedTrack(targetTrack);
-    const existingTrackArtists = getArtistNamesFromSavedTrack(existingTrack);
+    const targetTrackArtists = getArtistNamesFromSavedTrack(targetTrack).join(", ");
+    const existingTrackArtists = getArtistNamesFromSavedTrack(existingTrack).join(", ");
 
     if (targetTrackArtists < existingTrackArtists)
     {
@@ -1049,8 +1048,8 @@ function compareByArtistAscending(targetTrack, existingTrack)
 
 function compareByArtistDescending(targetTrack, existingTrack)
 {
-    const targetTrackArtists = getArtistNamesFromSavedTrack(targetTrack);
-    const existingTrackArtists = getArtistNamesFromSavedTrack(existingTrack);
+    const targetTrackArtists = getArtistNamesFromSavedTrack(targetTrack).join(", ");
+    const existingTrackArtists = getArtistNamesFromSavedTrack(existingTrack).join(", ");
 
     if (targetTrackArtists < existingTrackArtists)
     {
