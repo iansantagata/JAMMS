@@ -30,14 +30,16 @@
           </div>
 
           <h4 class="my-3">Optional Settings</h4>
-          <div class="form-row justify-content-start my-2">
-            <div class="col-1">
-              <div class="form-check-inline">
-                <input type="checkbox" name="playlistIsPublic" class="form-check-input" id="playlistPublicInput" defaultValue="false" />
-              </div>
+          <div class="form-group">
+            <div class="form-check">
+              <input type="checkbox" name="playlistIsPublic" class="form-check-input" id="playlistPublicInput" defaultValue="false" />
+              <label class="form-check-label" for="playlistPublicInput">Set Playlist to Public</label>
             </div>
-            <div class="col-3">
-              <p>Set playlist to public</p>
+          </div>
+          <div class="form-group">
+            <div class="form-check">
+              <input type="checkbox" name="playlistIsCollaborative" class="form-check-input" id="playlistCollaborativeInput" defaultValue="false" />
+              <label class="form-check-label" for="playlistCollaborativeInput">Set Playlist to Collaborative</label>
             </div>
           </div>
 
