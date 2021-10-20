@@ -10,52 +10,12 @@
       <div class="input-group justify-content-center">
         <div class="dropdown input-group-prepend">
           <button id="playlistsPerPageDropdown" class="btn btn-outline-info btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Playlists Per Page</button>
-          <div class="dropdown-menu">
-            <!-- TODO - Refactor this in JS instead of Vash -->
-            @if(model.numberOfPlaylistsPerPage !== 10)
-            {
-              <a id="playlistsPerPageLink-10" class="dropdown-item" href="/playlists?playlistsPerPage=10">10</a>
-            }
-            else
-            {
-              <a class="dropdown-item disabled" href="#">10</a>
-            }
+          <div id="playlistsPerPageDropdownOptionsContainer" class="dropdown-menu">
+            <script type="text/javascript">
+              var playlistsPerPageSelected = @model.numberOfPlaylistsPerPage;
 
-            @if(model.numberOfPlaylistsPerPage !== 20)
-            {
-              <a id="playlistsPerPageLink-20" class="dropdown-item" href="/playlists?playlistsPerPage=20">20</a>
-            }
-            else
-            {
-              <a class="dropdown-item disabled" href="#">20</a>
-            }
-
-            @if(model.numberOfPlaylistsPerPage !== 30)
-            {
-              <a id="playlistsPerPageLink-30" class="dropdown-item" href="/playlists?playlistsPerPage=30">30</a>
-            }
-            else
-            {
-              <a class="dropdown-item disabled" href="#">30</a>
-            }
-
-            @if(model.numberOfPlaylistsPerPage !== 40)
-            {
-              <a id="playlistsPerPageLink-40" class="dropdown-item" href="/playlists?playlistsPerPage=40">40</a>
-            }
-            else
-            {
-              <a class="dropdown-item disabled" href="#">40</a>
-            }
-
-            @if(model.numberOfPlaylistsPerPage !== 50)
-            {
-              <a id="playlistsPerPageLink-50" class="dropdown-item" href="/playlists?playlistsPerPage=50">50</a>
-            }
-            else
-            {
-              <a class="dropdown-item disabled" href="#">50</a>
-            }
+              addPlaylistsPerPageDropdownOptions(playlistsPerPageSelected);
+            </script>
           </div>
         </div>
         <div class="input-group-append">
