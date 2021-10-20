@@ -23,20 +23,14 @@ exports.getPlaylistOrdering = function(req)
         ...defaultPlaylistOrderData
     };
 
-    playlistOrderData.enabled = Boolean(req.body.playlistOrderEnabled);
-    if (!playlistOrderData)
-    {
-        return defaultPlaylistOrderData;
-    }
-
     playlistOrderData.field = req.body.playlistOrderField;
     switch (playlistOrderData.field)
     {
         case "artist":
         case "album":
-        case "release date":
+        case "releaseDate":
         case "duration":
-        case "library add date":
+        case "libraryAddDate":
         case "popularity":
         case "song":
             break;
@@ -65,6 +59,8 @@ exports.getPlaylistOrdering = function(req)
         return defaultPlaylistOrderData;
     }
 
+    // If we made it this far without exiting, then we have valid playlist ordering data
+    playlistOrderData.enabled = true;
     return playlistOrderData;
 };
 
@@ -152,7 +148,7 @@ function getOrderingFunction(orderField, orderDirection)
             );
             break;
 
-        case "release date":
+        case "releaseDate":
             orderingFunction = getOrderingFunctionByDirection(
                 comparisons.compareByReleaseAscending,
                 comparisons.compareByReleaseDescending,
@@ -168,7 +164,7 @@ function getOrderingFunction(orderField, orderDirection)
             );
             break;
 
-        case "library add date":
+        case "libraryAddDate":
             orderingFunction = getOrderingFunctionByDirection(
                 comparisons.compareByLibraryAscending,
                 comparisons.compareByLibraryDescending,

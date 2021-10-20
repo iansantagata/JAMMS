@@ -34,12 +34,6 @@ exports.getPlaylistLimits = function(req)
         ...defaultPlaylistLimitData
     };
 
-    playlistLimitData.enabled = Boolean(req.body.playlistLimitEnabled);
-    if (!playlistLimitData.enabled)
-    {
-        return defaultPlaylistLimitData;
-    }
-
     playlistLimitData.value = req.body.playlistLimitValue;
     if (!playlistLimitData.value)
     {
@@ -82,6 +76,8 @@ exports.getPlaylistLimits = function(req)
             return defaultPlaylistLimitData;
     }
 
+    // If we made it this far without exiting, then we have valid playlist limit data
+    playlistLimitData.enabled = true;
     return playlistLimitData;
 };
 

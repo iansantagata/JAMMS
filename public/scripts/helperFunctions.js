@@ -119,6 +119,19 @@ function isFormValid(formElement)
     return formElement.checkValidity();
 }
 
+function removeChildElements(element)
+{
+    // Only try to remove child elements when we actually find the target element
+    if (element)
+    {
+        // Clear out all nesting of nodes within the node
+        while (element.hasChildNodes())
+        {
+            element.removeChild(element.firstChild);
+        }
+    }
+}
+
 function replaceElementContentsWithLoadingIndicatorById(id, showLoadingText)
 {
     const element = document.getElementById(id);
@@ -127,11 +140,8 @@ function replaceElementContentsWithLoadingIndicatorById(id, showLoadingText)
 
 function replaceElementContentsWithLoadingIndicator(element, showLoadingText)
 {
-    // Clear out all nesting of nodes within the node
-    while (element.hasChildNodes())
-    {
-        element.removeChild(element.firstChild);
-    }
+    // Clear out all child elements
+    removeChildElements(element);
 
     const spanSpinner = document.createElement("span");
     spanSpinner.setAttribute("class", "spinner-border spinner-border-sm");
@@ -148,11 +158,8 @@ function replaceElementContentsWithLoadingIndicator(element, showLoadingText)
 
 function replaceElementContentsWithText(element, text)
 {
-    // Clear out all nesting of nodes within the node
-    while (element.hasChildNodes())
-    {
-        element.removeChild(element.firstChild);
-    }
+    // Clear out all child elements
+    removeChildElements(element);
 
     // Add the custom text into the node
     const textNode = document.createTextNode(text);

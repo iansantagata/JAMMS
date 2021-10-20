@@ -3,28 +3,15 @@
 // Script Logic
 let ruleCounter = 0;
 
-addOnClickEventListenerToElementById("playlistLimitEnabledInput", controlEnablementOfLimitElements);
-addOnClickEventListenerToElementById("playlistOrderEnabledInput", controlEnablementOfOrderElements);
-
 addOnClickEventListenerToElementById("addRuleButton", addRuleFormFields);
+addOnClickEventListenerToElementById("addLimitButton", addLimitFormFields);
+addOnClickEventListenerToElementById("addOrderButton", addOrderFormFields);
 
 addOnClickEventListenerToElementById("generateSmartPlaylistPreviewButton", previewSmartPlaylist);
 
 addOnChangeEventListenerToElementById("createSmartPlaylistForm", displayPreviewOutOfDateAlert);
 
 // DOM Specific Functions
-function controlEnablementOfLimitElements()
-{
-    controlEnablementOfElementById("playlistLimitValueInput");
-    controlEnablementOfElementById("playlistLimitTypeInput");
-}
-
-function controlEnablementOfOrderElements()
-{
-    controlEnablementOfElementById("playlistOrderDirectionInput");
-    controlEnablementOfElementById("playlistOrderFieldInput");
-}
-
 function previewSmartPlaylist()
 {
     // First, make sure the event fired correctly and the form is valid
@@ -359,7 +346,7 @@ function addRuleFormFields()
     selectRuleType.appendChild(songOptionRuleType);
 
     const ruleTypeDiv = document.createElement("div");
-    ruleTypeDiv.setAttribute("class", "col-3");
+    ruleTypeDiv.setAttribute("class", "col-md my-2");
     ruleTypeDiv.appendChild(selectRuleType);
 
     // Rule Operator Selection
@@ -410,7 +397,7 @@ function addRuleFormFields()
     selectRuleOperator.appendChild(doesNotContainOptionRuleOperator);
 
     const ruleOperatorDiv = document.createElement("div");
-    ruleOperatorDiv.setAttribute("class", "col-4");
+    ruleOperatorDiv.setAttribute("class", "col-md my-2");
     ruleOperatorDiv.appendChild(selectRuleOperator);
 
     // Rule Text Data
@@ -422,7 +409,7 @@ function addRuleFormFields()
     inputRuleTextData.setAttribute("required", "");
 
     const ruleTextDataDiv = document.createElement("div");
-    ruleTextDataDiv.setAttribute("class", "col-3");
+    ruleTextDataDiv.setAttribute("class", "col-md my-2");
     ruleTextDataDiv.appendChild(inputRuleTextData);
 
     // Remove Rule Button
@@ -430,28 +417,230 @@ function addRuleFormFields()
     removeRuleButton.setAttribute("type", "button");
     removeRuleButton.setAttribute("name", "removeRuleButton");
     removeRuleButton.setAttribute("id", `removeRuleButton-${ruleCounter}`);
-    removeRuleButton.setAttribute("class", "btn btn-outline-danger btn-sm form-control");
+    removeRuleButton.setAttribute("class", "btn btn-outline-danger btn-sm my-2");
     removeRuleButton.innerText = "Remove Rule";
 
-    const removeRuleButtonDiv = document.createElement("div");
-    removeRuleButtonDiv.setAttribute("class", "col-2");
-    removeRuleButtonDiv.appendChild(removeRuleButton);
+    // Rule Inputs in Row
+    const rowDiv = document.createElement("div");
+    rowDiv.setAttribute("class", "form-row my-2");
+    rowDiv.appendChild(ruleTypeDiv);
+    rowDiv.appendChild(ruleOperatorDiv);
+    rowDiv.appendChild(ruleTextDataDiv);
 
     // Add all the components to the top level rule div
     const ruleDiv = document.createElement("div");
-    ruleDiv.setAttribute("class", "form-row my-2");
+    ruleDiv.setAttribute("class", "my-2");
     ruleDiv.setAttribute("id", `rule-${ruleCounter}`);
-    ruleDiv.appendChild(ruleTypeDiv);
-    ruleDiv.appendChild(ruleOperatorDiv);
-    ruleDiv.appendChild(ruleTextDataDiv);
-    ruleDiv.appendChild(removeRuleButtonDiv);
+    ruleDiv.appendChild(rowDiv);
+    ruleDiv.appendChild(removeRuleButton);
 
     // Append a form row of fields for a new rule
     const rulesContainerElement = document.getElementById("rulesContainer");
     rulesContainerElement.appendChild(ruleDiv);
 
-    // Finally, add an event listener to the remove rule button that has been added
+    // Add an event listener to the remove rule button that has been added
     addOnClickEventListenerToElement(removeRuleButton, removeRuleFormFields);
+
+    // Finally, trigger a "changed" warning if a preview was already generated
+    displayPreviewOutOfDateAlert();
+}
+
+function addLimitFormFields()
+{
+    // Create pieces of the form row needed for limiting the playlist
+    // Playlist Limit Value Input
+    const limitValueInputElement = document.createElement("input");
+    limitValueInputElement.setAttribute("type", "number");
+    limitValueInputElement.setAttribute("name", "playlistLimitValue");
+    limitValueInputElement.setAttribute("class", "form-control");
+    limitValueInputElement.setAttribute("id", "playlistLimitValueInput");
+    limitValueInputElement.setAttribute("min", "1");
+    limitValueInputElement.setAttribute("max", "10000");
+    limitValueInputElement.setAttribute("placeholder", "Your Limit Number");
+    limitValueInputElement.setAttribute("required", "");
+
+    const limitValueDivElement = document.createElement("div");
+    limitValueDivElement.setAttribute("class", "col-md my-2");
+    limitValueDivElement.appendChild(limitValueInputElement);
+
+    // Playlist Limit Type Options
+    const limitTypeHoursOptionElement = document.createElement("option");
+    limitTypeHoursOptionElement.setAttribute("value", "hours");
+    limitTypeHoursOptionElement.innerText = "Hours";
+
+    const limitTypeMinutesOptionElement = document.createElement("option");
+    limitTypeMinutesOptionElement.setAttribute("value", "minutes");
+    limitTypeMinutesOptionElement.innerText = "Minutes";
+
+    const limitTypeSongsOptionElement = document.createElement("option");
+    limitTypeSongsOptionElement.setAttribute("value", "songs");
+    limitTypeSongsOptionElement.setAttribute("selected", "");
+    limitTypeSongsOptionElement.innerText = "Songs";
+
+    // Playlist Limit Type Select
+    const limitTypeSelectElement = document.createElement("select");
+    limitTypeSelectElement.setAttribute("name", "playlistLimitType");
+    limitTypeSelectElement.setAttribute("class", "form-control");
+    limitTypeSelectElement.setAttribute("id", "playlistLimitTypeInput");
+    limitTypeSelectElement.setAttribute("required", "");
+    limitTypeSelectElement.appendChild(limitTypeHoursOptionElement);
+    limitTypeSelectElement.appendChild(limitTypeMinutesOptionElement);
+    limitTypeSelectElement.appendChild(limitTypeSongsOptionElement);
+
+    const limitTypeDivElement = document.createElement("div");
+    limitTypeDivElement.setAttribute("class", "col-md my-2");
+    limitTypeDivElement.appendChild(limitTypeSelectElement);
+
+    // Limit Inputs in Row
+    const rowDiv = document.createElement("div");
+    rowDiv.setAttribute("class", "form-row my-2");
+    rowDiv.appendChild(limitValueDivElement);
+    rowDiv.appendChild(limitTypeDivElement);
+
+    // Add all the components to the top level limit div
+    const limitDiv = document.createElement("div");
+    limitDiv.setAttribute("class", "my-2");
+    limitDiv.setAttribute("id", "limitData");
+    limitDiv.appendChild(rowDiv);
+
+    // Append a form row of fields for limits
+    const limitContainerElement = document.getElementById("limitsContainer");
+    limitContainerElement.appendChild(limitDiv);
+
+    // Playlist Limit Removal
+    const removeLimitButton = document.createElement("button");
+    removeLimitButton.setAttribute("type", "button");
+    removeLimitButton.setAttribute("name", "removeLimitButton");
+    removeLimitButton.setAttribute("id", "removeLimitButton");
+    removeLimitButton.setAttribute("class", "btn btn-outline-danger btn-sm my-3");
+    removeLimitButton.innerText = "Remove Limit";
+
+    // Remove the add limit button and replace with a removal button
+    // This is because we only want to support one limit at a time
+    const limitsButtonContainer = document.getElementById("limitsButtonContainer");
+    removeChildElements(limitsButtonContainer);
+    limitsButtonContainer.appendChild(removeLimitButton);
+
+    // Add an event listener to the remove limits button that has been added
+    addOnClickEventListenerToElement(removeLimitButton, removeLimitsFormFields);
+
+    // Finally, trigger a "changed" warning if a preview was already generated
+    displayPreviewOutOfDateAlert();
+}
+
+function addOrderFormFields()
+{
+    // Create pieces of the form row needed for ordering the playlist
+    // Playlist Order Field Options
+    const orderFieldAlbumOptionElement = document.createElement("option");
+    orderFieldAlbumOptionElement.setAttribute("value", "album");
+    orderFieldAlbumOptionElement.innerText = "Album Name";
+
+    const orderFieldArtistOptionElement = document.createElement("option");
+    orderFieldArtistOptionElement.setAttribute("value", "artist");
+    orderFieldArtistOptionElement.setAttribute("selected", "");
+    orderFieldArtistOptionElement.innerText = "Artist Name";
+
+    const orderFieldLibraryAddDateOptionElement = document.createElement("option");
+    orderFieldLibraryAddDateOptionElement.setAttribute("value", "libraryAddDate");
+    orderFieldLibraryAddDateOptionElement.innerText = "Library Add Date";
+
+    const orderFieldReleaseDateOptionElement = document.createElement("option");
+    orderFieldReleaseDateOptionElement.setAttribute("value", "releaseDate");
+    orderFieldReleaseDateOptionElement.innerText = "Release Date";
+
+    const orderFieldDurationOptionElement = document.createElement("option");
+    orderFieldDurationOptionElement.setAttribute("value", "duration");
+    orderFieldDurationOptionElement.innerText = "Song Length";
+
+    const orderFieldSongOptionElement = document.createElement("option");
+    orderFieldSongOptionElement.setAttribute("value", "song");
+    orderFieldSongOptionElement.innerText = "Song Name";
+
+    const orderFieldPopularityOptionElement = document.createElement("option");
+    orderFieldPopularityOptionElement.setAttribute("value", "popularity");
+    orderFieldPopularityOptionElement.innerText = "Song Popularity";
+
+    // Playlist Order Field Select
+    const orderFieldSelectElement = document.createElement("select");
+    orderFieldSelectElement.setAttribute("name", "playlistOrderField");
+    orderFieldSelectElement.setAttribute("class", "form-control");
+    orderFieldSelectElement.setAttribute("id", "playlistOrderFieldInput");
+    orderFieldSelectElement.setAttribute("required", "");
+
+    orderFieldSelectElement.appendChild(orderFieldAlbumOptionElement);
+    orderFieldSelectElement.appendChild(orderFieldArtistOptionElement);
+    orderFieldSelectElement.appendChild(orderFieldLibraryAddDateOptionElement);
+    orderFieldSelectElement.appendChild(orderFieldReleaseDateOptionElement);
+    orderFieldSelectElement.appendChild(orderFieldDurationOptionElement);
+    orderFieldSelectElement.appendChild(orderFieldSongOptionElement);
+    orderFieldSelectElement.appendChild(orderFieldPopularityOptionElement);
+
+    // Playlist Order Type Div
+    const orderFieldDivElement = document.createElement("div");
+    orderFieldDivElement.setAttribute("class", "col-md my-2");
+    orderFieldDivElement.appendChild(orderFieldSelectElement);
+
+    // Playlist Order Direction Options
+    const orderDirectionAscendingOptionElement = document.createElement("option");
+    orderDirectionAscendingOptionElement.setAttribute("value", "ascending");
+    orderDirectionAscendingOptionElement.setAttribute("selected", "");
+    orderDirectionAscendingOptionElement.innerText = "Ascending Order";
+
+    const orderDirectionDescendingOptionElement = document.createElement("option");
+    orderDirectionDescendingOptionElement.setAttribute("value", "descending");
+    orderDirectionDescendingOptionElement.innerText = "Descending Order";
+
+    // Playlist Order Direction Select
+    const orderDirectionSelectElement = document.createElement("select");
+    orderDirectionSelectElement.setAttribute("name", "playlistOrderDirection");
+    orderDirectionSelectElement.setAttribute("class", "form-control");
+    orderDirectionSelectElement.setAttribute("id", "playlistOrderDirectionInput");
+    orderDirectionSelectElement.setAttribute("required", "");
+
+    orderDirectionSelectElement.appendChild(orderDirectionAscendingOptionElement);
+    orderDirectionSelectElement.appendChild(orderDirectionDescendingOptionElement);
+
+    // Playlist Order Direction Div
+    const orderDirectionDivElement = document.createElement("div");
+    orderDirectionDivElement.setAttribute("class", "col-md my-2");
+    orderDirectionDivElement.appendChild(orderDirectionSelectElement);
+
+    // Order Inputs in Row
+    const rowDiv = document.createElement("div");
+    rowDiv.setAttribute("class", "form-row my-2");
+    rowDiv.appendChild(orderFieldDivElement);
+    rowDiv.appendChild(orderDirectionDivElement);
+
+    // Add all the components to the top level order div
+    const orderDiv = document.createElement("div");
+    orderDiv.setAttribute("class", "my-2");
+    orderDiv.setAttribute("id", "orderData");
+    orderDiv.appendChild(rowDiv);
+
+    // Append a form row of fields for order
+    const orderContainerElement = document.getElementById("orderContainer");
+    orderContainerElement.appendChild(orderDiv);
+
+    // Playlist Order Removal
+    const removeOrderButton = document.createElement("button");
+    removeOrderButton.setAttribute("type", "button");
+    removeOrderButton.setAttribute("name", "removeOrderButton");
+    removeOrderButton.setAttribute("id", "removeOrderButton");
+    removeOrderButton.setAttribute("class", "btn btn-outline-danger btn-sm my-3");
+    removeOrderButton.innerText = "Remove Order";
+
+    // Remove the add order button and replace with a removal button
+    // This is because we only want to support one ordering at a time
+    const orderButtonContainer = document.getElementById("orderButtonContainer");
+    removeChildElements(orderButtonContainer);
+    orderButtonContainer.appendChild(removeOrderButton);
+
+    // Add an event listener to the remove limits button that has been added
+    addOnClickEventListenerToElement(removeOrderButton, removeOrderFormFields);
+
+    // Finally, trigger a "changed" warning if a preview was already generated
+    displayPreviewOutOfDateAlert();
 }
 
 function removeRuleFormFields()
@@ -475,4 +664,65 @@ function removeRuleFormFields()
     const targetRuleId = `rule-${targetRuleNumber}`;
     const targetRuleElement = document.getElementById(targetRuleId);
     targetRuleElement.remove();
+
+    // Finally, trigger a "changed" warning if a preview was already generated
+    displayPreviewOutOfDateAlert();
+}
+
+function removeLimitsFormFields()
+{
+    // Remove the limit data
+    const limitDataElement = document.getElementById("limitData");
+    limitDataElement.remove();
+
+    // Remove the remove limit button and replace with an add limit button
+    // This is because we only want to support one limit at a time
+    const limitsButtonContainer = document.getElementById("limitsButtonContainer");
+    removeChildElements(limitsButtonContainer);
+
+    // Playlist Limit Addition
+    const addLimitButton = document.createElement("button");
+    addLimitButton.setAttribute("type", "button");
+    addLimitButton.setAttribute("name", "addLimitButton");
+    addLimitButton.setAttribute("id", "addLimitButton");
+    addLimitButton.setAttribute("class", "btn btn-outline-info btn-sm my-3");
+    addLimitButton.innerText = "Add Limit";
+
+    // Restore the button to its original location
+    limitsButtonContainer.appendChild(addLimitButton);
+
+    // Add back an event listener to the add limit button
+    addOnClickEventListenerToElementById("addLimitButton", addLimitFormFields);
+
+    // Finally, trigger a "changed" warning if a preview was already generated
+    displayPreviewOutOfDateAlert();
+}
+
+function removeOrderFormFields()
+{
+    // Remove the order data
+    const orderDataElement = document.getElementById("orderData");
+    orderDataElement.remove();
+
+    // Remove the remove order button and replace with an add order button
+    // This is because we only want to support one ordering at a time
+    const orderButtonContainer = document.getElementById("orderButtonContainer");
+    removeChildElements(orderButtonContainer);
+
+    // Playlist Limit Addition
+    const addOrderButton = document.createElement("button");
+    addOrderButton.setAttribute("type", "button");
+    addOrderButton.setAttribute("name", "addOrderButton");
+    addOrderButton.setAttribute("id", "addOrderButton");
+    addOrderButton.setAttribute("class", "btn btn-outline-info btn-sm my-3");
+    addOrderButton.innerText = "Add Order";
+
+    // Restore the button to its original location
+    orderButtonContainer.appendChild(addOrderButton);
+
+    // Add back an event listener to the add order button
+    addOnClickEventListenerToElementById("addOrderButton", addOrderFormFields);
+
+    // Finally, trigger a "changed" warning if a preview was already generated
+    displayPreviewOutOfDateAlert();
 }
