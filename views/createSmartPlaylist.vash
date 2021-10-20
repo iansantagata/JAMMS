@@ -5,7 +5,7 @@
     <script defer src="scripts/createSmartPlaylist.js"></script>
 
     <div id="smartPlaylist" class="row align-items-center justify-content-around">
-      <div class="col-9 text-wrap my-3">
+      <div class="col text-wrap my-3">
         <form id="createSmartPlaylistForm" action="/createSmartPlaylist" method="post" name="createSmartPlaylist">
 
           <div class="form-group">

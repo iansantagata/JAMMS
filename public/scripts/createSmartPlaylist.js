@@ -359,7 +359,7 @@ function addRuleFormFields()
     selectRuleType.appendChild(songOptionRuleType);
 
     const ruleTypeDiv = document.createElement("div");
-    ruleTypeDiv.setAttribute("class", "col-3");
+    ruleTypeDiv.setAttribute("class", "col-md my-2");
     ruleTypeDiv.appendChild(selectRuleType);
 
     // Rule Operator Selection
@@ -410,7 +410,7 @@ function addRuleFormFields()
     selectRuleOperator.appendChild(doesNotContainOptionRuleOperator);
 
     const ruleOperatorDiv = document.createElement("div");
-    ruleOperatorDiv.setAttribute("class", "col-4");
+    ruleOperatorDiv.setAttribute("class", "col-md my-2");
     ruleOperatorDiv.appendChild(selectRuleOperator);
 
     // Rule Text Data
@@ -422,7 +422,7 @@ function addRuleFormFields()
     inputRuleTextData.setAttribute("required", "");
 
     const ruleTextDataDiv = document.createElement("div");
-    ruleTextDataDiv.setAttribute("class", "col-3");
+    ruleTextDataDiv.setAttribute("class", "col-md my-2");
     ruleTextDataDiv.appendChild(inputRuleTextData);
 
     // Remove Rule Button
@@ -430,21 +430,22 @@ function addRuleFormFields()
     removeRuleButton.setAttribute("type", "button");
     removeRuleButton.setAttribute("name", "removeRuleButton");
     removeRuleButton.setAttribute("id", `removeRuleButton-${ruleCounter}`);
-    removeRuleButton.setAttribute("class", "btn btn-outline-danger btn-sm form-control");
+    removeRuleButton.setAttribute("class", "btn btn-outline-danger btn-sm my-2");
     removeRuleButton.innerText = "Remove Rule";
 
-    const removeRuleButtonDiv = document.createElement("div");
-    removeRuleButtonDiv.setAttribute("class", "col-2");
-    removeRuleButtonDiv.appendChild(removeRuleButton);
+    // Rule Inputs in Row
+    const rowDiv = document.createElement("div");
+    rowDiv.setAttribute("class", "form-row my-2");
+    rowDiv.appendChild(ruleTypeDiv);
+    rowDiv.appendChild(ruleOperatorDiv);
+    rowDiv.appendChild(ruleTextDataDiv);
 
     // Add all the components to the top level rule div
     const ruleDiv = document.createElement("div");
-    ruleDiv.setAttribute("class", "form-row my-2");
+    ruleDiv.setAttribute("class", "my-2");
     ruleDiv.setAttribute("id", `rule-${ruleCounter}`);
-    ruleDiv.appendChild(ruleTypeDiv);
-    ruleDiv.appendChild(ruleOperatorDiv);
-    ruleDiv.appendChild(ruleTextDataDiv);
-    ruleDiv.appendChild(removeRuleButtonDiv);
+    ruleDiv.appendChild(rowDiv);
+    ruleDiv.appendChild(removeRuleButton);
 
     // Append a form row of fields for a new rule
     const rulesContainerElement = document.getElementById("rulesContainer");
