@@ -438,8 +438,11 @@ function addRuleFormFields()
     const rulesContainerElement = document.getElementById("rulesContainer");
     rulesContainerElement.appendChild(ruleDiv);
 
-    // Finally, add an event listener to the remove rule button that has been added
+    // Add an event listener to the remove rule button that has been added
     addOnClickEventListenerToElement(removeRuleButton, removeRuleFormFields);
+
+    // Finally, trigger a "changed" warning if a preview was already generated
+    displayPreviewOutOfDateAlert();
 }
 
 function addLimitFormFields()
@@ -518,8 +521,11 @@ function addLimitFormFields()
     removeChildElements(limitsButtonContainer);
     limitsButtonContainer.appendChild(removeLimitButton);
 
-    // Finally, add an event listener to the remove limits button that has been added
+    // Add an event listener to the remove limits button that has been added
     addOnClickEventListenerToElement(removeLimitButton, removeLimitsFormFields);
+
+    // Finally, trigger a "changed" warning if a preview was already generated
+    displayPreviewOutOfDateAlert();
 }
 
 function addOrderFormFields()
@@ -630,8 +636,11 @@ function addOrderFormFields()
     removeChildElements(orderButtonContainer);
     orderButtonContainer.appendChild(removeOrderButton);
 
-    // Finally, add an event listener to the remove limits button that has been added
+    // Add an event listener to the remove limits button that has been added
     addOnClickEventListenerToElement(removeOrderButton, removeOrderFormFields);
+
+    // Finally, trigger a "changed" warning if a preview was already generated
+    displayPreviewOutOfDateAlert();
 }
 
 function removeRuleFormFields()
@@ -655,6 +664,9 @@ function removeRuleFormFields()
     const targetRuleId = `rule-${targetRuleNumber}`;
     const targetRuleElement = document.getElementById(targetRuleId);
     targetRuleElement.remove();
+
+    // Finally, trigger a "changed" warning if a preview was already generated
+    displayPreviewOutOfDateAlert();
 }
 
 function removeLimitsFormFields()
@@ -679,8 +691,11 @@ function removeLimitsFormFields()
     // Restore the button to its original location
     limitsButtonContainer.appendChild(addLimitButton);
 
-    // Finally, add back an event listener to the add limit button
+    // Add back an event listener to the add limit button
     addOnClickEventListenerToElementById("addLimitButton", addLimitFormFields);
+
+    // Finally, trigger a "changed" warning if a preview was already generated
+    displayPreviewOutOfDateAlert();
 }
 
 function removeOrderFormFields()
@@ -705,6 +720,9 @@ function removeOrderFormFields()
     // Restore the button to its original location
     orderButtonContainer.appendChild(addOrderButton);
 
-    // Finally, add back an event listener to the add order button
+    // Add back an event listener to the add order button
     addOnClickEventListenerToElementById("addOrderButton", addOrderFormFields);
+
+    // Finally, trigger a "changed" warning if a preview was already generated
+    displayPreviewOutOfDateAlert();
 }
