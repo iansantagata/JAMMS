@@ -45,6 +45,5 @@ jobs:
         username: ${{ secrets.SYNC_USER }}
         key: ${{ secrets.SYNC_SSH_PRIVATE_KEY }}
         script_stop: true
-        debug: true
         envs: NODE_MODULES_PATH, NPM_PATH
-        script: $NPM_PATH/npm install --dry-run $NODE_MODULES_PATH
+        script: $NPM_PATH/npm install $NODE_MODULES_PATH
