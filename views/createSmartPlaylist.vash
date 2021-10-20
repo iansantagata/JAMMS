@@ -23,38 +23,13 @@
             <button type="button" name="addLimitButton" id="addLimitButton" class="btn btn-outline-info btn-sm my-3">Add Limit</button>
           </div>
 
-          <h4 class="my-3">Optional Settings</h4>
-          <div class="form-row my-2">
-            <div class="col-1">
-              <div class="form-check-inline">
-                <input type="checkbox" name="playlistOrderEnabled" class="form-check-input" id="playlistOrderEnabledInput" defaultValue="false" />
-              </div>
-            </div>
-            <div class="col-3">
-              <p>Order songs by</p>
-            </div>
-            <div class="col-4">
-              <select name="playlistOrderField" class="form-control" id="playlistOrderFieldInput" disabled>
-                <option value="album">Album Name</option>
-                <option value="artist" selected>Artist Name</option>
-                <option value="library add date">Library Add Date</option>
-                <option value="release date">Release Date</option>
-                <option value="duration">Song Length</option>
-                <option value="song">Song Name</option>
-                <option value="popularity">Song Popularity</option>
-              </select>
-            </div>
-            <div class="col-1">
-              <p>in</p>
-            </div>
-            <div class="col-3">
-              <select name="playlistOrderDirection" class="form-control" id="playlistOrderDirectionInput" disabled>
-                <option value="ascending" selected>Ascending Order</option>
-                <option value="descending">Descending Order</option>
-              </select>
-            </div>
+          <h4 class="my-3">Song Order</h4>
+          <div id="orderContainer"></div>
+          <div id="orderButtonContainer">
+            <button type="button" name="addOrderButton" id="addOrderButton" class="btn btn-outline-info btn-sm my-3">Add Order</button>
           </div>
 
+          <h4 class="my-3">Optional Settings</h4>
           <div class="form-row justify-content-start my-2">
             <div class="col-1">
               <div class="form-check-inline">

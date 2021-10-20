@@ -3,22 +3,15 @@
 // Script Logic
 let ruleCounter = 0;
 
-addOnClickEventListenerToElementById("playlistOrderEnabledInput", controlEnablementOfOrderElements);
-
 addOnClickEventListenerToElementById("addRuleButton", addRuleFormFields);
 addOnClickEventListenerToElementById("addLimitButton", addLimitFormFields);
+addOnClickEventListenerToElementById("addOrderButton", addOrderFormFields);
 
 addOnClickEventListenerToElementById("generateSmartPlaylistPreviewButton", previewSmartPlaylist);
 
 addOnChangeEventListenerToElementById("createSmartPlaylistForm", displayPreviewOutOfDateAlert);
 
 // DOM Specific Functions
-function controlEnablementOfOrderElements()
-{
-    controlEnablementOfElementById("playlistOrderDirectionInput");
-    controlEnablementOfElementById("playlistOrderFieldInput");
-}
-
 function previewSmartPlaylist()
 {
     // First, make sure the event fired correctly and the form is valid
@@ -529,6 +522,118 @@ function addLimitFormFields()
     addOnClickEventListenerToElement(removeLimitButton, removeLimitsFormFields);
 }
 
+function addOrderFormFields()
+{
+    // Create pieces of the form row needed for ordering the playlist
+    // Playlist Order Field Options
+    const orderFieldAlbumOptionElement = document.createElement("option");
+    orderFieldAlbumOptionElement.setAttribute("value", "album");
+    orderFieldAlbumOptionElement.innerText = "Album Name";
+
+    const orderFieldArtistOptionElement = document.createElement("option");
+    orderFieldArtistOptionElement.setAttribute("value", "artist");
+    orderFieldArtistOptionElement.setAttribute("selected", "");
+    orderFieldArtistOptionElement.innerText = "Artist Name";
+
+    const orderFieldLibraryAddDateOptionElement = document.createElement("option");
+    orderFieldLibraryAddDateOptionElement.setAttribute("value", "libraryAddDate");
+    orderFieldLibraryAddDateOptionElement.innerText = "Library Add Date";
+
+    const orderFieldReleaseDateOptionElement = document.createElement("option");
+    orderFieldReleaseDateOptionElement.setAttribute("value", "releaseDate");
+    orderFieldReleaseDateOptionElement.innerText = "Release Date";
+
+    const orderFieldDurationOptionElement = document.createElement("option");
+    orderFieldDurationOptionElement.setAttribute("value", "duration");
+    orderFieldDurationOptionElement.innerText = "Song Length";
+
+    const orderFieldSongOptionElement = document.createElement("option");
+    orderFieldSongOptionElement.setAttribute("value", "song");
+    orderFieldSongOptionElement.innerText = "Song Name";
+
+    const orderFieldPopularityOptionElement = document.createElement("option");
+    orderFieldPopularityOptionElement.setAttribute("value", "popularity");
+    orderFieldPopularityOptionElement.innerText = "Song Popularity";
+
+    // Playlist Order Field Select
+    const orderFieldSelectElement = document.createElement("select");
+    orderFieldSelectElement.setAttribute("name", "playlistOrderField");
+    orderFieldSelectElement.setAttribute("class", "form-control");
+    orderFieldSelectElement.setAttribute("id", "playlistOrderFieldInput");
+    orderFieldSelectElement.setAttribute("required", "");
+
+    orderFieldSelectElement.appendChild(orderFieldAlbumOptionElement);
+    orderFieldSelectElement.appendChild(orderFieldArtistOptionElement);
+    orderFieldSelectElement.appendChild(orderFieldLibraryAddDateOptionElement);
+    orderFieldSelectElement.appendChild(orderFieldReleaseDateOptionElement);
+    orderFieldSelectElement.appendChild(orderFieldDurationOptionElement);
+    orderFieldSelectElement.appendChild(orderFieldSongOptionElement);
+    orderFieldSelectElement.appendChild(orderFieldPopularityOptionElement);
+
+    // Playlist Order Type Div
+    const orderFieldDivElement = document.createElement("div");
+    orderFieldDivElement.setAttribute("class", "col-md my-2");
+    orderFieldDivElement.appendChild(orderFieldSelectElement);
+
+    // Playlist Order Direction Options
+    const orderDirectionAscendingOptionElement = document.createElement("option");
+    orderDirectionAscendingOptionElement.setAttribute("value", "ascending");
+    orderDirectionAscendingOptionElement.setAttribute("selected", "");
+    orderDirectionAscendingOptionElement.innerText = "Ascending Order";
+
+    const orderDirectionDescendingOptionElement = document.createElement("option");
+    orderDirectionDescendingOptionElement.setAttribute("value", "descending");
+    orderDirectionDescendingOptionElement.innerText = "Descending Order";
+
+    // Playlist Order Direction Select
+    const orderDirectionSelectElement = document.createElement("select");
+    orderDirectionSelectElement.setAttribute("name", "playlistOrderDirection");
+    orderDirectionSelectElement.setAttribute("class", "form-control");
+    orderDirectionSelectElement.setAttribute("id", "playlistOrderDirectionInput");
+    orderDirectionSelectElement.setAttribute("required", "");
+
+    orderDirectionSelectElement.appendChild(orderDirectionAscendingOptionElement);
+    orderDirectionSelectElement.appendChild(orderDirectionDescendingOptionElement);
+
+    // Playlist Order Direction Div
+    const orderDirectionDivElement = document.createElement("div");
+    orderDirectionDivElement.setAttribute("class", "col-md my-2");
+    orderDirectionDivElement.appendChild(orderDirectionSelectElement);
+
+    // Order Inputs in Row
+    const rowDiv = document.createElement("div");
+    rowDiv.setAttribute("class", "form-row my-2");
+    rowDiv.appendChild(orderFieldDivElement);
+    rowDiv.appendChild(orderDirectionDivElement);
+
+    // Add all the components to the top level order div
+    const orderDiv = document.createElement("div");
+    orderDiv.setAttribute("class", "my-2");
+    orderDiv.setAttribute("id", "orderData");
+    orderDiv.appendChild(rowDiv);
+
+    // Append a form row of fields for order
+    const orderContainerElement = document.getElementById("orderContainer");
+    orderContainerElement.appendChild(orderDiv);
+
+    // Playlist Order Removal
+    const removeOrderButton = document.createElement("button");
+    removeOrderButton.setAttribute("type", "button");
+    removeOrderButton.setAttribute("name", "removeOrderButton");
+    removeOrderButton.setAttribute("id", "removeOrderButton");
+    removeOrderButton.setAttribute("class", "btn btn-outline-danger btn-sm my-3");
+    removeOrderButton.innerText = "Remove Order";
+
+    // Remove the add order button and replace with a removal button
+    // This is because we only want to support one ordering at a time
+    const orderButtonContainer = document.getElementById("orderButtonContainer");
+    removeChildElements(orderButtonContainer);
+    orderButtonContainer.appendChild(removeOrderButton);
+
+    // Finally, add an event listener to the remove limits button that has been added
+    addOnClickEventListenerToElement(removeOrderButton, removeOrderFormFields);
+}
+
 function removeRuleFormFields()
 {
     // There may be multiple buttons for removal, see which one this is by ID
@@ -576,4 +681,30 @@ function removeLimitsFormFields()
 
     // Finally, add back an event listener to the add limit button
     addOnClickEventListenerToElementById("addLimitButton", addLimitFormFields);
+}
+
+function removeOrderFormFields()
+{
+    // Remove the order data
+    const orderDataElement = document.getElementById("orderData");
+    orderDataElement.remove();
+
+    // Remove the remove order button and replace with an add order button
+    // This is because we only want to support one ordering at a time
+    const orderButtonContainer = document.getElementById("orderButtonContainer");
+    removeChildElements(orderButtonContainer);
+
+    // Playlist Limit Addition
+    const addOrderButton = document.createElement("button");
+    addOrderButton.setAttribute("type", "button");
+    addOrderButton.setAttribute("name", "addOrderButton");
+    addOrderButton.setAttribute("id", "addOrderButton");
+    addOrderButton.setAttribute("class", "btn btn-outline-info btn-sm my-3");
+    addOrderButton.innerText = "Add Order";
+
+    // Restore the button to its original location
+    orderButtonContainer.appendChild(addOrderButton);
+
+    // Finally, add back an event listener to the add order button
+    addOnClickEventListenerToElementById("addOrderButton", addOrderFormFields);
 }
