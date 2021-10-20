@@ -7,6 +7,10 @@ const path = require("path"); // URI and local file paths
 const customModulePath = path.join(__dirname, "..");
 const logger = require(path.join(customModulePath, "logger.js"));
 
+// Smart Playlist Modules
+const smartPlaylistModulesPath = __dirname;
+const dataRetrieval = require(path.join(smartPlaylistModulesPath, "dataRetrieval.js"));
+
 // Default Constant Values
 const maximumPlaylistSongLimit = 10000;
 
@@ -80,3 +84,39 @@ exports.getPlaylistLimits = function(req)
 
     return playlistLimitData;
 };
+
+exports.getPlaylistTracksLimitedBySongs = function(savedTracksInPlaylist, songLimit)
+{
+    let numberOfTracks = savedTracksInPlaylist.length;
+    while (numberOfTracks > songLimit)
+    {
+        // If we have to remove something, it should be the last track in the list based on ordering
+        savedTracksInPlaylist.pop();
+        numberOfTracks--;
+    }
+
+    return savedTracksInPlaylist;
+}
+
+exports.getPlaylistTracksLimitedByMsec = function(savedTracksInPlaylist, msecLimit)
+{
+    let timeOfTracksInPlaylistInMsec = 0;
+    for (const savedTrackInPlaylist of savedTracksInPlaylist)
+    {
+        timeOfTracksInPlaylistInMsec += dataRetrieval.getDurationFromSavedTrack(savedTrackInPlaylist);
+    }
+
+    while (timeOfTracksInPlaylistInMsec > msecLimit)
+    {
+        // If we have to remove something, it should be the last track in the list based on ordering
+        const removedTrack = savedTracksInPlaylist.pop();
+        timeOfTracksInPlaylistInMsec -= dataRetrieval.getDurationFromSavedTrack(removedTrack);
+    }
+
+    return savedTracksInPlaylist;
+}
+
+exports.getPlaylistTracksLimitedByUnknown = function(savedTracksInPlaylist, limit)
+{
+    return savedTracksInPlaylist;
+}

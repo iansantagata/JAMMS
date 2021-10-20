@@ -68,33 +68,27 @@ exports.getPlaylistOrdering = function(req)
     return playlistOrderData;
 };
 
-exports.getOrderForTracks = function(targetTrackIndex, tracks, orderOfTracks, orderComparisonFunction)
+exports.putTrackIntoOrderedTracks = function(savedTrackToInsert, orderedSavedTracks, orderComparisonFunction)
 {
-    if (!Array.isArray(orderOfTracks))
+    if (!Array.isArray(orderedSavedTracks))
     {
-        return [];
+        return orderedSavedTracks;
     }
 
-    if (typeof targetTrackIndex !== "number" || isNaN(targetTrackIndex))
+    if (!savedTrackToInsert)
     {
-        return orderOfTracks;
-    }
-
-    if (!Array.isArray(tracks) || tracks.length <= 0)
-    {
-        return orderOfTracks;
+        return orderedSavedTracks;
     }
 
     if (typeof orderComparisonFunction !== "function")
     {
-        return orderOfTracks;
+        return orderedSavedTracks;
     }
 
     // Figure out where this track goes in the existing ordering
     let targetOrderIndex = 0;
     let lowerBoundInclusive = 0;
-    let upperBoundExclusive = orderOfTracks.length;
-    const trackToInsert = tracks[targetTrackIndex];
+    let upperBoundExclusive = orderedSavedTracks.length;
 
     // Converge on the location to insert by moving the bounds until they are equal
     while (lowerBoundInclusive !== upperBoundExclusive)
@@ -104,10 +98,10 @@ exports.getOrderForTracks = function(targetTrackIndex, tracks, orderOfTracks, or
         targetOrderIndex = upperBoundExclusive - 1 - Math.floor((upperBoundExclusive - lowerBoundInclusive) / 2);
 
         // Use the order index to retrieve the target track
-        const targetTrack = tracks[orderOfTracks[targetOrderIndex]];
+        const targetSavedTrack = orderedSavedTracks[targetOrderIndex];
 
         // Compare the track to be inserted against the track at the current index
-        const comparisonResult = orderComparisonFunction(trackToInsert, targetTrack);
+        const comparisonResult = orderComparisonFunction(savedTrackToInsert, targetSavedTrack);
 
         // Track to insert should come in order before the target track
         if (comparisonResult < 0)
@@ -131,8 +125,8 @@ exports.getOrderForTracks = function(targetTrackIndex, tracks, orderOfTracks, or
 
     // Insert into the order array, pushing everything at the index (inclusive) back
     targetOrderIndex = lowerBoundInclusive;
-    orderOfTracks.splice(targetOrderIndex, 0, targetTrackIndex);
-    return orderOfTracks;
+    orderedSavedTracks.splice(targetOrderIndex, 0, savedTrackToInsert);
+    return orderedSavedTracks;
 };
 
 // Local Helper Functions

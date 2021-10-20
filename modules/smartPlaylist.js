@@ -52,15 +52,25 @@ exports.getSmartPlaylistPreview = async function(req, res, next)
 {
     try
     {
+        // First, process all of the rules and optional settings from the request
         // Set that this is to be a playlist preview (which will short circuit some extra work not needed for a preview)
-        req.body.isPlaylistPreview = true;
+        const isPlaylistPreview = true;
+        const playlistRules = rules.getPlaylistRules(req);
+        const playlistOrderData = ordering.getPlaylistOrdering(req);
+        const playlistLimitData = limits.getPlaylistLimits(req);
 
-        const smartPlaylistData = await getSmartPlaylistData(req, res);
-        const playlistPreviewData = smartPlaylistData.trackData;
+        const smartPlaylistSettings = {
+            isPlaylistPreview: isPlaylistPreview,
+            playlistLimitData: playlistLimitData,
+            playlistOrderData: playlistOrderData,
+            playlistRules: playlistRules
+        };
+
+        const smartPlaylistPreviewTracks = await getSmartPlaylistTracks(req, res, smartPlaylistSettings);
 
         // Send the preview data back to the caller without reloading the page
         res.set("Content-Type", "application/json");
-        res.send(playlistPreviewData);
+        res.send(smartPlaylistPreviewTracks);
     }
     catch (error)
     {
@@ -73,12 +83,24 @@ exports.createSmartPlaylist = async function(req, res, next)
 {
     try
     {
+        // First, process all of the rules and optional settings from the request
+        const isPlaylistPreview = false;
+        const playlistRules = rules.getPlaylistRules(req);
+        const playlistOrderData = ordering.getPlaylistOrdering(req);
+        const playlistLimitData = limits.getPlaylistLimits(req);
+
+        const smartPlaylistSettings = {
+            isPlaylistPreview: isPlaylistPreview,
+            playlistLimitData: playlistLimitData,
+            playlistOrderData: playlistOrderData,
+            playlistRules: playlistRules
+        };
+
         // Get track data and information needed to create the smart playlist
-        const smartPlaylistData = await getSmartPlaylistData(req, res);
-        if (!smartPlaylistData ||
-            !smartPlaylistData.trackData ||
-            !Array.isArray(smartPlaylistData.trackData) ||
-            smartPlaylistData.trackData.length <= 0)
+        const smartPlaylistTracks = await getSmartPlaylistTracks(req, res, smartPlaylistSettings);
+        if (!smartPlaylistTracks ||
+            !Array.isArray(smartPlaylistTracks) ||
+            smartPlaylistTracks.length <= 0)
         {
             throw new Error("Failed to get valid smart playlist data");
         }
@@ -89,12 +111,12 @@ exports.createSmartPlaylist = async function(req, res, next)
 
         // For visibility purposes, prepend the name of the smart playlist with the app name
         req.body.playlistName = playlistNamePrefix + req.body.playlistName;
-        req.body.playlistDescription = getPlaylistDescription(smartPlaylistData.limitData, smartPlaylistData.orderData);
+        req.body.playlistDescription = getPlaylistDescription(playlistLimitData, playlistOrderData);
         const createPlaylistResponse = await spotifyClient.createSinglePlaylist(req, res);
 
         // Now that we have created the playlist, we want to add the valid songs to it based on the smart playlist rules
         const playlistId = createPlaylistResponse.id;
-        const trackUris = smartPlaylistData.trackData.map(dataRetrieval.getUriFromSavedTrack);
+        const trackUris = smartPlaylistTracks.map(dataRetrieval.getUriFromSavedTrack);
         const trackUriChunks = helperFunctions.getArrayChunks(trackUris, trackAddPlaylistLimit);
         req.body.playlistId = playlistId;
 
@@ -133,16 +155,10 @@ exports.createSmartPlaylist = async function(req, res, next)
 };
 
 // Local Helper Functions
-async function getSmartPlaylistData(req, res)
+async function getRuleFollowingSmartPlaylistTracks(req, res, isPlaylistPreview, playlistRules)
 {
     try
     {
-        // First, process all of the rules and optional settings from the request
-        const isPlaylistPreview = Boolean(req.body.isPlaylistPreview);
-        const playlistLimitData = limits.getPlaylistLimits(req);
-        const playlistOrderData = ordering.getPlaylistOrdering(req);
-        const playlistRules = rules.getPlaylistRules(req);
-
         // Make sure that any special rules are extracted and any additional structures are setup
         // This is done so that if a track does not have the data we need,
         // Then the app can retrieve that data and enrich the track with the data manually
@@ -150,9 +166,7 @@ async function getSmartPlaylistData(req, res)
         let artistIdToGenresMap = new Map();
 
         // Keep track of the tracks to be in the playlist and the order of them as well
-        const tracksInPlaylist = [];
-        let trackOrderingInPlaylist = [];
-        let timeOfTracksInPlaylistInMsec = 0;
+        const savedTracksInPlaylist = [];
         let canRetrieveMoreBatches = true;
 
         req.query.pageNumber = 1; // Start with first page
@@ -162,15 +176,46 @@ async function getSmartPlaylistData(req, res)
         while (canRetrieveMoreBatches)
         {
             // Get all the tracks in this batch
-            const getAllTracksBatchedResponse = await spotifyClient.getAllTracks(req, res);
+            const allTracksBatchedResponse = await spotifyClient.getAllTracks(req, res);
 
             // Get data on the tracks processed
-            const tracksProcessed = getAllTracksBatchedResponse.offset + getAllTracksBatchedResponse.limit;
-            const totalTracks = getAllTracksBatchedResponse.total;
-            let tracksInBatch = getAllTracksBatchedResponse.items;
+            const tracksProcessed = allTracksBatchedResponse.offset + allTracksBatchedResponse.limit;
+            const totalTracks = allTracksBatchedResponse.total;
+            let savedTracksInBatch = allTracksBatchedResponse.items;
 
-            // Increment the page number to retrieve the next batch of tracks when ready
-            req.query.pageNumber++;
+            // Handle any special rules required before track processing begins
+            if (playlistSpecialRuleFlags.has("genre"))
+            {
+                artistIdToGenresMap = await specialRules.getArtistIdToGenreMap(req, res, savedTracksInBatch, artistIdToGenresMap);
+                savedTracksInBatch = await enrichment.enrichTracksWithGenres(savedTracksInBatch, artistIdToGenresMap);
+            }
+
+            // Process each track in the batch
+            for (const savedTrackInBatch of savedTracksInBatch)
+            {
+                // Ensure that this track should go into the playlist based on the rules
+                // If the track breaks even one of the rules, skip it and move to the next track to check
+                const trackFollowsAllRules = doesTrackBelongInPlaylist(savedTrackInBatch, playlistRules);
+                if (!trackFollowsAllRules)
+                {
+                    continue;
+                }
+
+                // Put the target track that follows the rules in the list of tracks to go in the playlist
+                savedTracksInPlaylist.push(savedTrackInBatch);
+
+                // If this is a playlist preview, we want to get the first set of songs that satisfy the requirements quickly
+                // We want to be conscious of processing time, so we do not need to get all the songs in the library to create the playlist yet
+                // Thus, we can just stop grabbing new batches and processing tracks once we have reached the desired limit
+                if (isPlaylistPreview && savedTracksInPlaylist.length >= playlistPreviewLimit)
+                {
+                    // Will break out of the batch processing loop
+                    canRetrieveMoreBatches = false;
+
+                    // Breaks out of the track processing loop for this batch
+                    break;
+                }
+            }
 
             // If there are no more tracks to retrieve from the library after these ones, mark that so we do not continue endlessly
             if (tracksProcessed >= totalTracks)
@@ -178,103 +223,132 @@ async function getSmartPlaylistData(req, res)
                 canRetrieveMoreBatches = false;
             }
 
-            // Handle any special rules required before track processing begins
-            if (playlistSpecialRuleFlags.has("genre"))
-            {
-                artistIdToGenresMap = await specialRules.getArtistIdToGenreMap(req, res, tracksInBatch, artistIdToGenresMap);
-                tracksInBatch = await enrichment.enrichTracksWithGenres(tracksInBatch, artistIdToGenresMap);
-            }
-
-            // Process each track in the batch
-            for (const trackInBatch of tracksInBatch)
-            {
-                // Ensure that this track should go into the playlist based on the rules
-                let trackFollowsAllRules = true;
-                for (const playlistRule of playlistRules)
-                {
-                    if (!playlistRule.function(trackInBatch, playlistRule.data, playlistRule.operator))
-                    {
-                        trackFollowsAllRules = false;
-                        break;
-                    }
-                }
-
-                // If the track breaks even one of the rules, skip it and move to the next track to check
-                if (!trackFollowsAllRules)
-                {
-                    continue;
-                }
-
-                // Put the track in the list of tracks to go in the playlist and keep a running tally of how long the playlist is
-                tracksInPlaylist.push(trackInBatch);
-                const lastTrackAddedIndex = tracksInPlaylist.length - 1;
-                timeOfTracksInPlaylistInMsec += dataRetrieval.getDurationFromSavedTrack(trackInBatch);
-
-                // Figure out where this track should be ordered in the playlist
-                if (playlistOrderData.enabled)
-                {
-                    trackOrderingInPlaylist = ordering.getOrderForTracks(lastTrackAddedIndex, tracksInPlaylist, trackOrderingInPlaylist, playlistOrderData.comparisonFunction);
-                }
-                else
-                {
-                    // If order does not matter, just add the track to the end of the list
-                    trackOrderingInPlaylist.push(lastTrackAddedIndex);
-                }
-
-                // If this is a playlist preview, we want to get the first set of songs that satisfy the requirements quickly
-                // We want to be conscious of processing time, so we do not need to get all the songs in the library to create the playlist yet
-                // Thus, we can just stop grabbing new batches and processing tracks once we have reached the desired limit
-                if (isPlaylistPreview && tracksInPlaylist.length >= playlistPreviewLimit)
-                {
-                    // Will break out of the batch processing loop
-                    canRetrieveMoreBatches = false;
-
-                    // Breaks out of the track processing loop for a single batch
-                    break;
-                }
-            }
+            // Increment the page number to retrieve the next batch of tracks (if applicable)
+            req.query.pageNumber++;
         }
 
-        // Filter the tracks in the playlist based on number of songs limit (if applicable)
-        while (playlistLimitData.enabled && playlistLimitData.type === "songs" && trackOrderingInPlaylist.length > playlistLimitData.value)
+        return Promise.resolve(savedTracksInPlaylist);
+    }
+    catch (error)
+    {
+        logger.logError(`Failed to get rule following smart playlist tracks: ${error.message}`);
+        return Promise.reject(error);
+    }
+}
+
+function getOrderedSmartPlaylistTracks(playlistOrderData, savedTracksInPlaylist)
+{
+    try
+    {
+        // If order does not matter, simply return the saved tracks
+        if (!playlistOrderData.enabled)
         {
-            // If we have to remove something, it should be the last track in the list based on ordering
-            const trackIndexToRemoveBySongLimit = trackOrderingInPlaylist.pop();
-            const trackToRemoveBySongLimit = tracksInPlaylist[trackIndexToRemoveBySongLimit];
-            timeOfTracksInPlaylistInMsec -= dataRetrieval.getDurationFromSavedTrack(trackToRemoveBySongLimit);
-            tracksInPlaylist[trackIndexToRemoveBySongLimit] = null;
+            return Promise.resolve(savedTracksInPlaylist);
         }
 
-        // Filter the tracks in the playlist based on total time limit (if applicable)
-        while (playlistLimitData.enabled && playlistLimitData.type === "milliseconds" && timeOfTracksInPlaylistInMsec > playlistLimitData.value)
+        // Order the tracks by looping through each of them and putting them into a new array
+        let orderedSavedTracksInPlaylist = [];
+        for (const savedTrackInPlaylist of savedTracksInPlaylist)
         {
-            // If we have to remove something, it should be the last track in the list based on ordering
-            const trackIndexToRemoveByTimeLimit = trackOrderingInPlaylist.pop();
-            const trackToRemoveByTimeLimit = tracksInPlaylist[trackIndexToRemoveByTimeLimit];
-            timeOfTracksInPlaylistInMsec -= dataRetrieval.getDurationFromSavedTrack(trackToRemoveByTimeLimit);
-            tracksInPlaylist[trackIndexToRemoveByTimeLimit] = null;
+            // Figure out where this track should be ordered in the playlist and put it there
+            orderedSavedTracksInPlaylist = ordering.putTrackIntoOrderedTracks(
+                savedTrackInPlaylist,
+                orderedSavedTracksInPlaylist,
+                playlistOrderData.comparisonFunction);
         }
 
-        // Once we have an ordered list of all the tracks to use, shuffle around the track data to be in that order
-        const orderedTracksInPlaylist = [];
-        for (const trackIndex of trackOrderingInPlaylist)
+        return Promise.resolve(orderedSavedTracksInPlaylist);
+    }
+    catch (error)
+    {
+        logger.logError(`Failed to get ordered smart playlist tracks: ${error.message}`);
+        return Promise.reject(error);
+    }
+}
+
+function getFilteredSmartPlaylistTracks(playlistLimitData, savedTracksInPlaylist)
+{
+    try
+    {
+        // If limiting is not enabled, simply return the saved tracks
+        if (!playlistLimitData.enabled)
         {
-            orderedTracksInPlaylist.push(tracksInPlaylist[trackIndex]);
+            return Promise.resolve(savedTracksInPlaylist);
         }
 
-        const smartPlaylistData = {
-            limitData: playlistLimitData,
-            orderData: playlistOrderData,
-            trackData: orderedTracksInPlaylist
-        };
+        // Determine which filtering function should be used to filter the tracks
+        let filteringFunction = () => {};
+        switch (playlistLimitData.type)
+        {
+            case "songs":
+                filteringFunction = limits.getPlaylistTracksLimitedBySongs;
+                break;
 
-        return Promise.resolve(smartPlaylistData);
+            case "milliseconds":
+                filteringFunction = limits.getPlaylistTracksLimitedByMsec;
+                break;
+
+            default:
+                // If there is an unknown filter, this function will simply return the saved tracks without filtering them
+                filteringFunction = limits.getPlaylistTracksLimitedByUnknown;
+                break;
+        }
+
+        // Filter the tracks in the playlist using the specific filtering function
+        const filteredSavedTracksInPlaylist = filteringFunction(savedTracksInPlaylist, playlistLimitData.value);
+
+        return Promise.resolve(filteredSavedTracksInPlaylist);
+    }
+    catch (error)
+    {
+        logger.logError(`Failed to get filtered smart playlist tracks: ${error.message}`);
+        return Promise.reject(error);
+    }
+}
+
+async function getSmartPlaylistTracks(req, res, smartPlaylistSettings)
+{
+    try
+    {
+        // First, get all of the tracks that follow all the smart playlist rules
+        const smartPlaylistSavedTracks = await getRuleFollowingSmartPlaylistTracks(
+            req,
+            res,
+            smartPlaylistSettings.isPlaylistPreview,
+            smartPlaylistSettings.playlistRules);
+
+        // Next, order the saved tracks that belong in the playlist
+        const orderedSmartPlaylistSavedTracks = await getOrderedSmartPlaylistTracks(
+            smartPlaylistSettings.playlistOrderData,
+            smartPlaylistSavedTracks);
+
+        // Finally, filter out any ordered saved tracks that are over the limit
+        const orderedAndFilteredSmartPlaylistSavedTracks = await getFilteredSmartPlaylistTracks(
+            smartPlaylistSettings.playlistLimitData,
+            orderedSmartPlaylistSavedTracks);
+
+        return Promise.resolve(orderedAndFilteredSmartPlaylistSavedTracks);
     }
     catch (error)
     {
         logger.logError(`Failed to get smart playlist tracks: ${error.message}`);
         return Promise.reject(error);
     }
+}
+
+function doesTrackBelongInPlaylist(savedTrack, playlistRules)
+{
+    for (const playlistRule of playlistRules)
+    {
+        // If even a single rule is broken, short circuit because the track does not belong
+        if (!playlistRule.function(savedTrack, playlistRule.data, playlistRule.operator))
+        {
+            return false;
+        }
+    }
+
+    // This track follows all the rules, so it does belong in the playlist
+    return true;
 }
 
 function getPlaylistDescription(playlistLimitData, playlistOrderData)
