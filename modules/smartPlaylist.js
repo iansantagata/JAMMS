@@ -254,7 +254,8 @@ function getOrderedSmartPlaylistTracks(playlistOrderData, savedTracksInPlaylist)
             orderedSavedTracksInPlaylist = ordering.putTrackIntoOrderedTracks(
                 savedTrackInPlaylist,
                 orderedSavedTracksInPlaylist,
-                playlistOrderData.comparisonFunction);
+                playlistOrderData.comparisonFunction
+            );
         }
 
         return Promise.resolve(orderedSavedTracksInPlaylist);
@@ -315,17 +316,20 @@ async function getSmartPlaylistTracks(req, res, smartPlaylistSettings)
             req,
             res,
             smartPlaylistSettings.isPlaylistPreview,
-            smartPlaylistSettings.playlistRules);
+            smartPlaylistSettings.playlistRules
+        );
 
         // Next, order the saved tracks that belong in the playlist
         const orderedSmartPlaylistSavedTracks = await getOrderedSmartPlaylistTracks(
             smartPlaylistSettings.playlistOrderData,
-            smartPlaylistSavedTracks);
+            smartPlaylistSavedTracks
+        );
 
         // Finally, filter out any ordered saved tracks that are over the limit
         const orderedAndFilteredSmartPlaylistSavedTracks = await getFilteredSmartPlaylistTracks(
             smartPlaylistSettings.playlistLimitData,
-            orderedSmartPlaylistSavedTracks);
+            orderedSmartPlaylistSavedTracks
+        );
 
         return Promise.resolve(orderedAndFilteredSmartPlaylistSavedTracks);
     }

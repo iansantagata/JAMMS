@@ -96,7 +96,7 @@ exports.getPlaylistTracksLimitedBySongs = function(savedTracksInPlaylist, songLi
     }
 
     return savedTracksInPlaylist;
-}
+};
 
 exports.getPlaylistTracksLimitedByMsec = function(savedTracksInPlaylist, msecLimit)
 {
@@ -114,9 +114,9 @@ exports.getPlaylistTracksLimitedByMsec = function(savedTracksInPlaylist, msecLim
     }
 
     return savedTracksInPlaylist;
-}
+};
 
-exports.getPlaylistTracksLimitedByUnknown = function(savedTracksInPlaylist, limit)
+exports.getPlaylistTracksLimitedByUnknown = function(savedTracksInPlaylist)
 {
     return savedTracksInPlaylist;
-}
+};
