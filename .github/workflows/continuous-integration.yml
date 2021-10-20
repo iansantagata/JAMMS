@@ -33,3 +33,16 @@ jobs:
         ARGS_MORE: '--exclude=/node_modules/'
         MODE: push
         RUN_SCRIPT_ON: source
+
+    - name: Remote Install via SSH
+      uses: appleboy/ssh-action@v0.1.4
+      env:
+        path: ${{ secrets.NODE_MODULES_TARGET_PATH }}
+      with:
+        host: ${{ secrets.SYNC_SERVER }}
+        port: ${{ secrets.SYNC_PORT }}
+        username: ${{ secrets.SYNC_USER }}
+        key: ${{ secrets.SYNC_SSH_PRIVATE_KEY }}
+        debug: true
+        envs: path
+        script: ../bin/npm install --dry-run $path
