@@ -37,12 +37,13 @@ jobs:
     - name: Remote Install via SSH
       uses: appleboy/ssh-action@v0.1.4
       env:
-        path: ${{ secrets.NODE_MODULES_TARGET_PATH }}
+        NODE_MODULES_PATH: ${{ secrets.NODE_MODULES_TARGET_PATH }}
       with:
         host: ${{ secrets.SYNC_SERVER }}
         port: ${{ secrets.SYNC_PORT }}
         username: ${{ secrets.SYNC_USER }}
         key: ${{ secrets.SYNC_SSH_PRIVATE_KEY }}
+        script_stop: true
         debug: true
-        envs: path
-        script: ../bin/npm install --dry-run $path
+        envs: NODE_MODULES_PATH
+        script: ../bin/npm install --dry-run $NODE_MODULES_PATH
