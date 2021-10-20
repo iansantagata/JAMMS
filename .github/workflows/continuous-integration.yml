@@ -38,6 +38,7 @@ jobs:
       uses: appleboy/ssh-action@v0.1.4
       env:
         NODE_MODULES_PATH: ${{ secrets.NODE_MODULES_TARGET_PATH }}
+        NPM_PATH: ${{ secrets.NPM_TARGET_PATH }}
       with:
         host: ${{ secrets.SYNC_SERVER }}
         port: ${{ secrets.SYNC_PORT }}
@@ -45,5 +46,5 @@ jobs:
         key: ${{ secrets.SYNC_SSH_PRIVATE_KEY }}
         script_stop: true
         debug: true
-        envs: NODE_MODULES_PATH
-        script: ../bin/npm install --dry-run $NODE_MODULES_PATH
+        envs: NODE_MODULES_PATH, NPM_PATH
+        script: $NPM_PATH/npm install --dry-run $NODE_MODULES_PATH
