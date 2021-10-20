@@ -36,6 +36,7 @@ exports.getLoginPage = async function(req, res, next)
             redirect_uri: redirectUri,
             response_type: "code",
             scope: scopes,
+            show_dialog: true,
             state: stateToken
         };
 
