@@ -3,22 +3,16 @@
 // Script Logic
 let ruleCounter = 0;
 
-addOnClickEventListenerToElementById("playlistLimitEnabledInput", controlEnablementOfLimitElements);
 addOnClickEventListenerToElementById("playlistOrderEnabledInput", controlEnablementOfOrderElements);
 
 addOnClickEventListenerToElementById("addRuleButton", addRuleFormFields);
+addOnClickEventListenerToElementById("addLimitButton", addLimitFormFields);
 
 addOnClickEventListenerToElementById("generateSmartPlaylistPreviewButton", previewSmartPlaylist);
 
 addOnChangeEventListenerToElementById("createSmartPlaylistForm", displayPreviewOutOfDateAlert);
 
 // DOM Specific Functions
-function controlEnablementOfLimitElements()
-{
-    controlEnablementOfElementById("playlistLimitValueInput");
-    controlEnablementOfElementById("playlistLimitTypeInput");
-}
-
 function controlEnablementOfOrderElements()
 {
     controlEnablementOfElementById("playlistOrderDirectionInput");
@@ -455,6 +449,86 @@ function addRuleFormFields()
     addOnClickEventListenerToElement(removeRuleButton, removeRuleFormFields);
 }
 
+function addLimitFormFields()
+{
+    // Create pieces of the form row needed for limiting the playlist
+    // Playlist Limit Value Input
+    const limitValueInputElement = document.createElement("input");
+    limitValueInputElement.setAttribute("type", "number");
+    limitValueInputElement.setAttribute("name", "playlistLimitValue");
+    limitValueInputElement.setAttribute("class", "form-control");
+    limitValueInputElement.setAttribute("id", "playlistLimitValueInput");
+    limitValueInputElement.setAttribute("min", "1");
+    limitValueInputElement.setAttribute("max", "10000");
+    limitValueInputElement.setAttribute("placeholder", "Your Limit Number");
+    limitValueInputElement.setAttribute("required", "");
+
+    const limitValueDivElement = document.createElement("div");
+    limitValueDivElement.setAttribute("class", "col-md my-2");
+    limitValueDivElement.appendChild(limitValueInputElement);
+
+    // Playlist Limit Type Options
+    const limitTypeHoursOptionElement = document.createElement("option");
+    limitTypeHoursOptionElement.setAttribute("value", "hours");
+    limitTypeHoursOptionElement.innerText = "Hours";
+
+    const limitTypeMinutesOptionElement = document.createElement("option");
+    limitTypeMinutesOptionElement.setAttribute("value", "minutes");
+    limitTypeMinutesOptionElement.innerText = "Minutes";
+
+    const limitTypeSongsOptionElement = document.createElement("option");
+    limitTypeSongsOptionElement.setAttribute("value", "songs");
+    limitTypeSongsOptionElement.setAttribute("selected", "");
+    limitTypeSongsOptionElement.innerText = "Songs";
+
+    // Playlist Limit Type Select
+    const limitTypeSelectElement = document.createElement("select");
+    limitTypeSelectElement.setAttribute("name", "playlistLimitType");
+    limitTypeSelectElement.setAttribute("class", "form-control");
+    limitTypeSelectElement.setAttribute("id", "playlistLimitTypeInput");
+    limitTypeSelectElement.setAttribute("required", "");
+    limitTypeSelectElement.appendChild(limitTypeHoursOptionElement);
+    limitTypeSelectElement.appendChild(limitTypeMinutesOptionElement);
+    limitTypeSelectElement.appendChild(limitTypeSongsOptionElement);
+
+    const limitTypeDivElement = document.createElement("div");
+    limitTypeDivElement.setAttribute("class", "col-md my-2");
+    limitTypeDivElement.appendChild(limitTypeSelectElement);
+
+    // Limit Inputs in Row
+    const rowDiv = document.createElement("div");
+    rowDiv.setAttribute("class", "form-row my-2");
+    rowDiv.appendChild(limitValueDivElement);
+    rowDiv.appendChild(limitTypeDivElement);
+
+    // Add all the components to the top level limit div
+    const limitDiv = document.createElement("div");
+    limitDiv.setAttribute("class", "my-2");
+    limitDiv.setAttribute("id", "limitData");
+    limitDiv.appendChild(rowDiv);
+
+    // Append a form row of fields for limits
+    const limitContainerElement = document.getElementById("limitsContainer");
+    limitContainerElement.appendChild(limitDiv);
+
+    // Playlist Limit Removal
+    const removeLimitButton = document.createElement("button");
+    removeLimitButton.setAttribute("type", "button");
+    removeLimitButton.setAttribute("name", "removeLimitButton");
+    removeLimitButton.setAttribute("id", "removeLimitButton");
+    removeLimitButton.setAttribute("class", "btn btn-outline-danger btn-sm my-3");
+    removeLimitButton.innerText = "Remove Limit";
+
+    // Remove the add limit button and replace with a removal button
+    // This is because we only want to support one limit at a time
+    const limitsButtonContainer = document.getElementById("limitsButtonContainer");
+    removeChildElements(limitsButtonContainer);
+    limitsButtonContainer.appendChild(removeLimitButton);
+
+    // Finally, add an event listener to the remove limits button that has been added
+    addOnClickEventListenerToElement(removeLimitButton, removeLimitsFormFields);
+}
+
 function removeRuleFormFields()
 {
     // There may be multiple buttons for removal, see which one this is by ID
@@ -476,4 +550,30 @@ function removeRuleFormFields()
     const targetRuleId = `rule-${targetRuleNumber}`;
     const targetRuleElement = document.getElementById(targetRuleId);
     targetRuleElement.remove();
+}
+
+function removeLimitsFormFields()
+{
+    // Remove the limit data
+    const limitDataElement = document.getElementById("limitData");
+    limitDataElement.remove();
+
+    // Remove the remove limit button and replace with an add limit button
+    // This is because we only want to support one limit at a time
+    const limitsButtonContainer = document.getElementById("limitsButtonContainer");
+    removeChildElements(limitsButtonContainer);
+
+    // Playlist Limit Addition
+    const addLimitButton = document.createElement("button");
+    addLimitButton.setAttribute("type", "button");
+    addLimitButton.setAttribute("name", "addLimitButton");
+    addLimitButton.setAttribute("id", "addLimitButton");
+    addLimitButton.setAttribute("class", "btn btn-outline-info btn-sm my-3");
+    addLimitButton.innerText = "Add Limit";
+
+    // Restore the button to its original location
+    limitsButtonContainer.appendChild(addLimitButton);
+
+    // Finally, add back an event listener to the add limit button
+    addOnClickEventListenerToElementById("addLimitButton", addLimitFormFields);
 }
