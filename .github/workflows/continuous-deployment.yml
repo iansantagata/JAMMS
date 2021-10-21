@@ -53,14 +53,14 @@ jobs:
       env:
         VENV_ACTIVATION_PATH: ${{ secrets.VENV_ACTIVATION_TARGET_PATH }}
         CODE_PATH: ${{ secrets.SYNC_TARGET_PATH }}
+        SELECTOR_PATH: ${{ secrets.SELECTOR_TARGET_PATH }}
       with:
         host: ${{ secrets.SYNC_SERVER }}
         port: ${{ secrets.SYNC_PORT }}
         username: ${{ secrets.SYNC_USER }}
         key: ${{ secrets.SYNC_SSH_PRIVATE_KEY }}
         script_stop: true
-        envs: VENV_ACTIVATION_PATH, CODE_PATH
+        envs: VENV_ACTIVATION_PATH, CODE_PATH, SELECTOR_PATH
         script: |
           source $VENV_ACTIVATION_PATH/activate && cd $CODE_PATH
-          echo $PATH
-          cloudlinux-selector restart --json --interpreter nodejs --app-root $CODE_PATH
+          $SELECTOR_PATH/cloudlinux-selector restart --json --interpreter nodejs --app-root $CODE_PATH
