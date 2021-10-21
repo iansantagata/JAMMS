@@ -314,13 +314,19 @@ function addRuleFormFields()
 
     // Create pieces of the form row needed for the new rule
     // Rule Type Selection
+    const emptyOptionRuleType = document.createElement("option");
+    emptyOptionRuleType.setAttribute("value", "");
+    emptyOptionRuleType.setAttribute("selected", "");
+    emptyOptionRuleType.setAttribute("disabled", "");
+    emptyOptionRuleType.setAttribute("hidden", "");
+    emptyOptionRuleType.innerText = "Select a Field";
+
     const albumOptionRuleType = document.createElement("option");
     albumOptionRuleType.setAttribute("value", "album");
     albumOptionRuleType.innerText = "Album Name";
 
     const artistOptionRuleType = document.createElement("option");
     artistOptionRuleType.setAttribute("value", "artist");
-    artistOptionRuleType.setAttribute("selected", "");
     artistOptionRuleType.innerText = "Artist Name";
 
     const genreOptionRuleType = document.createElement("option");
@@ -339,6 +345,7 @@ function addRuleFormFields()
     selectRuleType.setAttribute("name", `playlistRuleType-${ruleCounter}`);
     selectRuleType.setAttribute("class", "form-control");
     selectRuleType.setAttribute("required", "");
+    selectRuleType.appendChild(emptyOptionRuleType);
     selectRuleType.appendChild(albumOptionRuleType);
     selectRuleType.appendChild(artistOptionRuleType);
     selectRuleType.appendChild(genreOptionRuleType);
@@ -350,9 +357,15 @@ function addRuleFormFields()
     ruleTypeDiv.appendChild(selectRuleType);
 
     // Rule Operator Selection
+    const emptyOptionRuleOperator = document.createElement("option");
+    emptyOptionRuleOperator.setAttribute("value", "");
+    emptyOptionRuleOperator.setAttribute("selected", "");
+    emptyOptionRuleOperator.setAttribute("disabled", "");
+    emptyOptionRuleOperator.setAttribute("hidden", "");
+    emptyOptionRuleOperator.innerText = "Select an Operator";
+
     const equalOptionRuleOperator = document.createElement("option");
     equalOptionRuleOperator.setAttribute("value", "equal");
-    equalOptionRuleOperator.setAttribute("selected", "");
     equalOptionRuleOperator.innerText = "is";
 
     const notEqualOptionRuleOperator = document.createElement("option");
@@ -387,6 +400,7 @@ function addRuleFormFields()
     selectRuleOperator.setAttribute("name", `playlistRuleOperator-${ruleCounter}`);
     selectRuleOperator.setAttribute("class", "form-control");
     selectRuleOperator.setAttribute("required", "");
+    selectRuleOperator.appendChild(emptyOptionRuleOperator);
     selectRuleOperator.appendChild(equalOptionRuleOperator);
     selectRuleOperator.appendChild(notEqualOptionRuleOperator);
     selectRuleOperator.appendChild(greaterThanOptionRuleOperator);
