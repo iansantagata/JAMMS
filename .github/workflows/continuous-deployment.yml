@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: Continuous Deployment
 
 on:
   push:
@@ -34,7 +34,7 @@ jobs:
         MODE: push
         RUN_SCRIPT_ON: source
 
-    - name: Remote Install via SSH
+    - name: Remote Package Install via SSH
       uses: appleboy/ssh-action@v0.1.4
       env:
         NODE_MODULES_PATH: ${{ secrets.NODE_MODULES_TARGET_PATH }}
@@ -47,3 +47,19 @@ jobs:
         script_stop: true
         envs: NODE_MODULES_PATH, NPM_PATH
         script: $NPM_PATH/npm install $NODE_MODULES_PATH
+
+    - name: Remote Server Restart via SSH
+      uses: appleboy/ssh-action@v0.1.4
+      env:
+        VENV_ACTIVATION_PATH: ${{ secrets.VENV_ACTIVATION_TARGET_PATH }}
+        CODE_PATH: ${{ secrets.SYNC_TARGET_PATH }}
+      with:
+        host: ${{ secrets.SYNC_SERVER }}
+        port: ${{ secrets.SYNC_PORT }}
+        username: ${{ secrets.SYNC_USER }}
+        key: ${{ secrets.SYNC_SSH_PRIVATE_KEY }}
+        script_stop: true
+        envs: VENV_ACTIVATION_PATH, CODE_PATH
+        script: |
+          source $VENV_ACTIVATION_PATH/activate && cd $CODE_PATH
+          cloudlinux-selector restart --json --interpreter nodejs --app-root $CODE_PATH
