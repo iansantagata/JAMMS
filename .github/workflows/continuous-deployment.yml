@@ -62,4 +62,5 @@ jobs:
         envs: VENV_ACTIVATION_PATH, CODE_PATH
         script: |
           source $VENV_ACTIVATION_PATH/activate && cd $CODE_PATH
+          echo $PATH
           cloudlinux-selector restart --json --interpreter nodejs --app-root $CODE_PATH
