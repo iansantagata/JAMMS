@@ -164,6 +164,7 @@ async function getRuleFollowingSmartPlaylistTracks(req, res, isPlaylistPreview, 
         // Then the app can retrieve that data and enrich the track with the data manually
         const playlistSpecialRuleFlags = specialRules.getPlaylistSpecialRuleFlags(playlistRules);
         let artistIdToGenresMap = new Map();
+        let trackIdToAudioFeaturesMap = new Map();
 
         // Keep track of the tracks to be in the playlist and the order of them as well
         const savedTracksInPlaylist = [];
@@ -188,6 +189,17 @@ async function getRuleFollowingSmartPlaylistTracks(req, res, isPlaylistPreview, 
             {
                 artistIdToGenresMap = await specialRules.getArtistIdToGenreMap(req, res, savedTracksInBatch, artistIdToGenresMap);
                 savedTracksInBatch = await enrichment.enrichTracksWithGenres(savedTracksInBatch, artistIdToGenresMap);
+            }
+
+            if (playlistSpecialRuleFlags.has("audioFeatures"))
+            {
+                trackIdToAudioFeaturesMap = await specialRules.getTrackIdToAudioFeaturesMap(
+                    req,
+                    res,
+                    savedTracksInBatch,
+                    trackIdToAudioFeaturesMap);
+
+                savedTracksInBatch = await enrichment.enrichTracksWithAudioFeatures(savedTracksInBatch, trackIdToAudioFeaturesMap);
             }
 
             // Process each track in the batch
