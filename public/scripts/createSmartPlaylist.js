@@ -562,19 +562,29 @@ function enableValidOperatorOptions()
     removeChildElements(ruleOperatorElement);
 
     // Add the new replacement operator options to the select element based on the type
-    switch (ruleFieldType) {
+    let ruleOperatorAddSuccess = false;
+    switch (ruleFieldType)
+    {
         case "string":
             addRuleOperatorOptionsForStringDataType(ruleOperatorElement);
+            ruleOperatorAddSuccess = true;
             break;
 
         case "number":
             addRuleOperatorOptionsForNumberDataType(ruleOperatorElement);
+            ruleOperatorAddSuccess = true;
             break;
 
         default:
-            const ruleOperatorOptionsNotAddedError = new Error("Failed to add rule operator options based on rule data type");
-            console.error(ruleOperatorOptionsNotAddedError.message);
-            return;
+            ruleOperatorAddSuccess = false;
+            break;
+    }
+
+    if (!ruleOperatorAddSuccess)
+    {
+        const ruleOperatorOptionsNotAddedError = new Error("Failed to add rule operator options based on rule data type");
+        console.error(ruleOperatorOptionsNotAddedError.message);
+        return;
     }
 
     // Enable the operator if it was disabled or do nothing if it was already enabled
@@ -625,21 +635,31 @@ function enableValidRuleDataEntry()
     }
 
     // Update the type of the data entry based on what data type is expected and clear out old values
-    switch (ruleFieldType) {
+    let isRuleFieldTypeChangeSuccess = false;
+    switch (ruleFieldType)
+    {
         case "string":
             ruleDataElement.setAttribute("type", "text");
             ruleDataElement.value = "";
+            isRuleFieldTypeChangeSuccess = true;
             break;
 
         case "number":
             ruleDataElement.setAttribute("type", "number");
             ruleDataElement.value = "";
+            isRuleFieldTypeChangeSuccess = true;
             break;
 
         default:
-            const ruleFieldTypeNotChangedError = new Error("Failed to change data entry field type based on rule data type");
-            console.error(ruleFieldTypeNotChangedError.message);
-            return;
+            isRuleFieldTypeChangeSuccess = false;
+            break;
+    }
+
+    if (!isRuleFieldTypeChangeSuccess)
+    {
+        const ruleFieldTypeNotChangedError = new Error("Failed to change data entry field type based on rule data type");
+        console.error(ruleFieldTypeNotChangedError.message);
+        return;
     }
 
     // Enable the entry field if it was disabled or do nothing if it was already enabled
@@ -658,15 +678,12 @@ function getDataFieldType(ruleFieldValue)
         case "genre":
         case "song":
             return "string";
-            break;
 
         case "year":
             return "number";
-            break;
 
         default:
             return null;
-            break;
     }
 }
 
