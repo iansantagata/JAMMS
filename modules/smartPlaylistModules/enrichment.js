@@ -57,3 +57,34 @@ exports.enrichTracksWithGenres = function(savedTracks, artistIdToGenresMap)
         return Promise.reject(error);
     }
 };
+
+exports.enrichTracksWithAudioFeatures = function(savedTracks, trackIdToAudioFeaturesMap)
+{
+    try
+    {
+        for (const savedTrack of savedTracks)
+        {
+            // Check the mapping for a track ID to its corresponding audio features
+            // If we do not have audio features for this track, simply use an empty object
+            let audioFeatures = {};
+            const trackId = savedTrack.track.id;
+            if (trackIdToAudioFeaturesMap.has(trackId))
+            {
+                audioFeatures = trackIdToAudioFeaturesMap.get(trackId);
+            }
+
+            // Finally, set the audio features onto the track object
+            savedTrack.track.audio_features = audioFeatures;
+        }
+
+        // When finished adding audio features to the tracks, return the modified tracks
+        return Promise.resolve(savedTracks);
+    }
+    catch (error)
+    {
+        // If there is a problem with the enrichment, then a user's request related to audio features data cannot realistically succeed
+        // Best to log the error and reject to avoid a situation where users are built an undesireable smart playlist
+        logger.logError(`Failed to enrich tracks with audio features: ${error.message}`);
+        return Promise.reject(error);
+    }
+};
