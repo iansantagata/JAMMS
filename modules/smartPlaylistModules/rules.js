@@ -56,27 +56,36 @@ function getRuleOperatorFunction(operator)
         case "notEqual":
             operatorFunction = operators.notEquals;
             break;
+
         case "greaterThan":
             operatorFunction = operators.greaterThan;
             break;
+
         case "greaterThanOrEqual":
             operatorFunction = operators.greaterThanOrEqualTo;
             break;
+
         case "lessThan":
             operatorFunction = operators.lessThan;
             break;
+
         case "lessThanOrEqual":
             operatorFunction = operators.lessThanOrEqualTo;
             break;
+
         case "contains":
             operatorFunction = operators.contains;
             break;
+
         case "doesNotContain":
             operatorFunction = operators.doesNotContain;
             break;
+
         case "equal":
-        default:
             operatorFunction = operators.equals;
+            break;
+
+        default:
             break;
     }
 
@@ -97,6 +106,9 @@ function getRuleFunction(ruleType)
             ruleFunction = ruleByAlbumName;
             break;
 
+        case "bpm":
+            ruleFunction = exports.ruleByBeatsPerMinute;
+
         case "genre":
             ruleFunction = exports.ruleByGenre;
             break;
@@ -106,15 +118,17 @@ function getRuleFunction(ruleType)
             break;
 
         case "song":
-        default:
             ruleFunction = ruleBySongName;
+            break;
+
+        default:
             break;
     }
 
     return ruleFunction;
 }
 
-// Specific Rule By X Functions
+// Special Rule By X Functions
 exports.ruleByGenre = function(track, genreNameRuleData, operatorFunction)
 {
     const trackGenres = dataRetrieval.getGenresFromSavedTrack(track);
@@ -123,6 +137,13 @@ exports.ruleByGenre = function(track, genreNameRuleData, operatorFunction)
     return operatorFunction(trackGenres, normalizedGenreNameRuleData);
 };
 
+exports.ruleByBeatsPerMinute = function(track, beatsPerMinuteRuleData, operatorFunction)
+{
+    const trackBeatsPerMinute = dataRetrieval.getBeatsPerMinuteFromSavedTrack(track);
+    return operatorFunction(trackBeatsPerMinute, beatsPerMinuteRuleData);
+}
+
+// Generic Rule By X Functions
 function ruleBySongName(track, songNameRuleData, operatorFunction)
 {
     const trackSongName = dataRetrieval.getTrackNameFromSavedTrack(track);
