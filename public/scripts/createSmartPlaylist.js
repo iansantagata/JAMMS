@@ -21,6 +21,8 @@ function previewSmartPlaylist()
     const formElement = getClosestForm(eventElement);
     if (!formElement)
     {
+        const formElementNotFoundError = new Error("Failed to find closest related form element");
+        console.error(formElementNotFoundError);
         return;
     }
 
@@ -883,12 +885,16 @@ function removeRuleFormFields()
     const index = eventElementId.lastIndexOf("-");
     if (index === -1)
     {
+        const ruleNumberNotFoundError = new Error("Failed to find rule number from event ID");
+        console.error(ruleNumberNotFoundError.message);
         return;
     }
 
     const targetRuleNumber = eventElementId.substr(index + 1);
     if (targetRuleNumber === "")
     {
+        const ruleNotFoundError = new Error("Failed to find rule data");
+        console.error(ruleNotFoundError.message);
         return;
     }
 
