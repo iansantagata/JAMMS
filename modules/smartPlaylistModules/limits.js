@@ -26,6 +26,7 @@ exports.getPlaylistLimits = function(req)
         enabled: false,
         type: null,
         userSpecifiedType: null,
+        userSpecifiedValue: null,
         value: null
     };
 
@@ -53,6 +54,7 @@ exports.getPlaylistLimits = function(req)
     }
 
     // Make sure that the user specified playlist limit is a valid one that the app knows how to handle
+    playlistLimitData.userSpecifiedValue = playlistLimitData.value;
     playlistLimitData.userSpecifiedType = req.body.playlistLimitType;
     switch (playlistLimitData.userSpecifiedType)
     {

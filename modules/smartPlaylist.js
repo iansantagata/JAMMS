@@ -362,7 +362,7 @@ function getPlaylistDescription(playlistLimitData, playlistOrderData)
     if (playlistLimitData.enabled)
     {
         playlistDescription += playlistDescriptionLimitPrefix + playlistDescriptionSpace +
-            playlistLimitData.value + playlistDescriptionSpace +
+            playlistLimitData.userSpecifiedValue + playlistDescriptionSpace +
             playlistLimitData.userSpecifiedType + playlistDescriptionPeriod + playlistDescriptionSpace;
     }
 
