@@ -331,6 +331,10 @@ function addRuleFormFields()
     artistOptionRuleType.setAttribute("value", "artist");
     artistOptionRuleType.innerText = "Artist Name";
 
+    const beatsOptionRuleType = document.createElement("option");
+    beatsOptionRuleType.setAttribute("value", "bpm");
+    beatsOptionRuleType.innerText = "Beats Per Minute";
+
     const genreOptionRuleType = document.createElement("option");
     genreOptionRuleType.setAttribute("value", "genre");
     genreOptionRuleType.innerText = "Genre";
@@ -352,6 +356,7 @@ function addRuleFormFields()
     selectRuleType.appendChild(emptyOptionRuleType);
     selectRuleType.appendChild(albumOptionRuleType);
     selectRuleType.appendChild(artistOptionRuleType);
+    selectRuleType.appendChild(beatsOptionRuleType);
     selectRuleType.appendChild(genreOptionRuleType);
     selectRuleType.appendChild(yearOptionRuleType);
     selectRuleType.appendChild(songOptionRuleType);
@@ -572,7 +577,8 @@ function enableValidOperatorOptions()
             ruleOperatorAddSuccess = true;
             break;
 
-        case "number":
+        case "integer":
+        case "positiveInteger":
             addRuleOperatorOptionsForNumberDataType(ruleOperatorElement);
             ruleOperatorAddSuccess = true;
             break;
@@ -642,12 +648,21 @@ function enableValidRuleDataEntry()
     {
         case "string":
             ruleDataElement.setAttribute("type", "text");
+            ruleDataElement.removeAttribute("min");
             ruleDataElement.value = "";
             isRuleFieldTypeChangeSuccess = true;
             break;
 
-        case "number":
+        case "integer":
             ruleDataElement.setAttribute("type", "number");
+            ruleDataElement.removeAttribute("min");
+            ruleDataElement.value = "";
+            isRuleFieldTypeChangeSuccess = true;
+            break;
+
+        case "positiveInteger":
+            ruleDataElement.setAttribute("type", "number");
+            ruleDataElement.setAttribute("min", "0");
             ruleDataElement.value = "";
             isRuleFieldTypeChangeSuccess = true;
             break;
@@ -682,7 +697,10 @@ function getDataFieldType(ruleFieldValue)
             return "string";
 
         case "year":
-            return "number";
+            return "integer";
+
+        case "bpm":
+            return "positiveInteger";
 
         default:
             return null;
