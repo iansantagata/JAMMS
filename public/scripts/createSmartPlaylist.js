@@ -341,8 +341,10 @@ function addRuleFormFields()
     songOptionRuleType.setAttribute("value", "song");
     songOptionRuleType.innerText = "Song Name";
 
+    const selectRuleTypeId = `playlistRuleType-${ruleCounter}`;
     const selectRuleType = document.createElement("select");
-    selectRuleType.setAttribute("name", `playlistRuleType-${ruleCounter}`);
+    selectRuleType.setAttribute("name", selectRuleTypeId);
+    selectRuleType.setAttribute("id", selectRuleTypeId);
     selectRuleType.setAttribute("class", "form-control");
     selectRuleType.setAttribute("required", "");
     selectRuleType.appendChild(emptyOptionRuleType);
@@ -364,51 +366,16 @@ function addRuleFormFields()
     emptyOptionRuleOperator.setAttribute("hidden", "");
     emptyOptionRuleOperator.innerText = "Select an Operator";
 
-    const equalOptionRuleOperator = document.createElement("option");
-    equalOptionRuleOperator.setAttribute("value", "equal");
-    equalOptionRuleOperator.innerText = "is";
-
-    const notEqualOptionRuleOperator = document.createElement("option");
-    notEqualOptionRuleOperator.setAttribute("value", "notEqual");
-    notEqualOptionRuleOperator.innerText = "is not";
-
-    const greaterThanOptionRuleOperator = document.createElement("option");
-    greaterThanOptionRuleOperator.setAttribute("value", "greaterThan");
-    greaterThanOptionRuleOperator.innerText = "is greater than";
-
-    const greaterThanOrEqualToOptionRuleOperator = document.createElement("option");
-    greaterThanOrEqualToOptionRuleOperator.setAttribute("value", "greaterThanOrEqual");
-    greaterThanOrEqualToOptionRuleOperator.innerText = "is greater than or equal to";
-
-    const lessThanOptionRuleOperator = document.createElement("option");
-    lessThanOptionRuleOperator.setAttribute("value", "lessThan");
-    lessThanOptionRuleOperator.innerText = "is less than";
-
-    const lessThanOrEqualToOptionRuleOperator = document.createElement("option");
-    lessThanOrEqualToOptionRuleOperator.setAttribute("value", "lessThanOrEqual");
-    lessThanOrEqualToOptionRuleOperator.innerText = "is less than or equal to";
-
-    const containsOptionRuleOperator = document.createElement("option");
-    containsOptionRuleOperator.setAttribute("value", "contains");
-    containsOptionRuleOperator.innerText = "contains";
-
-    const doesNotContainOptionRuleOperator = document.createElement("option");
-    doesNotContainOptionRuleOperator.setAttribute("value", "doesNotContain");
-    doesNotContainOptionRuleOperator.innerText = "does not contain";
-
+    // The select is disabled to start with only a defualt option
+    // It becomes enabled with more options once a data field is selected
+    const selectRuleOperatorId = `playlistRuleOperator-${ruleCounter}`;
     const selectRuleOperator = document.createElement("select");
-    selectRuleOperator.setAttribute("name", `playlistRuleOperator-${ruleCounter}`);
+    selectRuleOperator.setAttribute("name", selectRuleOperatorId);
+    selectRuleOperator.setAttribute("id", selectRuleOperatorId);
     selectRuleOperator.setAttribute("class", "form-control");
     selectRuleOperator.setAttribute("required", "");
+    selectRuleOperator.setAttribute("disabled", "");
     selectRuleOperator.appendChild(emptyOptionRuleOperator);
-    selectRuleOperator.appendChild(equalOptionRuleOperator);
-    selectRuleOperator.appendChild(notEqualOptionRuleOperator);
-    selectRuleOperator.appendChild(greaterThanOptionRuleOperator);
-    selectRuleOperator.appendChild(greaterThanOrEqualToOptionRuleOperator);
-    selectRuleOperator.appendChild(lessThanOptionRuleOperator);
-    selectRuleOperator.appendChild(lessThanOrEqualToOptionRuleOperator);
-    selectRuleOperator.appendChild(containsOptionRuleOperator);
-    selectRuleOperator.appendChild(doesNotContainOptionRuleOperator);
 
     const ruleOperatorDiv = document.createElement("div");
     ruleOperatorDiv.setAttribute("class", "col-md my-2");
@@ -421,6 +388,7 @@ function addRuleFormFields()
     inputRuleTextData.setAttribute("class", "form-control");
     inputRuleTextData.setAttribute("placeholder", "Your Rule Data");
     inputRuleTextData.setAttribute("required", "");
+    inputRuleTextData.setAttribute("disabled", "");
 
     const ruleTextDataDiv = document.createElement("div");
     ruleTextDataDiv.setAttribute("class", "col-md my-2");
@@ -454,6 +422,9 @@ function addRuleFormFields()
 
     // Add an event listener to the remove rule button that has been added
     addOnClickEventListenerToElement(removeRuleButton, removeRuleFormFields);
+
+    // Add an event listener to the selection of a rule data field to correspond to operators and data
+    addOnChangeEventListenerToElement(selectRuleType, enableValidOperatorOptions);
 
     // Finally, trigger a "changed" warning if a preview was already generated
     displayPreviewOutOfDateAlert();
@@ -540,6 +511,170 @@ function addLimitFormFields()
 
     // Finally, trigger a "changed" warning if a preview was already generated
     displayPreviewOutOfDateAlert();
+}
+
+function enableValidOperatorOptions()
+{
+    // There are multiple rules, so make sure we get the right one based on the event
+    const eventElementId = event.target.id;
+
+    const index = eventElementId.lastIndexOf("-");
+    if (index === -1)
+    {
+        const ruleNumberNotFoundError = new Error("Failed to find rule number from event ID");
+        console.error(ruleNumberNotFoundError.message);
+        return;
+    }
+
+    const targetRuleNumber = eventElementId.substr(index + 1);
+    if (targetRuleNumber === "")
+    {
+        const ruleNotFoundError = new Error("Failed to find rule data");
+        console.error(ruleNotFoundError.message);
+        return;
+    }
+
+    // Get the type of field that was selected.
+    const ruleFieldValue = event.target.value;
+    const ruleFieldType = getDataFieldType(ruleFieldValue);
+    if (ruleFieldType === null)
+    {
+        const typeUnknownError = new Error("Failed to determine rule data type");
+        console.error(typeUnknownError.message);
+        return;
+    }
+
+    // Get the operator element for this rule where a data field was selected
+    const ruleOperatorElement = document.getElementById(`playlistRuleOperator-${targetRuleNumber}`);
+    if (!ruleOperatorElement)
+    {
+        const ruleOperatorNotFoundError = new Error("Failed to find rule operator");
+        console.error(ruleOperatorNotFoundError.message);
+        return;
+    }
+
+    // Clear out all the previous child elements for the operator to replace with new ones
+    removeChildElements(ruleOperatorElement);
+
+    // Add the new replacement operator options to the select element based on the type
+    switch (ruleFieldType) {
+        case "string":
+            addRuleOperatorOptionsForStringDataType(ruleOperatorElement);
+            break;
+
+        case "number":
+            addRuleOperatorOptionsForNumberDataType(ruleOperatorElement);
+            break;
+
+        default:
+            const ruleOperatorOptionsNotAddedError = new Error("Failed to add rule operator options based on rule data type");
+            console.error(ruleOperatorOptionsNotAddedError.message);
+            return;
+    }
+
+    // Enable the rule if it was disabled or do nothing if it was already enabled
+    if (ruleOperatorElement.disabled)
+    {
+        controlEnablementOfElement(ruleOperatorElement);
+    }
+
+    // Finally, trigger a "changed" warning if a preview was already generated
+    displayPreviewOutOfDateAlert();
+}
+
+function getDataFieldType(ruleFieldValue)
+{
+    switch (ruleFieldValue)
+    {
+        case "album":
+        case "artist":
+        case "genre":
+        case "song":
+            return "string";
+            break;
+
+        case "year":
+            return "number";
+            break;
+
+        default:
+            return null;
+            break;
+    }
+}
+
+function addRuleOperatorOptionsForStringDataType(ruleOperatorElement)
+{
+    const emptyOptionRuleOperator = document.createElement("option");
+    emptyOptionRuleOperator.setAttribute("value", "");
+    emptyOptionRuleOperator.setAttribute("selected", "");
+    emptyOptionRuleOperator.setAttribute("disabled", "");
+    emptyOptionRuleOperator.setAttribute("hidden", "");
+    emptyOptionRuleOperator.innerText = "Select an Operator";
+
+    const equalOptionRuleOperator = document.createElement("option");
+    equalOptionRuleOperator.setAttribute("value", "equal");
+    equalOptionRuleOperator.innerText = "is";
+
+    const notEqualOptionRuleOperator = document.createElement("option");
+    notEqualOptionRuleOperator.setAttribute("value", "notEqual");
+    notEqualOptionRuleOperator.innerText = "is not";
+
+    const containsOptionRuleOperator = document.createElement("option");
+    containsOptionRuleOperator.setAttribute("value", "contains");
+    containsOptionRuleOperator.innerText = "contains";
+
+    const doesNotContainOptionRuleOperator = document.createElement("option");
+    doesNotContainOptionRuleOperator.setAttribute("value", "doesNotContain");
+    doesNotContainOptionRuleOperator.innerText = "does not contain";
+
+    ruleOperatorElement.appendChild(emptyOptionRuleOperator);
+    ruleOperatorElement.appendChild(equalOptionRuleOperator);
+    ruleOperatorElement.appendChild(notEqualOptionRuleOperator);
+    ruleOperatorElement.appendChild(containsOptionRuleOperator);
+    ruleOperatorElement.appendChild(doesNotContainOptionRuleOperator);
+}
+
+function addRuleOperatorOptionsForNumberDataType(ruleOperatorElement)
+{
+    const emptyOptionRuleOperator = document.createElement("option");
+    emptyOptionRuleOperator.setAttribute("value", "");
+    emptyOptionRuleOperator.setAttribute("selected", "");
+    emptyOptionRuleOperator.setAttribute("disabled", "");
+    emptyOptionRuleOperator.setAttribute("hidden", "");
+    emptyOptionRuleOperator.innerText = "Select an Operator";
+
+    const equalOptionRuleOperator = document.createElement("option");
+    equalOptionRuleOperator.setAttribute("value", "equal");
+    equalOptionRuleOperator.innerText = "is";
+
+    const notEqualOptionRuleOperator = document.createElement("option");
+    notEqualOptionRuleOperator.setAttribute("value", "notEqual");
+    notEqualOptionRuleOperator.innerText = "is not";
+
+    const greaterThanOptionRuleOperator = document.createElement("option");
+    greaterThanOptionRuleOperator.setAttribute("value", "greaterThan");
+    greaterThanOptionRuleOperator.innerText = "is greater than";
+
+    const greaterThanOrEqualToOptionRuleOperator = document.createElement("option");
+    greaterThanOrEqualToOptionRuleOperator.setAttribute("value", "greaterThanOrEqual");
+    greaterThanOrEqualToOptionRuleOperator.innerText = "is greater than or equal to";
+
+    const lessThanOptionRuleOperator = document.createElement("option");
+    lessThanOptionRuleOperator.setAttribute("value", "lessThan");
+    lessThanOptionRuleOperator.innerText = "is less than";
+
+    const lessThanOrEqualToOptionRuleOperator = document.createElement("option");
+    lessThanOrEqualToOptionRuleOperator.setAttribute("value", "lessThanOrEqual");
+    lessThanOrEqualToOptionRuleOperator.innerText = "is less than or equal to";
+
+    ruleOperatorElement.appendChild(emptyOptionRuleOperator);
+    ruleOperatorElement.appendChild(equalOptionRuleOperator);
+    ruleOperatorElement.appendChild(notEqualOptionRuleOperator);
+    ruleOperatorElement.appendChild(greaterThanOptionRuleOperator);
+    ruleOperatorElement.appendChild(greaterThanOrEqualToOptionRuleOperator);
+    ruleOperatorElement.appendChild(lessThanOptionRuleOperator);
+    ruleOperatorElement.appendChild(lessThanOrEqualToOptionRuleOperator);
 }
 
 function addOrderFormFields()
