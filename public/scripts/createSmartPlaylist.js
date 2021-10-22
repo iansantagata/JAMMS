@@ -372,7 +372,7 @@ function addRuleFormFields()
     const selectRuleOperator = document.createElement("select");
     selectRuleOperator.setAttribute("name", selectRuleOperatorId);
     selectRuleOperator.setAttribute("id", selectRuleOperatorId);
-    selectRuleOperator.setAttribute("class", "form-control");
+    selectRuleOperator.setAttribute("class", "form-control disabled");
     selectRuleOperator.setAttribute("required", "");
     selectRuleOperator.setAttribute("disabled", "");
     selectRuleOperator.appendChild(emptyOptionRuleOperator);
@@ -382,17 +382,21 @@ function addRuleFormFields()
     ruleOperatorDiv.appendChild(selectRuleOperator);
 
     // Rule Text Data
-    const inputRuleTextData = document.createElement("input");
-    inputRuleTextData.setAttribute("type", "text");
-    inputRuleTextData.setAttribute("name", `playlistRuleData-${ruleCounter}`);
-    inputRuleTextData.setAttribute("class", "form-control");
-    inputRuleTextData.setAttribute("placeholder", "Your Rule Data");
-    inputRuleTextData.setAttribute("required", "");
-    inputRuleTextData.setAttribute("disabled", "");
+    // The data entry input is disabled to start with
+    // It becomes enabled with once a data field is selected
+    const ruleDataInputId = `playlistRuleData-${ruleCounter}`;
+    const ruleDataInput = document.createElement("input");
+    ruleDataInput.setAttribute("type", "text");
+    ruleDataInput.setAttribute("name", ruleDataInputId);
+    ruleDataInput.setAttribute("id", ruleDataInputId);
+    ruleDataInput.setAttribute("class", "form-control disabled");
+    ruleDataInput.setAttribute("placeholder", "Your Rule Data");
+    ruleDataInput.setAttribute("required", "");
+    ruleDataInput.setAttribute("disabled", "");
 
     const ruleTextDataDiv = document.createElement("div");
     ruleTextDataDiv.setAttribute("class", "col-md my-2");
-    ruleTextDataDiv.appendChild(inputRuleTextData);
+    ruleTextDataDiv.appendChild(ruleDataInput);
 
     // Remove Rule Button
     const removeRuleButton = document.createElement("button");
@@ -425,6 +429,7 @@ function addRuleFormFields()
 
     // Add an event listener to the selection of a rule data field to correspond to operators and data
     addOnChangeEventListenerToElement(selectRuleType, enableValidOperatorOptions);
+    addOnChangeEventListenerToElement(selectRuleType, enableValidRuleDataEntry);
 
     // Finally, trigger a "changed" warning if a preview was already generated
     displayPreviewOutOfDateAlert();
@@ -572,14 +577,76 @@ function enableValidOperatorOptions()
             return;
     }
 
-    // Enable the rule if it was disabled or do nothing if it was already enabled
+    // Enable the operator if it was disabled or do nothing if it was already enabled
     if (ruleOperatorElement.disabled)
     {
         controlEnablementOfElement(ruleOperatorElement);
     }
+}
 
-    // Finally, trigger a "changed" warning if a preview was already generated
-    displayPreviewOutOfDateAlert();
+function enableValidRuleDataEntry()
+{
+    // There are multiple rules, so make sure we get the right one based on the event
+    const eventElementId = event.target.id;
+
+    const index = eventElementId.lastIndexOf("-");
+    if (index === -1)
+    {
+        const ruleNumberNotFoundError = new Error("Failed to find rule number from event ID");
+        console.error(ruleNumberNotFoundError.message);
+        return;
+    }
+
+    const targetRuleNumber = eventElementId.substr(index + 1);
+    if (targetRuleNumber === "")
+    {
+        const ruleNotFoundError = new Error("Failed to find rule data");
+        console.error(ruleNotFoundError.message);
+        return;
+    }
+
+    // Get the type of field that was selected.
+    const ruleFieldValue = event.target.value;
+    const ruleFieldType = getDataFieldType(ruleFieldValue);
+    if (ruleFieldType === null)
+    {
+        const typeUnknownError = new Error("Failed to determine rule data type");
+        console.error(typeUnknownError.message);
+        return;
+    }
+
+    // Get the data element for this rule where a data field was selected
+    const ruleDataElement = document.getElementById(`playlistRuleData-${targetRuleNumber}`);
+    if (!ruleDataElement)
+    {
+        const ruleDataElementNotFoundError = new Error("Failed to find rule data element");
+        console.error(ruleDataElementNotFoundError.message);
+        return;
+    }
+
+    // Update the type of the data entry based on what data type is expected and clear out old values
+    switch (ruleFieldType) {
+        case "string":
+            ruleDataElement.setAttribute("type", "text");
+            ruleDataElement.value = "";
+            break;
+
+        case "number":
+            ruleDataElement.setAttribute("type", "number");
+            ruleDataElement.value = "";
+            break;
+
+        default:
+            const ruleFieldTypeNotChangedError = new Error("Failed to change data entry field type based on rule data type");
+            console.error(ruleFieldTypeNotChangedError.message);
+            return;
+    }
+
+    // Enable the entry field if it was disabled or do nothing if it was already enabled
+    if (ruleDataElement.disabled)
+    {
+        controlEnablementOfElement(ruleDataElement);
+    }
 }
 
 function getDataFieldType(ruleFieldValue)
