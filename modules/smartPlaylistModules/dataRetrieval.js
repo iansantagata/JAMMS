@@ -63,6 +63,11 @@ exports.getGenresFromSavedTrack = function(savedTrack)
     return savedTrack.track.genres;
 };
 
+exports.getBeatsPerMinuteFromSavedTrack = function(savedTrack)
+{
+    return savedTrack.track.audio_features.tempo;
+}
+
 exports.getArtistNameFromArtist = function(artist)
 {
     return artist.name.toUpperCase();
