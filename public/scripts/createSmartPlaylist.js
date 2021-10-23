@@ -339,9 +339,9 @@ function addRuleFormFields()
     genreOptionRuleType.setAttribute("value", "genre");
     genreOptionRuleType.innerText = "Genre";
 
-    const yearOptionRuleType = document.createElement("option");
-    yearOptionRuleType.setAttribute("value", "year");
-    yearOptionRuleType.innerText = "Release Year";
+    const releaseDateOptionRuleType = document.createElement("option");
+    releaseDateOptionRuleType.setAttribute("value", "releaseDate");
+    releaseDateOptionRuleType.innerText = "Release Date";
 
     const songOptionRuleType = document.createElement("option");
     songOptionRuleType.setAttribute("value", "song");
@@ -358,7 +358,7 @@ function addRuleFormFields()
     selectRuleType.appendChild(artistOptionRuleType);
     selectRuleType.appendChild(beatsOptionRuleType);
     selectRuleType.appendChild(genreOptionRuleType);
-    selectRuleType.appendChild(yearOptionRuleType);
+    selectRuleType.appendChild(releaseDateOptionRuleType);
     selectRuleType.appendChild(songOptionRuleType);
 
     const ruleTypeDiv = document.createElement("div");
@@ -577,7 +577,11 @@ function enableValidOperatorOptions()
             ruleOperatorAddSuccess = true;
             break;
 
-        case "integer":
+        case "date":
+            addRuleOperatorOptionsForDateDataType(ruleOperatorElement);
+            ruleOperatorAddSuccess = true;
+            break;
+
         case "positiveInteger":
             addRuleOperatorOptionsForNumberDataType(ruleOperatorElement);
             ruleOperatorAddSuccess = true;
@@ -653,8 +657,8 @@ function enableValidRuleDataEntry()
             isRuleFieldTypeChangeSuccess = true;
             break;
 
-        case "integer":
-            ruleDataElement.setAttribute("type", "number");
+        case "date":
+            ruleDataElement.setAttribute("type", "date");
             ruleDataElement.removeAttribute("min");
             ruleDataElement.value = "";
             isRuleFieldTypeChangeSuccess = true;
@@ -696,8 +700,8 @@ function getDataFieldType(ruleFieldValue)
         case "song":
             return "string";
 
-        case "year":
-            return "integer";
+        case "releaseDate":
+            return "date";
 
         case "bpm":
             return "positiveInteger";
@@ -771,6 +775,48 @@ function addRuleOperatorOptionsForNumberDataType(ruleOperatorElement)
     const lessThanOrEqualToOptionRuleOperator = document.createElement("option");
     lessThanOrEqualToOptionRuleOperator.setAttribute("value", "lessThanOrEqual");
     lessThanOrEqualToOptionRuleOperator.innerText = "is less than or equal to";
+
+    ruleOperatorElement.appendChild(emptyOptionRuleOperator);
+    ruleOperatorElement.appendChild(equalOptionRuleOperator);
+    ruleOperatorElement.appendChild(notEqualOptionRuleOperator);
+    ruleOperatorElement.appendChild(greaterThanOptionRuleOperator);
+    ruleOperatorElement.appendChild(greaterThanOrEqualToOptionRuleOperator);
+    ruleOperatorElement.appendChild(lessThanOptionRuleOperator);
+    ruleOperatorElement.appendChild(lessThanOrEqualToOptionRuleOperator);
+}
+
+function addRuleOperatorOptionsForDateDataType(ruleOperatorElement)
+{
+    const emptyOptionRuleOperator = document.createElement("option");
+    emptyOptionRuleOperator.setAttribute("value", "");
+    emptyOptionRuleOperator.setAttribute("selected", "");
+    emptyOptionRuleOperator.setAttribute("disabled", "");
+    emptyOptionRuleOperator.setAttribute("hidden", "");
+    emptyOptionRuleOperator.innerText = "Select an Operator";
+
+    const equalOptionRuleOperator = document.createElement("option");
+    equalOptionRuleOperator.setAttribute("value", "equal");
+    equalOptionRuleOperator.innerText = "is";
+
+    const notEqualOptionRuleOperator = document.createElement("option");
+    notEqualOptionRuleOperator.setAttribute("value", "notEqual");
+    notEqualOptionRuleOperator.innerText = "is not";
+
+    const greaterThanOptionRuleOperator = document.createElement("option");
+    greaterThanOptionRuleOperator.setAttribute("value", "greaterThan");
+    greaterThanOptionRuleOperator.innerText = "is after";
+
+    const greaterThanOrEqualToOptionRuleOperator = document.createElement("option");
+    greaterThanOrEqualToOptionRuleOperator.setAttribute("value", "greaterThanOrEqual");
+    greaterThanOrEqualToOptionRuleOperator.innerText = "is on or after";
+
+    const lessThanOptionRuleOperator = document.createElement("option");
+    lessThanOptionRuleOperator.setAttribute("value", "lessThan");
+    lessThanOptionRuleOperator.innerText = "is before";
+
+    const lessThanOrEqualToOptionRuleOperator = document.createElement("option");
+    lessThanOrEqualToOptionRuleOperator.setAttribute("value", "lessThanOrEqual");
+    lessThanOrEqualToOptionRuleOperator.innerText = "is on or before";
 
     ruleOperatorElement.appendChild(emptyOptionRuleOperator);
     ruleOperatorElement.appendChild(equalOptionRuleOperator);

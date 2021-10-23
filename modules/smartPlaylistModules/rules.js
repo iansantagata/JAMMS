@@ -8,6 +8,9 @@ const smartPlaylistModulesPath = __dirname;
 const dataRetrieval = require(path.join(smartPlaylistModulesPath, "dataRetrieval.js"));
 const operators = require(path.join(smartPlaylistModulesPath, "operators.js"));
 
+// Default Constant Values
+const noop = () => {};
+
 // Rules Logic
 exports.getPlaylistRules = function(req)
 {
@@ -28,7 +31,16 @@ exports.getPlaylistRules = function(req)
                 const ruleData = req.body[`playlistRuleData-${ruleNumber}`];
 
                 const ruleOperatorFunction = getRuleOperatorFunction(ruleOperator);
+                if (ruleOperatorFunction === noop)
+                {
+                    throw new Error("Failed to find valid rule operator function");
+                }
+
                 const ruleFunction = getRuleFunction(ruleType);
+                if (ruleFunction === noop)
+                {
+                    throw new Error("Failed to find valid rule by function");
+                }
 
                 const ruleFromParameters =
                 {
@@ -49,7 +61,7 @@ exports.getPlaylistRules = function(req)
 // Local Helper Functions
 function getRuleOperatorFunction(operator)
 {
-    let operatorFunction = () => {};
+    let operatorFunction = noop;
 
     switch (operator)
     {
@@ -94,7 +106,7 @@ function getRuleOperatorFunction(operator)
 
 function getRuleFunction(ruleType)
 {
-    let ruleFunction = () => {};
+    let ruleFunction = noop;
 
     switch (ruleType)
     {
@@ -114,8 +126,8 @@ function getRuleFunction(ruleType)
             ruleFunction = exports.ruleByGenre;
             break;
 
-        case "year":
-            ruleFunction = ruleByReleaseYear;
+        case "releaseDate":
+            ruleFunction = ruleByReleaseDate;
             break;
 
         case "song":
@@ -161,10 +173,10 @@ function ruleByAlbumName(track, albumNameRuleData, operatorFunction)
     return operatorFunction(trackAlbumName, normalizedAlbumNameRuleData);
 }
 
-function ruleByReleaseYear(track, releaseYearRuleData, operatorFunction)
+function ruleByReleaseDate(track, releaseDateRuleData, operatorFunction)
 {
-    const trackReleaseYear = dataRetrieval.getReleaseYearFromSavedTrack(track);
-    return operatorFunction(trackReleaseYear, releaseYearRuleData);
+    const trackReleaseDate = dataRetrieval.getReleaseDateFromSavedTrack(track);
+    return operatorFunction(trackReleaseDate, releaseDateRuleData);
 }
 
 function ruleByArtistName(track, artistNameRuleData, operatorFunction)

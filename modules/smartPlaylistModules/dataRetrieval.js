@@ -34,15 +34,6 @@ exports.getReleaseDateFromSavedTrack = function(savedTrack)
     return savedTrack.track.album.release_date;
 };
 
-exports.getReleaseYearFromSavedTrack = function(savedTrack)
-{
-    // The release year is usually YYYY-MM-DD but can optionally have month or day level precision
-    // Grab the first four characters present to get the year value only as it should always be present
-    const yearCharactersLength = 4;
-    return exports.getReleaseDateFromSavedTrack(savedTrack)
-        .substr(0, yearCharactersLength);
-};
-
 exports.getAddDateFromSavedTrack = function(savedTrack)
 {
     return savedTrack.added_at;
