@@ -66,7 +66,7 @@ exports.getGenresFromSavedTrack = function(savedTrack)
 exports.getBeatsPerMinuteFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.audio_features.tempo;
-}
+};
 
 exports.getArtistNameFromArtist = function(artist)
 {

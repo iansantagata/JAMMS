@@ -108,6 +108,7 @@ function getRuleFunction(ruleType)
 
         case "bpm":
             ruleFunction = exports.ruleByBeatsPerMinute;
+            break;
 
         case "genre":
             ruleFunction = exports.ruleByGenre;
@@ -141,7 +142,7 @@ exports.ruleByBeatsPerMinute = function(track, beatsPerMinuteRuleData, operatorF
 {
     const trackBeatsPerMinute = dataRetrieval.getBeatsPerMinuteFromSavedTrack(track);
     return operatorFunction(trackBeatsPerMinute, beatsPerMinuteRuleData);
-}
+};
 
 // Generic Rule By X Functions
 function ruleBySongName(track, songNameRuleData, operatorFunction)

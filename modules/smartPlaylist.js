@@ -197,7 +197,8 @@ async function getRuleFollowingSmartPlaylistTracks(req, res, isPlaylistPreview, 
                     req,
                     res,
                     savedTracksInBatch,
-                    trackIdToAudioFeaturesMap);
+                    trackIdToAudioFeaturesMap
+                );
 
                 savedTracksInBatch = await enrichment.enrichTracksWithAudioFeatures(savedTracksInBatch, trackIdToAudioFeaturesMap);
             }

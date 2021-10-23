@@ -21,7 +21,7 @@ const spotifyFollowingUriPath = "/following";
 const spotifyFollowersUriPath = "/followers";
 const spotifyPlaylistsUriPath = "/playlists";
 const spotifyArtistsUriPath = "/artists";
-const spotifyAudioFeaturesUriPath = "/audio-features"
+const spotifyAudioFeaturesUriPath = "/audio-features";
 
 // Spotify Constants
 const spotifyShortTerm = "short_term";
@@ -776,4 +776,4 @@ exports.getAudioFeatures = async function(req, res)
         logger.logError(`Failed to get audio features: ${error.message}`);
         return Promise.reject(error);
     }
-}
+};
