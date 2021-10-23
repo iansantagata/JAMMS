@@ -21,6 +21,7 @@ const spotifyFollowingUriPath = "/following";
 const spotifyFollowersUriPath = "/followers";
 const spotifyPlaylistsUriPath = "/playlists";
 const spotifyArtistsUriPath = "/artists";
+const spotifyAudioFeaturesUriPath = "/audio-features";
 
 // Spotify Constants
 const spotifyShortTerm = "short_term";
@@ -39,6 +40,7 @@ const trackAddToPlaylistLimitMax = 100;
 const tracksRequestLimitDefault = 10;
 const tracksRequestLimitMax = 50;
 const tracksPageNumberDefault = 1;
+const trackIdsLimitMax = 100;
 
 const artistTimeRangeDefault = spotifyLongTerm;
 const tracksTimeRangeDefault = spotifyLongTerm;
@@ -718,6 +720,60 @@ exports.getTopTracks = async function(req, res)
     catch (error)
     {
         logger.logError(`Failed to get top tracks: ${error.message}`);
+        return Promise.reject(error);
+    }
+};
+
+exports.getAudioFeatures = async function(req, res)
+{
+    try
+    {
+        // Handle the case where the invalid parameters were passed to track IDs
+        const trackIds = req.query.trackIds;
+        if (!Array.isArray(trackIds))
+        {
+            throw new Error(`Invalid track IDs requested: "${trackIds}"`);
+        }
+
+        if (trackIds.length <= 0 || trackIds.length > trackIdsLimitMax)
+        {
+            throw new Error(`Invalid number of track IDs requested: ${trackIds.length}`);
+        }
+
+        const concatenatedTrackIds = trackIds
+            .filter(id => Boolean(id))
+            .join(",");
+
+        if (!concatenatedTrackIds)
+        {
+            throw new Error(`Invalid track IDs requested after concatenating: ${concatenatedTrackIds}`);
+        }
+
+        // Make the request to get each track's audio feature data
+        const requestData = {
+            ids: concatenatedTrackIds
+        };
+
+        const requestOptions = {
+            headers: {
+                Authorization: await authorize.getAccessToken(req, res)
+            }
+        };
+
+        const spotifyGetAudioFeaturesUri = `${spotifyBaseUri}${spotifyAudioFeaturesUriPath}`;
+        const spotifyGetAudioFeaturesRequestQuery = `?${querystring.stringify(requestData)}`;
+        const response = await axios.get(spotifyGetAudioFeaturesUri + spotifyGetAudioFeaturesRequestQuery, requestOptions);
+
+        // Extract only the data from the successful response that the user will care to see
+        const spotifyResponse = {
+            audioFeatures: response.data.audio_features
+        };
+
+        return Promise.resolve(spotifyResponse);
+    }
+    catch (error)
+    {
+        logger.logError(`Failed to get audio features: ${error.message}`);
         return Promise.reject(error);
     }
 };
