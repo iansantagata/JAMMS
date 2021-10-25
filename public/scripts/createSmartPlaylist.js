@@ -343,6 +343,10 @@ function addRuleFormFields()
     songDurationOptionRuleType.setAttribute("value", "duration");
     songDurationOptionRuleType.innerText = "Song Length";
 
+    const songLoudnessOptionRuleType = document.createElement("option");
+    songLoudnessOptionRuleType.setAttribute("value", "loudness");
+    songLoudnessOptionRuleType.innerText = "Song Loudness";
+
     const songOptionRuleType = document.createElement("option");
     songOptionRuleType.setAttribute("value", "song");
     songOptionRuleType.innerText = "Song Name";
@@ -363,6 +367,7 @@ function addRuleFormFields()
     selectRuleType.appendChild(genreOptionRuleType);
     selectRuleType.appendChild(releaseDateOptionRuleType);
     selectRuleType.appendChild(songDurationOptionRuleType);
+    selectRuleType.appendChild(songLoudnessOptionRuleType);
     selectRuleType.appendChild(songOptionRuleType);
     selectRuleType.appendChild(tempoOptionRuleType);
 
@@ -597,6 +602,7 @@ function enableValidOperatorOptions()
             ruleOperatorAddSuccess = true;
             break;
 
+        case "negativeInteger":
         case "positiveInteger":
             addRuleOperatorOptionsForNumberDataType(ruleOperatorElement);
             ruleOperatorAddSuccess = true;
@@ -668,6 +674,7 @@ function enableValidRuleDataEntry()
         case "string":
             ruleDataElement.setAttribute("type", "text");
             ruleDataElement.removeAttribute("min");
+            ruleDataElement.removeAttribute("max");
             ruleDataElement.value = "";
             isRuleFieldTypeChangeSuccess = true;
             break;
@@ -675,6 +682,16 @@ function enableValidRuleDataEntry()
         case "date":
             ruleDataElement.setAttribute("type", "date");
             ruleDataElement.removeAttribute("min");
+            ruleDataElement.removeAttribute("max");
+            ruleDataElement.value = "";
+            isRuleFieldTypeChangeSuccess = true;
+            break;
+
+
+        case "negativeInteger":
+            ruleDataElement.setAttribute("type", "number");
+            ruleDataElement.setAttribute("max", "0");
+            ruleDataElement.setAttribute("min", "-60");
             ruleDataElement.value = "";
             isRuleFieldTypeChangeSuccess = true;
             break;
@@ -682,6 +699,7 @@ function enableValidRuleDataEntry()
         case "positiveInteger":
             ruleDataElement.setAttribute("type", "number");
             ruleDataElement.setAttribute("min", "0");
+            ruleDataElement.removeAttribute("max");
             ruleDataElement.value = "";
             isRuleFieldTypeChangeSuccess = true;
             break;
@@ -785,6 +803,9 @@ function getDataFieldType(ruleFieldValue)
         case "releaseDate":
             return "date";
 
+        case "loudness":
+            return "negativeInteger";
+
         case "tempo":
         case "duration":
             return "positiveInteger";
@@ -803,6 +824,9 @@ function getDataFieldUnit(ruleFieldValue)
 
         case "duration":
             return "Minutes";
+
+        case "loudness":
+            return "Decibels";
 
         case "album":
         case "artist":

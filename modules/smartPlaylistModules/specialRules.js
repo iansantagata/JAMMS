@@ -29,12 +29,14 @@ exports.getPlaylistSpecialRuleFlags = function(inputRules)
     // Loop through every rule to check if there are any special cases to account for
     for (const inputRule of inputRules)
     {
-        if (inputRule.function === rules.ruleByGenre)
+        const inputRuleFunction = inputRule.function;
+        if (inputRuleFunction === rules.ruleByGenre)
         {
             flags.add("genre");
         }
 
-        if (inputRule.function === rules.ruleByBeatsPerMinute)
+        if (inputRuleFunction === rules.ruleByBeatsPerMinute ||
+            inputRuleFunction === rules.ruleByDecibels)
         {
             flags.add("audioFeatures");
         }
