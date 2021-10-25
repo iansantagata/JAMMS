@@ -11,6 +11,9 @@ const operators = require(path.join(smartPlaylistModulesPath, "operators.js"));
 // Default Constant Values
 const noop = () => {};
 
+const secondsToMsecConversion = 1000;
+const minutesToSecondsConversion = 60;
+
 // Rules Logic
 exports.getPlaylistRules = function(req)
 {
@@ -28,7 +31,7 @@ exports.getPlaylistRules = function(req)
             {
                 const ruleType = req.body[`playlistRuleType-${ruleNumber}`];
                 const ruleOperator = req.body[`playlistRuleOperator-${ruleNumber}`];
-                const ruleData = req.body[`playlistRuleData-${ruleNumber}`];
+                let ruleData = req.body[`playlistRuleData-${ruleNumber}`];
 
                 const ruleOperatorFunction = getRuleOperatorFunction(ruleOperator);
                 if (ruleOperatorFunction === noop)
@@ -40,6 +43,12 @@ exports.getPlaylistRules = function(req)
                 if (ruleFunction === noop)
                 {
                     throw new Error("Failed to find valid rule by function");
+                }
+
+                // Handle the special case where user input needs to be converted a different unit
+                if (ruleFunction === ruleByDuration)
+                {
+                    ruleData *= minutesToSecondsConversion * secondsToMsecConversion;
                 }
 
                 const ruleFromParameters =
@@ -118,8 +127,8 @@ function getRuleFunction(ruleType)
             ruleFunction = ruleByAlbumName;
             break;
 
-        case "bpm":
-            ruleFunction = exports.ruleByBeatsPerMinute;
+        case "duration":
+            ruleFunction = ruleByDuration;
             break;
 
         case "genre":
@@ -132,6 +141,10 @@ function getRuleFunction(ruleType)
 
         case "song":
             ruleFunction = ruleBySongName;
+            break;
+
+        case "tempo":
+            ruleFunction = exports.ruleByBeatsPerMinute;
             break;
 
         default:
@@ -157,12 +170,12 @@ exports.ruleByBeatsPerMinute = function(track, beatsPerMinuteRuleData, operatorF
 };
 
 // Generic Rule By X Functions
-function ruleBySongName(track, songNameRuleData, operatorFunction)
+function ruleByArtistName(track, artistNameRuleData, operatorFunction)
 {
-    const trackSongName = dataRetrieval.getTrackNameFromSavedTrack(track);
-    const normalizedSongNameRuleData = songNameRuleData.toUpperCase();
+    const trackArtistNames = dataRetrieval.getArtistNamesFromSavedTrack(track);
+    const normalizedArtistNameRuleData = artistNameRuleData.toUpperCase();
 
-    return operatorFunction(trackSongName, normalizedSongNameRuleData);
+    return operatorFunction(trackArtistNames, normalizedArtistNameRuleData);
 }
 
 function ruleByAlbumName(track, albumNameRuleData, operatorFunction)
@@ -173,16 +186,22 @@ function ruleByAlbumName(track, albumNameRuleData, operatorFunction)
     return operatorFunction(trackAlbumName, normalizedAlbumNameRuleData);
 }
 
+function ruleByDuration(track, durationRuleData, operatorFunction)
+{
+    const trackDuration = dataRetrieval.getDurationFromSavedTrack(track);
+    return operatorFunction(trackDuration, durationRuleData);
+}
+
 function ruleByReleaseDate(track, releaseDateRuleData, operatorFunction)
 {
     const trackReleaseDate = dataRetrieval.getReleaseDateFromSavedTrack(track);
     return operatorFunction(trackReleaseDate, releaseDateRuleData);
 }
 
-function ruleByArtistName(track, artistNameRuleData, operatorFunction)
+function ruleBySongName(track, songNameRuleData, operatorFunction)
 {
-    const trackArtistNames = dataRetrieval.getArtistNamesFromSavedTrack(track);
-    const normalizedArtistNameRuleData = artistNameRuleData.toUpperCase();
+    const trackSongName = dataRetrieval.getTrackNameFromSavedTrack(track);
+    const normalizedSongNameRuleData = songNameRuleData.toUpperCase();
 
-    return operatorFunction(trackArtistNames, normalizedArtistNameRuleData);
+    return operatorFunction(trackSongName, normalizedSongNameRuleData);
 }
