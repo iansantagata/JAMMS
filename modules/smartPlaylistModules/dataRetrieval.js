@@ -62,7 +62,7 @@ exports.getBeatsPerMinuteFromSavedTrack = function(savedTrack)
 exports.getDecibelsFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.audio_features.loudness;
-}
+};
 
 exports.getArtistNameFromArtist = function(artist)
 {

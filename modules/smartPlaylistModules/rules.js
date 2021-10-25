@@ -169,7 +169,7 @@ exports.ruleByDecibels = function(track, decibelsRuleData, operatorFunction)
 {
     const trackDecibels = dataRetrieval.getDecibelsFromSavedTrack(track);
     return operatorFunction(trackDecibels, decibelsRuleData);
-}
+};
 
 exports.ruleByGenre = function(track, genreNameRuleData, operatorFunction)
 {
