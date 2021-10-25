@@ -118,7 +118,7 @@ function getRuleFunction(ruleType)
             ruleFunction = ruleByAlbumName;
             break;
 
-        case "bpm":
+        case "tempo":
             ruleFunction = exports.ruleByBeatsPerMinute;
             break;
 

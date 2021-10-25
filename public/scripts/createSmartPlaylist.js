@@ -331,10 +331,6 @@ function addRuleFormFields()
     artistOptionRuleType.setAttribute("value", "artist");
     artistOptionRuleType.innerText = "Artist Name";
 
-    const beatsOptionRuleType = document.createElement("option");
-    beatsOptionRuleType.setAttribute("value", "bpm");
-    beatsOptionRuleType.innerText = "Beats Per Minute";
-
     const genreOptionRuleType = document.createElement("option");
     genreOptionRuleType.setAttribute("value", "genre");
     genreOptionRuleType.innerText = "Genre";
@@ -343,9 +339,17 @@ function addRuleFormFields()
     releaseDateOptionRuleType.setAttribute("value", "releaseDate");
     releaseDateOptionRuleType.innerText = "Release Date";
 
+    const songDurationOptionRuleType = document.createElement("option");
+    songDurationOptionRuleType.setAttribute("value", "duration");
+    songDurationOptionRuleType.innerText = "Song Length";
+
     const songOptionRuleType = document.createElement("option");
     songOptionRuleType.setAttribute("value", "song");
     songOptionRuleType.innerText = "Song Name";
+
+    const tempoOptionRuleType = document.createElement("option");
+    tempoOptionRuleType.setAttribute("value", "tempo");
+    tempoOptionRuleType.innerText = "Song Tempo";
 
     const selectRuleTypeId = `playlistRuleType-${ruleCounter}`;
     const selectRuleType = document.createElement("select");
@@ -356,10 +360,11 @@ function addRuleFormFields()
     selectRuleType.appendChild(emptyOptionRuleType);
     selectRuleType.appendChild(albumOptionRuleType);
     selectRuleType.appendChild(artistOptionRuleType);
-    selectRuleType.appendChild(beatsOptionRuleType);
     selectRuleType.appendChild(genreOptionRuleType);
     selectRuleType.appendChild(releaseDateOptionRuleType);
+    selectRuleType.appendChild(songDurationOptionRuleType);
     selectRuleType.appendChild(songOptionRuleType);
+    selectRuleType.appendChild(tempoOptionRuleType);
 
     const ruleTypeDiv = document.createElement("div");
     ruleTypeDiv.setAttribute("class", "col-md my-2");
@@ -401,9 +406,18 @@ function addRuleFormFields()
     ruleDataInput.setAttribute("required", "");
     ruleDataInput.setAttribute("disabled", "");
 
+    const ruleUnitDescriptionDiv = document.createElement("div");
+    ruleUnitDescriptionDiv.setAttribute("class", "input-group-append");
+    ruleUnitDescriptionDiv.setAttribute("id", `playlistRuleUnitContainer-${ruleCounter}`)
+
+    const ruleDataInputGroupDiv = document.createElement("div");
+    ruleDataInputGroupDiv.setAttribute("class", "input-group");
+    ruleDataInputGroupDiv.appendChild(ruleDataInput);
+    ruleDataInputGroupDiv.appendChild(ruleUnitDescriptionDiv);
+
     const ruleTextDataDiv = document.createElement("div");
     ruleTextDataDiv.setAttribute("class", "col-md my-2");
-    ruleTextDataDiv.appendChild(ruleDataInput);
+    ruleTextDataDiv.appendChild(ruleDataInputGroupDiv);
 
     // Remove Rule Button
     const removeRuleButton = document.createElement("button");
@@ -437,6 +451,7 @@ function addRuleFormFields()
     // Add an event listener to the selection of a rule data field to correspond to operators and data
     addOnChangeEventListenerToElement(selectRuleType, enableValidOperatorOptions);
     addOnChangeEventListenerToElement(selectRuleType, enableValidRuleDataEntry);
+    addOnChangeEventListenerToElement(selectRuleType, enableDataUnitVisibility);
 
     // Finally, trigger a "changed" warning if a preview was already generated
     displayPreviewOutOfDateAlert();
@@ -546,7 +561,7 @@ function enableValidOperatorOptions()
         return;
     }
 
-    // Get the type of field that was selected.
+    // Get the type of field that was selected
     const ruleFieldValue = event.target.value;
     const ruleFieldType = getDataFieldType(ruleFieldValue);
     if (ruleFieldType === null)
@@ -627,7 +642,7 @@ function enableValidRuleDataEntry()
         return;
     }
 
-    // Get the type of field that was selected.
+    // Get the type of field that was selected
     const ruleFieldValue = event.target.value;
     const ruleFieldType = getDataFieldType(ruleFieldValue);
     if (ruleFieldType === null)
@@ -690,6 +705,73 @@ function enableValidRuleDataEntry()
     }
 }
 
+function enableDataUnitVisibility()
+{
+    // There are multiple rules, so make sure we get the right one based on the event
+    const eventElementId = event.target.id;
+
+    const index = eventElementId.lastIndexOf("-");
+    if (index === -1)
+    {
+        const ruleNumberNotFoundError = new Error("Failed to find rule number from event ID");
+        console.error(ruleNumberNotFoundError.message);
+        return;
+    }
+
+    const targetRuleNumber = eventElementId.substr(index + 1);
+    if (targetRuleNumber === "")
+    {
+        const ruleNotFoundError = new Error("Failed to find rule data");
+        console.error(ruleNotFoundError.message);
+        return;
+    }
+
+    // See if we already have a unit area shown to the user
+    const playlistRuleUnitId = `playlistRuleUnit-${targetRuleNumber}`;
+    const playlistRuleUnitElement = document.getElementById(playlistRuleUnitId);
+
+    // Get the type of field that was selected
+    const ruleFieldValue = event.target.value;
+    const ruleFieldUnit = getDataFieldUnit(ruleFieldValue);
+
+    // We do not have a unit to show the user (intentional) and nothing to clear out, so exit
+    if (ruleFieldUnit === null && playlistRuleUnitElement === null)
+    {
+        return;
+    }
+
+    // We do not want to show a unit to the user, but we have an existing unit to clear out
+    if (ruleFieldUnit === null)
+    {
+        playlistRuleUnitElement.remove();
+        return;
+    }
+
+    // We have a unit to show to the user and an element to shove it into
+    if (playlistRuleUnitElement !== null)
+    {
+        playlistRuleUnitElement.innerText = ruleFieldUnit;
+        return;
+    }
+
+    // We have a unit to show the user and no element to shove it into
+    const unitContainerElement = document.getElementById(`playlistRuleUnitContainer-${targetRuleNumber}`);
+    if (unitContainerElement === null)
+    {
+        const unitContainerNotFoundError = new Error("Failed to locate container to place unit description");
+        console.error(unitContainerNotFoundError);
+        return;
+    }
+
+    // Create the unit description and shove it onto the container
+    const ruleUnitDescription = document.createElement("span");
+    ruleUnitDescription.setAttribute("class", "input-group-text");
+    ruleUnitDescription.setAttribute("id", `playlistRuleUnit-${targetRuleNumber}`);
+    ruleUnitDescription.innerText = ruleFieldUnit;
+
+    unitContainerElement.appendChild(ruleUnitDescription);
+}
+
 function getDataFieldType(ruleFieldValue)
 {
     switch (ruleFieldValue)
@@ -703,9 +785,30 @@ function getDataFieldType(ruleFieldValue)
         case "releaseDate":
             return "date";
 
-        case "bpm":
+        case "tempo":
+        case "duration":
             return "positiveInteger";
 
+        default:
+            return null;
+    }
+}
+
+function getDataFieldUnit(ruleFieldValue)
+{
+    switch (ruleFieldValue)
+    {
+        case "tempo":
+            return "Beats Per Minute";
+
+        case "duration":
+            return "Minutes";
+
+        case "album":
+        case "artist":
+        case "genre":
+        case "releaseDate":
+        case "song":
         default:
             return null;
     }
