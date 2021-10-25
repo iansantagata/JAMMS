@@ -135,6 +135,10 @@ function getRuleFunction(ruleType)
             ruleFunction = exports.ruleByGenre;
             break;
 
+        case "loudness":
+            ruleFunction = exports.ruleByDecibels;
+            break;
+
         case "releaseDate":
             ruleFunction = ruleByReleaseDate;
             break;
@@ -155,18 +159,24 @@ function getRuleFunction(ruleType)
 }
 
 // Special Rule By X Functions
+exports.ruleByBeatsPerMinute = function(track, beatsPerMinuteRuleData, operatorFunction)
+{
+    const trackBeatsPerMinute = dataRetrieval.getBeatsPerMinuteFromSavedTrack(track);
+    return operatorFunction(trackBeatsPerMinute, beatsPerMinuteRuleData);
+};
+
+exports.ruleByDecibels = function(track, decibelsRuleData, operatorFunction)
+{
+    const trackDecibels = dataRetrieval.getDecibelsFromSavedTrack(track);
+    return operatorFunction(trackDecibels, decibelsRuleData);
+}
+
 exports.ruleByGenre = function(track, genreNameRuleData, operatorFunction)
 {
     const trackGenres = dataRetrieval.getGenresFromSavedTrack(track);
     const normalizedGenreNameRuleData = genreNameRuleData.toUpperCase();
 
     return operatorFunction(trackGenres, normalizedGenreNameRuleData);
-};
-
-exports.ruleByBeatsPerMinute = function(track, beatsPerMinuteRuleData, operatorFunction)
-{
-    const trackBeatsPerMinute = dataRetrieval.getBeatsPerMinuteFromSavedTrack(track);
-    return operatorFunction(trackBeatsPerMinute, beatsPerMinuteRuleData);
 };
 
 // Generic Rule By X Functions
