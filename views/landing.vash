@@ -10,7 +10,7 @@
 
     <h2 class="mt-5 mb-3">FAQ</h2>
     <div id="faq" class="accordion text-left mb-5">
-      <div class="card">
+      <div class="card jamms-bg-dark">
         <div class="card-header" id="faqWhatIsJamms">
           <h2 class="mb-0">
             <button class="btn btn-link btn-block" type="button" data-toggle="collapse" data-target="#faqWhatIsJammsResponse" aria-expanded="true" aria-controls="faqWhatIsJammsResponse">
@@ -26,7 +26,7 @@
         </div>
       </div>
 
-      <div class="card">
+      <div class="card jamms-bg-dark">
         <div class="card-header" id="faqWhatDoesJammsDo">
           <h2 class="mb-0">
             <button class="btn btn-link btn-block collapsed" type="button" data-toggle="collapse" data-target="#faqWhatDoesJammsDoResponse" aria-expanded="false" aria-controls="faqWhatDoesJammsDoResponse">
@@ -43,7 +43,7 @@
         </div>
       </div>
 
-      <div class="card">
+      <div class="card jamms-bg-dark">
         <div class="card-header" id="faqWhatIsASmartPlaylist">
           <h2 class="mb-0">
             <button class="btn btn-link btn-block collapsed" type="button" data-toggle="collapse" data-target="#faqWhatIsASmartPlaylistResponse" aria-expanded="false" aria-controls="faqWhatDoesJammsDoResponse">
@@ -64,7 +64,7 @@
         </div>
       </div>
 
-      <div class="card">
+      <div class="card jamms-bg-dark">
         <div class="card-header" id="faqWhyUseASmartPlaylist">
           <h2 class="mb-0">
             <button class="btn btn-link btn-block collapsed" type="button" data-toggle="collapse" data-target="#faqWhyUseASmartPlaylistResponse" aria-expanded="false" aria-controls="faqWhyUseASmartPlaylistResponse">
@@ -98,7 +98,7 @@
         </div>
       </div>
 
-      <div class="card">
+      <div class="card jamms-bg-dark">
         <div class="card-header" id="faqWhyShouldIUseJamms">
           <h2 class="mb-0">
             <button class="btn btn-link btn-block collapsed" type="button" data-toggle="collapse" data-target="#faqWhyShouldIUseJammsResponse" aria-expanded="false" aria-controls="faqWhyShouldIUseJamms">
