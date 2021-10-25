@@ -408,7 +408,7 @@ function addRuleFormFields()
 
     const ruleUnitDescriptionDiv = document.createElement("div");
     ruleUnitDescriptionDiv.setAttribute("class", "input-group-append");
-    ruleUnitDescriptionDiv.setAttribute("id", `playlistRuleUnitContainer-${ruleCounter}`)
+    ruleUnitDescriptionDiv.setAttribute("id", `playlistRuleUnitContainer-${ruleCounter}`);
 
     const ruleDataInputGroupDiv = document.createElement("div");
     ruleDataInputGroupDiv.setAttribute("class", "input-group");
