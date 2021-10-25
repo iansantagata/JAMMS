@@ -602,7 +602,7 @@ function enableValidOperatorOptions()
             ruleOperatorAddSuccess = true;
             break;
 
-        case "integer":
+        case "negativeInteger":
         case "positiveInteger":
             addRuleOperatorOptionsForNumberDataType(ruleOperatorElement);
             ruleOperatorAddSuccess = true;
@@ -674,6 +674,7 @@ function enableValidRuleDataEntry()
         case "string":
             ruleDataElement.setAttribute("type", "text");
             ruleDataElement.removeAttribute("min");
+            ruleDataElement.removeAttribute("max");
             ruleDataElement.value = "";
             isRuleFieldTypeChangeSuccess = true;
             break;
@@ -681,14 +682,16 @@ function enableValidRuleDataEntry()
         case "date":
             ruleDataElement.setAttribute("type", "date");
             ruleDataElement.removeAttribute("min");
+            ruleDataElement.removeAttribute("max");
             ruleDataElement.value = "";
             isRuleFieldTypeChangeSuccess = true;
             break;
 
 
-        case "integer":
+        case "negativeInteger":
             ruleDataElement.setAttribute("type", "number");
-            ruleDataElement.removeAttribute("min");
+            ruleDataElement.setAttribute("max", "0");
+            ruleDataElement.setAttribute("min", "-60");
             ruleDataElement.value = "";
             isRuleFieldTypeChangeSuccess = true;
             break;
@@ -696,6 +699,7 @@ function enableValidRuleDataEntry()
         case "positiveInteger":
             ruleDataElement.setAttribute("type", "number");
             ruleDataElement.setAttribute("min", "0");
+            ruleDataElement.removeAttribute("max");
             ruleDataElement.value = "";
             isRuleFieldTypeChangeSuccess = true;
             break;
@@ -800,7 +804,7 @@ function getDataFieldType(ruleFieldValue)
             return "date";
 
         case "loudness":
-            return "integer";
+            return "negativeInteger";
 
         case "tempo":
         case "duration":
