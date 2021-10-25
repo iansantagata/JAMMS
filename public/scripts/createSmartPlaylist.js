@@ -343,6 +343,10 @@ function addRuleFormFields()
     songDurationOptionRuleType.setAttribute("value", "duration");
     songDurationOptionRuleType.innerText = "Song Length";
 
+    const songLoudnessOptionRuleType = document.createElement("option");
+    songLoudnessOptionRuleType.setAttribute("value", "loudness");
+    songLoudnessOptionRuleType.innerText = "Song Loudness";
+
     const songOptionRuleType = document.createElement("option");
     songOptionRuleType.setAttribute("value", "song");
     songOptionRuleType.innerText = "Song Name";
@@ -363,6 +367,7 @@ function addRuleFormFields()
     selectRuleType.appendChild(genreOptionRuleType);
     selectRuleType.appendChild(releaseDateOptionRuleType);
     selectRuleType.appendChild(songDurationOptionRuleType);
+    selectRuleType.appendChild(songLoudnessOptionRuleType);
     selectRuleType.appendChild(songOptionRuleType);
     selectRuleType.appendChild(tempoOptionRuleType);
 
@@ -597,6 +602,7 @@ function enableValidOperatorOptions()
             ruleOperatorAddSuccess = true;
             break;
 
+        case "integer":
         case "positiveInteger":
             addRuleOperatorOptionsForNumberDataType(ruleOperatorElement);
             ruleOperatorAddSuccess = true;
@@ -674,6 +680,14 @@ function enableValidRuleDataEntry()
 
         case "date":
             ruleDataElement.setAttribute("type", "date");
+            ruleDataElement.removeAttribute("min");
+            ruleDataElement.value = "";
+            isRuleFieldTypeChangeSuccess = true;
+            break;
+
+
+        case "integer":
+            ruleDataElement.setAttribute("type", "number");
             ruleDataElement.removeAttribute("min");
             ruleDataElement.value = "";
             isRuleFieldTypeChangeSuccess = true;
@@ -785,6 +799,9 @@ function getDataFieldType(ruleFieldValue)
         case "releaseDate":
             return "date";
 
+        case "loudness":
+            return "integer";
+
         case "tempo":
         case "duration":
             return "positiveInteger";
@@ -803,6 +820,9 @@ function getDataFieldUnit(ruleFieldValue)
 
         case "duration":
             return "Minutes";
+
+        case "loudness":
+            return "Decibels";
 
         case "album":
         case "artist":
