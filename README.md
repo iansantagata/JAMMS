@@ -1,6 +1,6 @@
 <!-- Badges -->
-[![Site Status](https://img.shields.io/website?label=Website&down_color=red&down_message=offline&up_color=green&up_message=online&url=https%3A%2F%2Fjamms.app)](https://jamms.app)
-[![License](https://img.shields.io/github/license/iansantagata/jamms?label=License)](LICENSE)
+[![Site Status](https://img.shields.io/website?label=Website&down_color=critical&down_message=offline&up_color=success&up_message=online&url=https%3A%2F%2Fjamms.app)](https://jamms.app)
+[![License](https://img.shields.io/github/license/iansantagata/jamms?label=License&color=success)](LICENSE)
 [![Continuous Deployment](https://github.com/iansantagata/jamms/actions/workflows/continuous-deployment.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/continuous-deployment.yml)
 [![Code QL Scan](https://github.com/iansantagata/jamms/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/codeql-analysis.yml)
 [![Code Linter](https://github.com/iansantagata/jamms/actions/workflows/linter.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/linter.yml)
