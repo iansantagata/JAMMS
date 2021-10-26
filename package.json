@@ -9,8 +9,8 @@
   "scripts": {
     "lintjs": "eslint .",
     "lintjsfix": "eslint . --fix",
-    "linthtml": "htmllint '{,!(node_modules)/**/}*.html'",
-    "lintvash": "htmllint '{,!(node_modules)/**/}*.vash'",
+    "linthtml": "linthtml '{,!(node_modules)/**/}*.html'",
+    "lintvash": "linthtml '{,!(node_modules)/**/}*.vash'",
     "lint": "npm run lintjs && npm run linthtml && npm run lintvash"
   },
   "dependencies": {
@@ -23,10 +23,9 @@
     "vash": "^0.13.0"
   },
   "devDependencies": {
+    "@linthtml/linthtml": "^0.8.0",
     "dotenv": "^10.0.0",
     "eslint": "^8.0.0",
-    "htmllint": "^0.7.2",
-    "htmllint-cli": "^0.0.7",
     "nodemon": "^2.0.12"
   }
 }
