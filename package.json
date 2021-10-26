@@ -9,8 +9,8 @@
   "scripts": {
     "lintjs": "eslint .",
     "lintjsfix": "eslint . --fix",
-    "linthtml": "linthtml '{,!(node_modules)/**/}*.html'",
-    "lintvash": "linthtml '{,!(node_modules)/**/}*.vash'",
+    "linthtml": "linthtml **/*.html",
+    "lintvash": "linthtml **/*.vash",
     "lint": "npm run lintjs && npm run linthtml && npm run lintvash"
   },
   "dependencies": {
