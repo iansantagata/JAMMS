@@ -28,6 +28,7 @@ rules:
     - double
   attr-req-value: true
   attr-validate: true
+  button-req-content: true
   class-no-dup: true
   class-style:
     - true
@@ -35,8 +36,8 @@ rules:
   doctype-first:
     - true
     - smart
-  doctype-html5: false
-  fig-req-figcaption: false
+  doctype-html5: true
+  fig-req-figcaption: true
   focusable-tabindex-style: false
   head-req-title: true
   head-valid-content-model: true
@@ -48,14 +49,10 @@ rules:
   id-no-dup: true
   img-req-alt: true
   img-req-src: false
-  indent-delta: false
   indent-style:
     - true
     - spaces
-  indent-width:
-    - true
-    - 2
-  indent-width-cont: false
+  indent-width: false
   input-radio-req-name: true
   input-req-label: false
   label-req-for: true
