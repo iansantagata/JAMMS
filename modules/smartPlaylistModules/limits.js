@@ -6,6 +6,7 @@ const path = require("path"); // URI and local file paths
 // Custom Modules
 const customModulePath = path.join(__dirname, "..");
 const logger = require(path.join(customModulePath, "logger.js"));
+const units = require(path.join(customModulePath, "unitConversion.js"));
 
 // Smart Playlist Modules
 const smartPlaylistModulesPath = __dirname;
@@ -13,10 +14,6 @@ const dataRetrieval = require(path.join(smartPlaylistModulesPath, "dataRetrieval
 
 // Default Constant Values
 const maximumPlaylistSongLimit = 10000;
-
-const secondsToMsecConversion = 1000;
-const minutesToSecondsConversion = 60;
-const hoursToMinutesConversion = 60;
 
 // Limits Logic
 exports.getPlaylistLimits = function(req)
@@ -60,12 +57,12 @@ exports.getPlaylistLimits = function(req)
     {
         // Convert the value from its time unit to milliseconds to be easier to work with (if applicable)
         case "minutes":
-            playlistLimitData.value *= minutesToSecondsConversion * secondsToMsecConversion;
+            playlistLimitData.value = units.getMillisecondsFromMinutes(playlistLimitData.value);
             playlistLimitData.type = "milliseconds";
             break;
 
         case "hours":
-            playlistLimitData.value *= hoursToMinutesConversion * minutesToSecondsConversion * secondsToMsecConversion;
+            playlistLimitData.value = units.getMillisecondsFromHours(playlistLimitData.value);
             playlistLimitData.type = "milliseconds";
             break;
 
