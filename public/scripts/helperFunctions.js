@@ -266,3 +266,18 @@ function getImagePath(images, minimumPixelsPerSide, defaultImagePath)
     // The URL is a valid one, so use it to point to the biggest valid image
     return targetImage.url;
 }
+
+function getCamelCase(str)
+{
+    const nonAlphanumericRepeatingFollowedBySingleAlphanumericRegex = /[^a-zA-Z0-9]+(.)/g;
+
+    return str
+        // Convert the whole string to lower case
+        .toLowerCase()
+
+        // Convert only parts of the string that should be camel case capitalized with capitals
+        .replace(
+            nonAlphanumericRepeatingFollowedBySingleAlphanumericRegex,
+            (match, chr) => chr.toUpperCase()
+        );
+}

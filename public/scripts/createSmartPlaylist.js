@@ -744,35 +744,7 @@ function enableDataUnitVisibility()
         return;
     }
 
-    // See if we already have a unit area shown to the user
-    const playlistRuleUnitId = `playlistRuleUnit-${targetRuleNumber}`;
-    const playlistRuleUnitElement = document.getElementById(playlistRuleUnitId);
-
-    // Get the type of field that was selected
-    const ruleFieldValue = event.target.value;
-    const ruleFieldUnit = getDataFieldUnit(ruleFieldValue);
-
-    // We do not have a unit to show the user (intentional) and nothing to clear out, so exit
-    if (ruleFieldUnit === null && playlistRuleUnitElement === null)
-    {
-        return;
-    }
-
-    // We do not want to show a unit to the user, but we have an existing unit to clear out
-    if (ruleFieldUnit === null)
-    {
-        playlistRuleUnitElement.remove();
-        return;
-    }
-
-    // We have a unit to show to the user and an element to shove it into
-    if (playlistRuleUnitElement !== null)
-    {
-        playlistRuleUnitElement.innerText = ruleFieldUnit;
-        return;
-    }
-
-    // We have a unit to show the user and no element to shove it into
+    // Make sure we have a container to put unit data into
     const unitContainerElement = document.getElementById(`playlistRuleUnitContainer-${targetRuleNumber}`);
     if (unitContainerElement === null)
     {
@@ -781,13 +753,35 @@ function enableDataUnitVisibility()
         return;
     }
 
+    // Clear out the container, we can recreate elements within it if needed
+    removeChildElements(unitContainerElement);
+
+    // Get the type of field that was selected
+    const ruleFieldValue = event.target.value;
+    const ruleFieldUnit = getDataFieldUnit(ruleFieldValue);
+
+    // If we  do not have a unit to show the user intentionally, there is no need to re-create the unit elements, so exit
+    if (ruleFieldUnit === null)
+    {
+        return;
+    }
+
     // Create the unit description and shove it onto the container
+    const ruleUnitId = `playlistRuleUnit-${targetRuleNumber}`;
     const ruleUnitDescription = document.createElement("span");
     ruleUnitDescription.setAttribute("class", "input-group-text");
-    ruleUnitDescription.setAttribute("id", `playlistRuleUnit-${targetRuleNumber}`);
+    ruleUnitDescription.setAttribute("id", ruleUnitId);
     ruleUnitDescription.innerText = ruleFieldUnit;
 
+    // We want to send this up with the rules form in case we need to convert units, so make it a hidden field
+    const ruleUnitHiddenFormField = document.createElement("input");
+    ruleUnitHiddenFormField.setAttribute("type", "hidden");
+    ruleUnitHiddenFormField.setAttribute("name", ruleUnitId);
+    ruleUnitHiddenFormField.value = getCamelCase(ruleFieldUnit);
+
+    // Put both the hidden element and the description in the container
     unitContainerElement.appendChild(ruleUnitDescription);
+    unitContainerElement.appendChild(ruleUnitHiddenFormField);
 }
 
 function getDataFieldType(ruleFieldValue)
