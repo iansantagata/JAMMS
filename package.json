@@ -8,6 +8,7 @@
   "repository": "github:iansantagata/jamms",
   "scripts": {
     "lintjs": "eslint .",
+    "lintjsfix": "eslint . --fix",
     "linthtml": "htmllint '{,!(node_modules)/**/}*.html'",
     "lintvash": "htmllint '{,!(node_modules)/**/}*.vash'",
     "lint": "npm run lintjs && npm run linthtml && npm run lintvash"
@@ -16,16 +17,16 @@
     "axios": "^0.21.4",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.4",
-    "dotenv": "^10.0.0",
     "express": "~4.16.0",
-    "nodemon": "^2.0.12",
     "probe-image-size": "^7.2.1",
     "querystring": "^0.2.1",
     "vash": "^0.13.0"
   },
   "devDependencies": {
+    "dotenv": "^10.0.0",
     "eslint": "^8.0.0",
     "htmllint": "^0.7.2",
-    "htmllint-cli": "^0.0.7"
+    "htmllint-cli": "^0.0.7",
+    "nodemon": "^2.0.12"
   }
 }
