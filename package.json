@@ -8,6 +8,7 @@
   "repository": "github:iansantagata/jamms",
   "scripts": {
     "lintjs": "eslint .",
+    "lintjsfix": "eslint . --fix",
     "linthtml": "htmllint '{,!(node_modules)/**/}*.html'",
     "lintvash": "htmllint '{,!(node_modules)/**/}*.vash'",
     "lint": "npm run lintjs && npm run linthtml && npm run lintvash"
