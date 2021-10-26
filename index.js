@@ -33,7 +33,11 @@ const isDevelopmentEnvironment = environment.isDevelopmentEnvironmentSync();
 if (isDevelopmentEnvironment)
 {
     const dotenv = require("dotenv");
-    dotenv.config();
+    dotenv.config(
+    {
+        path: path.join(__dirname, "environment", "development.env")
+    });
+
     logger.logInfo("Injected environment variables");
 }
 

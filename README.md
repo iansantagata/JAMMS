@@ -37,15 +37,17 @@ This application will not run properly without specific secrets (not included in
 
 For more information on where these secrets come from, see [Spotify's documentation on Application Settings](https://developer.spotify.com/documentation/general/guides/app-settings/).
 
-In a development (local) environment, these secrets come from a `.env` file at the root directory and are hard-coded as key-value pairs.  Within the application, the keys and respective values are injected as environment variables.  In a production environment, these secrets are injected via environment variables with the same name as those present in the `.env` file.
+In a development (local) environment, these secrets come from a `development.env` file in the [environment](environment) directory and are hard-coded as key-value pairs.  Within the application, the keys and respective values are injected as environment variables.  
 
-A `.env.example` file is shown at the root directory to provide a list of all secrets (environment variables) that are required for this application in both development and production.
+In a production environment, these secrets are injected via environment variables with the same name as those present in the `.env` file.
+
+A `.env.example` file is shown in the [environment](environment) directory to provide a list of all secrets (environment variables) that are required for this application in both development and production.
 
 To run this application locally:
 
-1. Copy the `.env.example` file in the root directory to a `.env` file.
-2. Replace one value with the appropriate value for each key.
-3. Repeat until all keys have their appropriate values in a development environment.
+1. Within the `environment` directory off of root, copy the `.env.example` file to a new file named `development.env`.
+2. Replace one example value with the appropriate value for each key.
+3. Repeat until all keys have their appropriate values in a environment.
 
 ### Start-Up
 
