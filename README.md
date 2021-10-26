@@ -1,7 +1,7 @@
 [![Continuous Deployment](https://github.com/iansantagata/jamms/actions/workflows/continuous-deployment.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/continuous-deployment.yml)
 [![Code QL Scan](https://github.com/iansantagata/jamms/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/codeql-analysis.yml)
 [![Code Linter](https://github.com/iansantagata/jamms/actions/workflows/linter.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/linter.yml)
-[![License](https://img.shields.io/github/license/iansantagata/jamms?label=License)](https://github.com/iansantagata/jamms/blob/master/LICENSE)
+[![License](https://img.shields.io/github/license/iansantagata/jamms?label=License)](LICENSE)
 
 ## Overview
 
