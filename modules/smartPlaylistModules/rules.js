@@ -3,6 +3,10 @@
 // Dependencies
 const path = require("path"); // URI and local file paths
 
+// Custom Modules
+const customModulePath = path.join(__dirname, "..");
+const units = require(path.join(customModulePath, "unitConversion.js"));
+
 // Smart Playlist Modules
 const smartPlaylistModulesPath = __dirname;
 const dataRetrieval = require(path.join(smartPlaylistModulesPath, "dataRetrieval.js"));
@@ -10,9 +14,6 @@ const operators = require(path.join(smartPlaylistModulesPath, "operators.js"));
 
 // Default Constant Values
 const noop = () => {};
-
-const secondsToMsecConversion = 1000;
-const minutesToSecondsConversion = 60;
 
 // Rules Logic
 exports.getPlaylistRules = function(req)
@@ -31,6 +32,7 @@ exports.getPlaylistRules = function(req)
             {
                 const ruleType = req.body[`playlistRuleType-${ruleNumber}`];
                 const ruleOperator = req.body[`playlistRuleOperator-${ruleNumber}`];
+                const ruleUnit = req.body[`playlistRuleUnit-${ruleNumber}`];
                 let ruleData = req.body[`playlistRuleData-${ruleNumber}`];
 
                 const ruleOperatorFunction = getRuleOperatorFunction(ruleOperator);
@@ -45,10 +47,11 @@ exports.getPlaylistRules = function(req)
                     throw new Error("Failed to find valid rule by function");
                 }
 
-                // Handle the special case where user input needs to be converted a different unit
-                if (ruleFunction === ruleByDuration)
+                // Handle the case where user input needs to be converted a different unit internally
+                const ruleUnitConversionFunction = getRuleUnitConversionFunction(ruleUnit);
+                if (ruleUnitConversionFunction !== noop)
                 {
-                    ruleData *= minutesToSecondsConversion * secondsToMsecConversion;
+                    ruleData = ruleUnitConversionFunction(ruleData);
                 }
 
                 const ruleFromParameters =
@@ -156,6 +159,18 @@ function getRuleFunction(ruleType)
     }
 
     return ruleFunction;
+}
+
+function getRuleUnitConversionFunction(ruleUnit)
+{
+    switch (ruleUnit)
+    {
+        case "minutes":
+            return units.getMillisecondsFromMinutes;
+
+        default:
+            return noop;
+    }
 }
 
 // Special Rule By X Functions
