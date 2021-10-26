@@ -11,14 +11,13 @@ const redirect = require(path.join(customModulePath, "redirect.js"));
 const secrets = require(path.join(customModulePath, "secrets.js"));
 const cookie = require(path.join(customModulePath, "cookie.js"));
 const logger = require(path.join(customModulePath, "logger.js"));
+const units = require(path.join(customModulePath, "unitConversion.js"));
 
 // Authorize Logic
 const spotifyAccessTokenUri = "https://accounts.spotify.com/api/token";
 
 const accessKey = "AccessToken";
 const refreshKey = "RefreshToken";
-
-const secondToMsecConversion = 1000;
 
 exports.getAuthorizationTokens = async function(req)
 {
@@ -57,7 +56,7 @@ exports.getAuthorizationTokens = async function(req)
             accessToken: response.data.access_token,
             refreshToken: response.data.refresh_token,
             scopes: response.data.scope,
-            tokenExpirationInMsec: response.data.expires_in * secondToMsecConversion,
+            tokenExpirationInMsec: units.getMillisecondsFromSeconds(response.data.expires_in),
             tokenType: response.data.token_type
         };
 
@@ -100,7 +99,7 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
             accessToken: response.data.access_token,
             refreshToken: response.data.refresh_token,
             scopes: response.data.scope,
-            tokenExpirationInMsec: response.data.expires_in * secondToMsecConversion,
+            tokenExpirationInMsec: units.getMillisecondsFromSeconds(response.data.expires_in),
             tokenType: response.data.token_type
         };
 
