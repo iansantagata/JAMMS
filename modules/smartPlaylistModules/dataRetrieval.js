@@ -82,6 +82,11 @@ exports.getEnergyFromSavedTrack = function(savedTrack)
     return savedTrack.track.audio_features.energy;
 };
 
+exports.getInstrumentalnessFromSavedTrack = function(savedTrack)
+{
+    return savedTrack.track.audio_features.instrumentalness;
+};
+
 // Retrieve Native Data from Artist Object
 exports.getArtistNameFromArtist = function(artist)
 {
