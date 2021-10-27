@@ -36,7 +36,8 @@ exports.getPlaylistSpecialRuleFlags = function(inputRules)
         }
 
         if (inputRuleFunction === rules.ruleByBeatsPerMinute ||
-            inputRuleFunction === rules.ruleByDecibels)
+            inputRuleFunction === rules.ruleByDecibels ||
+            inputRuleFunction === rules.ruleByAcousticness)
         {
             flags.add("audioFeatures");
         }

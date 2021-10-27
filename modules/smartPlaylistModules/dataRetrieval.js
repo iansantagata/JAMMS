@@ -54,6 +54,11 @@ exports.getGenresFromSavedTrack = function(savedTrack)
     return savedTrack.track.genres;
 };
 
+exports.getAcousticnessFromSavedTrack = function(savedTrack)
+{
+    return savedTrack.track.audio_features.acousticness;
+}
+
 exports.getBeatsPerMinuteFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.audio_features.tempo;

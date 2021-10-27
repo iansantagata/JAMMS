@@ -128,7 +128,7 @@ function displaySmartPlaylistPreview(data)
     headerElement.setAttribute("class", "my-3");
     headerElement.innerText = "Smart Playlist Track Preview";
 
-    const textElement = document.createTextNode("Note - All playlist previews are generated on request. On top of the limits set above, previews are also limitied to the first 25 matching tracks found. Any created smart playlist may differ from the tracks shown in the preview.");
+    const textElement = document.createTextNode("Note - All playlist previews are generated on request. On top of the limits set above, previews are also limited to the first 25 matching tracks found. Any created smart playlist may differ from the tracks shown in the preview.");
 
     const alertImageElement = document.createElement("i");
     alertImageElement.setAttribute("class", "bi-info-circle-fill mx-2");
