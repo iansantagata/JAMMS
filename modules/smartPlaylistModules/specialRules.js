@@ -30,14 +30,20 @@ exports.getPlaylistSpecialRuleFlags = function(inputRules)
     for (const inputRule of inputRules)
     {
         const inputRuleFunction = inputRule.function;
-        if (inputRuleFunction === rules.ruleByGenre)
+        const isGenreRule = inputRuleFunction === rules.ruleByGenre;
+
+        if (isGenreRule)
         {
             flags.add("genre");
         }
 
-        if (inputRuleFunction === rules.ruleByBeatsPerMinute ||
+        const isAudioFeaturesRule =
+            inputRuleFunction === rules.ruleByBeatsPerMinute ||
             inputRuleFunction === rules.ruleByDecibels ||
-            inputRuleFunction === rules.ruleByAcousticness)
+            inputRuleFunction === rules.ruleByAcousticness ||
+            inputRuleFunction === rules.ruleByDanceability;
+
+        if (isAudioFeaturesRule)
         {
             flags.add("audioFeatures");
         }

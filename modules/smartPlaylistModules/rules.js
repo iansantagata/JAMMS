@@ -134,6 +134,10 @@ function getRuleFunction(ruleType)
             ruleFunction = ruleByAlbumName;
             break;
 
+        case "danceability":
+            ruleFunction = exports.ruleByDanceability;
+            break;
+
         case "duration":
             ruleFunction = ruleByDuration;
             break;
@@ -192,6 +196,12 @@ exports.ruleByBeatsPerMinute = function(track, beatsPerMinuteRuleData, operatorF
     const trackBeatsPerMinute = dataRetrieval.getBeatsPerMinuteFromSavedTrack(track);
     return operatorFunction(trackBeatsPerMinute, beatsPerMinuteRuleData);
 };
+
+exports.ruleByDanceability = function(track, danceabilityRuleData, operatorFunction)
+{
+    const trackDanceability = dataRetrieval.getDanceabilityFromSavedTrack(track);
+    return operatorFunction(trackDanceability, danceabilityRuleData);
+}
 
 exports.ruleByDecibels = function(track, decibelsRuleData, operatorFunction)
 {

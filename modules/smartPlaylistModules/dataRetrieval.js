@@ -59,6 +59,11 @@ exports.getAcousticnessFromSavedTrack = function(savedTrack)
     return savedTrack.track.audio_features.acousticness;
 };
 
+exports.getDanceabilityFromSavedTrack = function(savedTrack)
+{
+    return savedTrack.track.audio_features.danceability;
+};
+
 exports.getBeatsPerMinuteFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.audio_features.tempo;
