@@ -335,6 +335,10 @@ function addRuleFormFields()
     artistOptionRuleType.setAttribute("value", "artist");
     artistOptionRuleType.innerText = "Artist Name";
 
+    const danceabilityOptionRuleType = document.createElement("option");
+    danceabilityOptionRuleType.setAttribute("value", "danceability");
+    danceabilityOptionRuleType.innerText = "Danceability";
+
     const genreOptionRuleType = document.createElement("option");
     genreOptionRuleType.setAttribute("value", "genre");
     genreOptionRuleType.innerText = "Genre";
@@ -369,6 +373,7 @@ function addRuleFormFields()
     selectRuleType.appendChild(acousticnessOptionRuleType);
     selectRuleType.appendChild(albumOptionRuleType);
     selectRuleType.appendChild(artistOptionRuleType);
+    selectRuleType.appendChild(danceabilityOptionRuleType);
     selectRuleType.appendChild(genreOptionRuleType);
     selectRuleType.appendChild(loudnessOptionRuleType);
     selectRuleType.appendChild(releaseDateOptionRuleType);
@@ -819,6 +824,7 @@ function getDataFieldType(ruleFieldValue)
             return "positiveInteger";
 
         case "acousticness":
+        case "danceability":
             return "percentage";
 
         default:
@@ -840,6 +846,7 @@ function getDataFieldUnit(ruleFieldValue)
             return "Decibels";
 
         case "acousticness":
+        case "danceability":
             return "Percent";
 
         case "album":
