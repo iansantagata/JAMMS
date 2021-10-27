@@ -335,6 +335,10 @@ function addRuleFormFields()
     genreOptionRuleType.setAttribute("value", "genre");
     genreOptionRuleType.innerText = "Genre";
 
+    const loudnessOptionRuleType = document.createElement("option");
+    loudnessOptionRuleType.setAttribute("value", "loudness");
+    loudnessOptionRuleType.innerText = "Loudness";
+
     const releaseDateOptionRuleType = document.createElement("option");
     releaseDateOptionRuleType.setAttribute("value", "releaseDate");
     releaseDateOptionRuleType.innerText = "Release Date";
@@ -343,17 +347,13 @@ function addRuleFormFields()
     songDurationOptionRuleType.setAttribute("value", "duration");
     songDurationOptionRuleType.innerText = "Song Length";
 
-    const songLoudnessOptionRuleType = document.createElement("option");
-    songLoudnessOptionRuleType.setAttribute("value", "loudness");
-    songLoudnessOptionRuleType.innerText = "Song Loudness";
-
     const songOptionRuleType = document.createElement("option");
     songOptionRuleType.setAttribute("value", "song");
     songOptionRuleType.innerText = "Song Name";
 
     const tempoOptionRuleType = document.createElement("option");
     tempoOptionRuleType.setAttribute("value", "tempo");
-    tempoOptionRuleType.innerText = "Song Tempo";
+    tempoOptionRuleType.innerText = "Tempo";
 
     const selectRuleTypeId = `playlistRuleType-${ruleCounter}`;
     const selectRuleType = document.createElement("select");
@@ -365,9 +365,9 @@ function addRuleFormFields()
     selectRuleType.appendChild(albumOptionRuleType);
     selectRuleType.appendChild(artistOptionRuleType);
     selectRuleType.appendChild(genreOptionRuleType);
+    selectRuleType.appendChild(loudnessOptionRuleType);
     selectRuleType.appendChild(releaseDateOptionRuleType);
     selectRuleType.appendChild(songDurationOptionRuleType);
-    selectRuleType.appendChild(songLoudnessOptionRuleType);
     selectRuleType.appendChild(songOptionRuleType);
     selectRuleType.appendChild(tempoOptionRuleType);
 
