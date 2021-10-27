@@ -142,6 +142,10 @@ function getRuleFunction(ruleType)
             ruleFunction = ruleByDuration;
             break;
 
+        case "energy":
+            ruleFunction = exports.ruleByEnergy;
+            break;
+
         case "genre":
             ruleFunction = exports.ruleByGenre;
             break;
@@ -207,6 +211,12 @@ exports.ruleByDecibels = function(track, decibelsRuleData, operatorFunction)
 {
     const trackDecibels = dataRetrieval.getDecibelsFromSavedTrack(track);
     return operatorFunction(trackDecibels, decibelsRuleData);
+};
+
+exports.ruleByEnergy = function(track, energyRuleData, operatorFunction)
+{
+    const trackEnergy = dataRetrieval.getEnergyFromSavedTrack(track);
+    return operatorFunction(trackEnergy, energyRuleData);
 };
 
 exports.ruleByGenre = function(track, genreNameRuleData, operatorFunction)
