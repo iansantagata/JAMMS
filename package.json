@@ -8,10 +8,10 @@
   "repository": "github:iansantagata/jamms",
   "scripts": {
     "lintjs": "eslint .",
-    "lintjsfix": "eslint . --fix",
     "linthtml": "linthtml **/*.html",
     "lintvash": "linthtml **/*.vash",
-    "lint": "npm run lintjs && npm run linthtml && npm run lintvash"
+    "lint": "npm run lintjs && npm run linthtml && npm run lintvash",
+    "lintfix": "eslint . --fix"
   },
   "dependencies": {
     "axios": "^0.21.4",
