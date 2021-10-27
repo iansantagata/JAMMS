@@ -403,6 +403,7 @@ function addRuleFormFields()
     selectRuleType.appendChild(instrumentalnessRuleType);
     selectRuleType.appendChild(livenessRuleType);
     selectRuleType.appendChild(loudnessOptionRuleType);
+    selectRuleType.appendChild(meterOptionRuleType);
     selectRuleType.appendChild(positivityOptionRuleType);
     selectRuleType.appendChild(releaseDateOptionRuleType);
     selectRuleType.appendChild(speechinessRuleType);
