@@ -92,6 +92,11 @@ exports.getLivenessFromSavedTrack = function(savedTrack)
     return savedTrack.track.audio_features.liveness;
 };
 
+exports.getSpeechinessFromSavedTrack = function(savedTrack)
+{
+    return savedTrack.track.audio_features.speechiness;
+};
+
 // Retrieve Native Data from Artist Object
 exports.getArtistNameFromArtist = function(artist)
 {

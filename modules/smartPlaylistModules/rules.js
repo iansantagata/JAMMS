@@ -170,6 +170,10 @@ function getRuleFunction(ruleType)
             ruleFunction = ruleBySongName;
             break;
 
+        case "speechiness":
+            ruleFunction = exports.ruleBySpeechiness;
+            break;
+
         case "tempo":
             ruleFunction = exports.ruleByBeatsPerMinute;
             break;
@@ -245,6 +249,12 @@ exports.ruleByLiveness = function(track, livenessRuleData, operatorFunction)
 {
     const trackLiveness = dataRetrieval.getLivenessFromSavedTrack(track);
     return operatorFunction(trackLiveness, livenessRuleData);
+};
+
+exports.ruleBySpeechiness = function(track, speechinessRuleData, operatorFunction)
+{
+    const trackSpeechiness = dataRetrieval.getSpeechinessFromSavedTrack(track);
+    return operatorFunction(trackSpeechiness, speechinessRuleData);
 };
 
 // Generic Rule By X Functions
