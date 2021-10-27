@@ -11,6 +11,7 @@ const express = require("express"); // Express web server framework
 const path = require("path"); // URI and local file paths
 const cors = require("cors"); // Cross-origin resource sharing
 const cookieParser = require("cookie-parser"); // Parsing and storing encrypted cookies
+const helmet = require("helmet"); // HTTP header security
 
 console.log("Imported major dependencies");
 
@@ -47,9 +48,30 @@ const viewsFilesPath = path.join(__dirname, "views");
 // Setup Application
 const cookieSigningKey = environment.getCookieSigningKeySync();
 
+const helmetConfiguration = {
+    contentSecurityPolicy: {
+        directives: {
+            "img-src": [
+                "'self'",
+                "data:",
+                "*.scdn.co"
+            ],
+            "script-src-elem": [
+                "'self'",
+                "'unsafe-inline'",
+                "stackpath.bootstrapcdn.com",
+                "code.jquery.com",
+                "cdn.jsdelivr.net"
+            ]
+        },
+        useDefaults: true
+    }
+};
+
 const app = express();
 app.use(express.static(staticFilesPath))
     .use(cors())
+    .use(helmet(helmetConfiguration))
     .use(cookieParser(cookieSigningKey))
     .use(express.json())
     .use(express.urlencoded({ extended: true }));
