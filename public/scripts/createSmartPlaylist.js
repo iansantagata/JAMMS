@@ -359,6 +359,10 @@ function addRuleFormFields()
     loudnessOptionRuleType.setAttribute("value", "loudness");
     loudnessOptionRuleType.innerText = "Loudness";
 
+    const positivityOptionRuleType = document.createElement("option");
+    positivityOptionRuleType.setAttribute("value", "valence");
+    positivityOptionRuleType.innerText = "Positivity";
+
     const releaseDateOptionRuleType = document.createElement("option");
     releaseDateOptionRuleType.setAttribute("value", "releaseDate");
     releaseDateOptionRuleType.innerText = "Release Date";
@@ -395,6 +399,7 @@ function addRuleFormFields()
     selectRuleType.appendChild(instrumentalnessRuleType);
     selectRuleType.appendChild(livenessRuleType);
     selectRuleType.appendChild(loudnessOptionRuleType);
+    selectRuleType.appendChild(positivityOptionRuleType);
     selectRuleType.appendChild(releaseDateOptionRuleType);
     selectRuleType.appendChild(speechinessRuleType);
     selectRuleType.appendChild(songDurationOptionRuleType);
@@ -849,6 +854,7 @@ function getDataFieldType(ruleFieldValue)
         case "instrumentalness":
         case "liveness":
         case "speechiness":
+        case "valence":
             return "percentage";
 
         default:
@@ -875,6 +881,7 @@ function getDataFieldUnit(ruleFieldValue)
         case "instrumentalness":
         case "liveness":
         case "speechiness":
+        case "valence":
             return "Percent";
 
         case "album":

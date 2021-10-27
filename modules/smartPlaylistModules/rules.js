@@ -178,6 +178,10 @@ function getRuleFunction(ruleType)
             ruleFunction = exports.ruleByBeatsPerMinute;
             break;
 
+        case "valence":
+            ruleFunction = exports.ruleByValence;
+            break;
+
         default:
             break;
     }
@@ -255,6 +259,12 @@ exports.ruleBySpeechiness = function(track, speechinessRuleData, operatorFunctio
 {
     const trackSpeechiness = dataRetrieval.getSpeechinessFromSavedTrack(track);
     return operatorFunction(trackSpeechiness, speechinessRuleData);
+};
+
+exports.ruleByValence = function(track, valenceRuleData, operatorFunction)
+{
+    const trackValence = dataRetrieval.getValenceFromSavedTrack(track);
+    return operatorFunction(trackValence, valenceRuleData);
 };
 
 // Generic Rule By X Functions
