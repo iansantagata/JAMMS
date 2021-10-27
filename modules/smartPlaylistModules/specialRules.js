@@ -42,7 +42,8 @@ exports.getPlaylistSpecialRuleFlags = function(inputRules)
             inputRuleFunction === rules.ruleByDecibels ||
             inputRuleFunction === rules.ruleByAcousticness ||
             inputRuleFunction === rules.ruleByDanceability ||
-            inputRuleFunction === rules.ruleByEnergy;
+            inputRuleFunction === rules.ruleByEnergy ||
+            inputRuleFunction === rules.ruleByInstrumentalness;
 
         if (isAudioFeaturesRule)
         {

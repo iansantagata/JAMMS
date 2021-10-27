@@ -150,6 +150,10 @@ function getRuleFunction(ruleType)
             ruleFunction = exports.ruleByGenre;
             break;
 
+        case "instrumentalness":
+            ruleFunction = exports.ruleByInstrumentalness;
+            break;
+
         case "loudness":
             ruleFunction = exports.ruleByDecibels;
             break;
@@ -225,6 +229,12 @@ exports.ruleByGenre = function(track, genreNameRuleData, operatorFunction)
     const normalizedGenreNameRuleData = genreNameRuleData.toUpperCase();
 
     return operatorFunction(trackGenres, normalizedGenreNameRuleData);
+};
+
+exports.ruleByInstrumentalness = function(track, instrumentalnessRuleData, operatorFunction)
+{
+    const trackInstrumentalness = dataRetrieval.getInstrumentalnessFromSavedTrack(track);
+    return operatorFunction(trackInstrumentalness, instrumentalnessRuleData);
 };
 
 // Generic Rule By X Functions
