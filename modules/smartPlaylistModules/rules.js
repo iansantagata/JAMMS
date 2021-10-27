@@ -162,6 +162,10 @@ function getRuleFunction(ruleType)
             ruleFunction = exports.ruleByDecibels;
             break;
 
+        case "meter":
+            ruleFunction = exports.ruleByBeatsPerMeasure;
+            break;
+
         case "releaseDate":
             ruleFunction = ruleByReleaseDate;
             break;
@@ -215,6 +219,12 @@ exports.ruleByBeatsPerMinute = function(track, beatsPerMinuteRuleData, operatorF
 {
     const trackBeatsPerMinute = dataRetrieval.getBeatsPerMinuteFromSavedTrack(track);
     return operatorFunction(trackBeatsPerMinute, beatsPerMinuteRuleData);
+};
+
+exports.ruleByBeatsPerMeasure = function(track, beatsPerMeasureRuleData, operatorFunction)
+{
+    const trackBeatsPerMeasure = dataRetrieval.getBeatsPerMeasureFromSavedTrack(track);
+    return operatorFunction(trackBeatsPerMeasure, beatsPerMeasureRuleData);
 };
 
 exports.ruleByDanceability = function(track, danceabilityRuleData, operatorFunction)

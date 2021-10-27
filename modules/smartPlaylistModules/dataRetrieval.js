@@ -67,6 +67,11 @@ exports.getBeatsPerMinuteFromSavedTrack = function(savedTrack)
     return savedTrack.track.audio_features.tempo;
 };
 
+exports.getBeatsPerMeasureFromSavedTrack = function(savedTrack)
+{
+    return savedTrack.track.audio_features.time_signature;
+};
+
 exports.getDanceabilityFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.audio_features.danceability;

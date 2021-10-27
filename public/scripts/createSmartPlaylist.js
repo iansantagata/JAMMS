@@ -367,6 +367,10 @@ function addRuleFormFields()
     releaseDateOptionRuleType.setAttribute("value", "releaseDate");
     releaseDateOptionRuleType.innerText = "Release Date";
 
+    const meterOptionRuleType = document.createElement("option");
+    meterOptionRuleType.setAttribute("value", "meter");
+    meterOptionRuleType.innerText = "Rhythmic Meter";
+
     const speechinessRuleType = document.createElement("option");
     speechinessRuleType.setAttribute("value", "speechiness");
     speechinessRuleType.innerText = "Speechiness";
@@ -846,6 +850,7 @@ function getDataFieldType(ruleFieldValue)
 
         case "tempo":
         case "duration":
+        case "meter":
             return "positiveInteger";
 
         case "acousticness":
@@ -868,6 +873,9 @@ function getDataFieldUnit(ruleFieldValue)
     {
         case "tempo":
             return "Beats Per Minute";
+
+        case "meter":
+            return "Beats Per Measure";
 
         case "duration":
             return "Minutes";
