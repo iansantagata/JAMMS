@@ -4,6 +4,7 @@
 const secondsToMsecConversion = 1000;
 const minutesToSecondsConversion = 60;
 const hoursToMinutesConversion = 60;
+const decimalToIntegerPercentageConversion = 100;
 
 // Unit Conversion Logic
 
@@ -23,6 +24,11 @@ exports.getMinutesFromHours = function(hours)
     return hours * hoursToMinutesConversion;
 };
 
+exports.getIntegerFromDecimalPercentage = function(decimalPercentage)
+{
+    return decimalPercentage * decimalToIntegerPercentageConversion;
+};
+
 exports.getSecondsFromMilliseconds = function(msec)
 {
     return msec / secondsToMsecConversion;
@@ -36,6 +42,11 @@ exports.getMinutesFromSeconds = function(seconds)
 exports.getHoursFromMinutes = function(minutes)
 {
     return minutes / hoursToMinutesConversion;
+};
+
+exports.getDecimalfromIntegerPercentage = function(integerPercentage)
+{
+    return integerPercentage / decimalToIntegerPercentageConversion;
 };
 
 // Multiple Step Conversions

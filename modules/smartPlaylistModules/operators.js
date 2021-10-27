@@ -2,6 +2,8 @@
 
 // Default Constant Values
 const maximumRecursionLimit = 3;
+const defaultRadixBase = 10;
+const defaultFuzzyEquivalencePercentage = 0.01;
 
 // Operators Logic
 exports.equals = function(a, b)
@@ -26,7 +28,14 @@ exports.equals = function(a, b)
             .includes(b);
     }
 
-    // Otherwise, check exact equivalence (for strings and numerics and the like)
+    // If a is a decimal, use fuzzy equivalence
+    // Fuzzy equivalence will be less than 1% difference between the numbers to say they are "basically" the same
+    if (typeof a === "number" && parseFloat(a, defaultRadixBase) !== Math.floor(a))
+    {
+        return Math.abs(a - b) <= defaultFuzzyEquivalencePercentage;
+    }
+
+    // Otherwise, check exact equivalence (for strings and non-decimal numerics and the like)
     return a === b;
 };
 

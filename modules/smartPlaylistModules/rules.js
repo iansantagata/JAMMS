@@ -122,6 +122,10 @@ function getRuleFunction(ruleType)
 
     switch (ruleType)
     {
+        case "acousticness":
+            ruleFunction = exports.ruleByAcousticness;
+            break;
+
         case "artist":
             ruleFunction = ruleByArtistName;
             break;
@@ -168,12 +172,21 @@ function getRuleUnitConversionFunction(ruleUnit)
         case "minutes":
             return units.getMillisecondsFromMinutes;
 
+        case "percent":
+            return units.getDecimalfromIntegerPercentage;
+
         default:
             return noop;
     }
 }
 
 // Special Rule By X Functions
+exports.ruleByAcousticness = function(track, acousticnessRuleData, operatorFunction)
+{
+    const trackAcousticness = dataRetrieval.getAcousticnessFromSavedTrack(track);
+    return operatorFunction(trackAcousticness, acousticnessRuleData);
+};
+
 exports.ruleByBeatsPerMinute = function(track, beatsPerMinuteRuleData, operatorFunction)
 {
     const trackBeatsPerMinute = dataRetrieval.getBeatsPerMinuteFromSavedTrack(track);

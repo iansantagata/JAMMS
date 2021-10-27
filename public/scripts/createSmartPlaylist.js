@@ -128,7 +128,7 @@ function displaySmartPlaylistPreview(data)
     headerElement.setAttribute("class", "my-3");
     headerElement.innerText = "Smart Playlist Track Preview";
 
-    const textElement = document.createTextNode("Note - All playlist previews are generated on request. On top of the limits set above, previews are also limitied to the first 25 matching tracks found. Any created smart playlist may differ from the tracks shown in the preview.");
+    const textElement = document.createTextNode("Note - All playlist previews are generated on request. On top of the limits set above, previews are also limited to the first 25 matching tracks found. Any created smart playlist may differ from the tracks shown in the preview.");
 
     const alertImageElement = document.createElement("i");
     alertImageElement.setAttribute("class", "bi-info-circle-fill mx-2");
@@ -323,6 +323,10 @@ function addRuleFormFields()
     emptyOptionRuleType.setAttribute("hidden", "");
     emptyOptionRuleType.innerText = "Select a Field";
 
+    const acousticnessOptionRuleType = document.createElement("option");
+    acousticnessOptionRuleType.setAttribute("value", "acousticness");
+    acousticnessOptionRuleType.innerText = "Acousticness";
+
     const albumOptionRuleType = document.createElement("option");
     albumOptionRuleType.setAttribute("value", "album");
     albumOptionRuleType.innerText = "Album Name";
@@ -335,6 +339,10 @@ function addRuleFormFields()
     genreOptionRuleType.setAttribute("value", "genre");
     genreOptionRuleType.innerText = "Genre";
 
+    const loudnessOptionRuleType = document.createElement("option");
+    loudnessOptionRuleType.setAttribute("value", "loudness");
+    loudnessOptionRuleType.innerText = "Loudness";
+
     const releaseDateOptionRuleType = document.createElement("option");
     releaseDateOptionRuleType.setAttribute("value", "releaseDate");
     releaseDateOptionRuleType.innerText = "Release Date";
@@ -343,17 +351,13 @@ function addRuleFormFields()
     songDurationOptionRuleType.setAttribute("value", "duration");
     songDurationOptionRuleType.innerText = "Song Length";
 
-    const songLoudnessOptionRuleType = document.createElement("option");
-    songLoudnessOptionRuleType.setAttribute("value", "loudness");
-    songLoudnessOptionRuleType.innerText = "Song Loudness";
-
     const songOptionRuleType = document.createElement("option");
     songOptionRuleType.setAttribute("value", "song");
     songOptionRuleType.innerText = "Song Name";
 
     const tempoOptionRuleType = document.createElement("option");
     tempoOptionRuleType.setAttribute("value", "tempo");
-    tempoOptionRuleType.innerText = "Song Tempo";
+    tempoOptionRuleType.innerText = "Tempo";
 
     const selectRuleTypeId = `playlistRuleType-${ruleCounter}`;
     const selectRuleType = document.createElement("select");
@@ -362,12 +366,13 @@ function addRuleFormFields()
     selectRuleType.setAttribute("class", "form-control");
     selectRuleType.setAttribute("required", "");
     selectRuleType.appendChild(emptyOptionRuleType);
+    selectRuleType.appendChild(acousticnessOptionRuleType);
     selectRuleType.appendChild(albumOptionRuleType);
     selectRuleType.appendChild(artistOptionRuleType);
     selectRuleType.appendChild(genreOptionRuleType);
+    selectRuleType.appendChild(loudnessOptionRuleType);
     selectRuleType.appendChild(releaseDateOptionRuleType);
     selectRuleType.appendChild(songDurationOptionRuleType);
-    selectRuleType.appendChild(songLoudnessOptionRuleType);
     selectRuleType.appendChild(songOptionRuleType);
     selectRuleType.appendChild(tempoOptionRuleType);
 
@@ -604,6 +609,7 @@ function enableValidOperatorOptions()
 
         case "negativeInteger":
         case "positiveInteger":
+        case "percentage":
             addRuleOperatorOptionsForNumberDataType(ruleOperatorElement);
             ruleOperatorAddSuccess = true;
             break;
@@ -690,8 +696,8 @@ function enableValidRuleDataEntry()
 
         case "negativeInteger":
             ruleDataElement.setAttribute("type", "number");
-            ruleDataElement.setAttribute("max", "0");
             ruleDataElement.setAttribute("min", "-60");
+            ruleDataElement.setAttribute("max", "0");
             ruleDataElement.value = "";
             isRuleFieldTypeChangeSuccess = true;
             break;
@@ -700,6 +706,14 @@ function enableValidRuleDataEntry()
             ruleDataElement.setAttribute("type", "number");
             ruleDataElement.setAttribute("min", "0");
             ruleDataElement.removeAttribute("max");
+            ruleDataElement.value = "";
+            isRuleFieldTypeChangeSuccess = true;
+            break;
+
+        case "percentage":
+            ruleDataElement.setAttribute("type", "number");
+            ruleDataElement.setAttribute("min", "0");
+            ruleDataElement.setAttribute("max", "100");
             ruleDataElement.value = "";
             isRuleFieldTypeChangeSuccess = true;
             break;
@@ -804,6 +818,9 @@ function getDataFieldType(ruleFieldValue)
         case "duration":
             return "positiveInteger";
 
+        case "acousticness":
+            return "percentage";
+
         default:
             return null;
     }
@@ -821,6 +838,9 @@ function getDataFieldUnit(ruleFieldValue)
 
         case "loudness":
             return "Decibels";
+
+        case "acousticness":
+            return "Percent";
 
         case "album":
         case "artist":
