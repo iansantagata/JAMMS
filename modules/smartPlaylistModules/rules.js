@@ -154,6 +154,10 @@ function getRuleFunction(ruleType)
             ruleFunction = exports.ruleByInstrumentalness;
             break;
 
+        case "liveness":
+            ruleFunction = exports.ruleByLiveness;
+            break;
+
         case "loudness":
             ruleFunction = exports.ruleByDecibels;
             break;
@@ -235,6 +239,12 @@ exports.ruleByInstrumentalness = function(track, instrumentalnessRuleData, opera
 {
     const trackInstrumentalness = dataRetrieval.getInstrumentalnessFromSavedTrack(track);
     return operatorFunction(trackInstrumentalness, instrumentalnessRuleData);
+};
+
+exports.ruleByLiveness = function(track, livenessRuleData, operatorFunction)
+{
+    const trackLiveness = dataRetrieval.getLivenessFromSavedTrack(track);
+    return operatorFunction(trackLiveness, livenessRuleData);
 };
 
 // Generic Rule By X Functions
