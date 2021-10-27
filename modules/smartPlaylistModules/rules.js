@@ -201,7 +201,7 @@ exports.ruleByDanceability = function(track, danceabilityRuleData, operatorFunct
 {
     const trackDanceability = dataRetrieval.getDanceabilityFromSavedTrack(track);
     return operatorFunction(trackDanceability, danceabilityRuleData);
-}
+};
 
 exports.ruleByDecibels = function(track, decibelsRuleData, operatorFunction)
 {
