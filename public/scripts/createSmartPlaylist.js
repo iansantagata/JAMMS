@@ -323,6 +323,10 @@ function addRuleFormFields()
     emptyOptionRuleType.setAttribute("hidden", "");
     emptyOptionRuleType.innerText = "Select a Field";
 
+    const acousticnessOptionRuleType = document.createElement("option");
+    acousticnessOptionRuleType.setAttribute("value", "acousticness");
+    acousticnessOptionRuleType.innerText = "Acousticness";
+
     const albumOptionRuleType = document.createElement("option");
     albumOptionRuleType.setAttribute("value", "album");
     albumOptionRuleType.innerText = "Album Name";
@@ -362,6 +366,7 @@ function addRuleFormFields()
     selectRuleType.setAttribute("class", "form-control");
     selectRuleType.setAttribute("required", "");
     selectRuleType.appendChild(emptyOptionRuleType);
+    selectRuleType.appendChild(acousticnessOptionRuleType);
     selectRuleType.appendChild(albumOptionRuleType);
     selectRuleType.appendChild(artistOptionRuleType);
     selectRuleType.appendChild(genreOptionRuleType);
@@ -604,6 +609,7 @@ function enableValidOperatorOptions()
 
         case "negativeInteger":
         case "positiveInteger":
+        case "percentage":
             addRuleOperatorOptionsForNumberDataType(ruleOperatorElement);
             ruleOperatorAddSuccess = true;
             break;
@@ -690,8 +696,8 @@ function enableValidRuleDataEntry()
 
         case "negativeInteger":
             ruleDataElement.setAttribute("type", "number");
-            ruleDataElement.setAttribute("max", "0");
             ruleDataElement.setAttribute("min", "-60");
+            ruleDataElement.setAttribute("max", "0");
             ruleDataElement.value = "";
             isRuleFieldTypeChangeSuccess = true;
             break;
@@ -700,6 +706,14 @@ function enableValidRuleDataEntry()
             ruleDataElement.setAttribute("type", "number");
             ruleDataElement.setAttribute("min", "0");
             ruleDataElement.removeAttribute("max");
+            ruleDataElement.value = "";
+            isRuleFieldTypeChangeSuccess = true;
+            break;
+
+        case "percentage":
+            ruleDataElement.setAttribute("type", "number");
+            ruleDataElement.setAttribute("min", "0");
+            ruleDataElement.setAttribute("max", "100");
             ruleDataElement.value = "";
             isRuleFieldTypeChangeSuccess = true;
             break;
@@ -804,6 +818,9 @@ function getDataFieldType(ruleFieldValue)
         case "duration":
             return "positiveInteger";
 
+        case "acousticness":
+            return "percentage";
+
         default:
             return null;
     }
@@ -821,6 +838,9 @@ function getDataFieldUnit(ruleFieldValue)
 
         case "loudness":
             return "Decibels";
+
+        case "acousticness":
+            return "Percent";
 
         case "album":
         case "artist":
