@@ -39,6 +39,7 @@ exports.getPlaylistSpecialRuleFlags = function(inputRules)
 
         const isAudioFeaturesRule =
             inputRuleFunction === rules.ruleByBeatsPerMinute ||
+            inputRuleFunction === rules.ruleByBeatsPerMeasure ||
             inputRuleFunction === rules.ruleByDecibels ||
             inputRuleFunction === rules.ruleByAcousticness ||
             inputRuleFunction === rules.ruleByDanceability ||
