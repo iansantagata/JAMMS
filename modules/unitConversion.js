@@ -27,7 +27,7 @@ exports.getMinutesFromHours = function(hours)
 exports.getIntegerFromDecimalPercentage = function(decimalPercentage)
 {
     return decimalPercentage * decimalToIntegerPercentageConversion;
-}
+};
 
 exports.getSecondsFromMilliseconds = function(msec)
 {
@@ -47,7 +47,7 @@ exports.getHoursFromMinutes = function(minutes)
 exports.getDecimalfromIntegerPercentage = function(integerPercentage)
 {
     return integerPercentage / decimalToIntegerPercentageConversion;
-}
+};
 
 // Multiple Step Conversions
 exports.getMillisecondsFromHours = function(hours)

@@ -185,7 +185,7 @@ exports.ruleByAcousticness = function(track, acousticnessRuleData, operatorFunct
 {
     const trackAcousticness = dataRetrieval.getAcousticnessFromSavedTrack(track);
     return operatorFunction(trackAcousticness, acousticnessRuleData);
-}
+};
 
 exports.ruleByBeatsPerMinute = function(track, beatsPerMinuteRuleData, operatorFunction)
 {
