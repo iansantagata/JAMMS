@@ -1,6 +1,8 @@
 "use strict";
 
 // Data Retrieval Logic
+
+// Retrieve Native Data from Saved Track Object
 exports.getUriFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.uri;
@@ -49,6 +51,7 @@ exports.getPopularityFromSavedTrack = function(savedTrack)
     return savedTrack.track.popularity;
 };
 
+// Retrieve Enriched Data from Saved Track Object
 exports.getGenresFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.genres;
@@ -59,14 +62,14 @@ exports.getAcousticnessFromSavedTrack = function(savedTrack)
     return savedTrack.track.audio_features.acousticness;
 };
 
-exports.getDanceabilityFromSavedTrack = function(savedTrack)
-{
-    return savedTrack.track.audio_features.danceability;
-};
-
 exports.getBeatsPerMinuteFromSavedTrack = function(savedTrack)
 {
     return savedTrack.track.audio_features.tempo;
+};
+
+exports.getDanceabilityFromSavedTrack = function(savedTrack)
+{
+    return savedTrack.track.audio_features.danceability;
 };
 
 exports.getDecibelsFromSavedTrack = function(savedTrack)
@@ -74,6 +77,12 @@ exports.getDecibelsFromSavedTrack = function(savedTrack)
     return savedTrack.track.audio_features.loudness;
 };
 
+exports.getEnergyFromSavedTrack = function(savedTrack)
+{
+    return savedTrack.track.audio_features.energy;
+};
+
+// Retrieve Native Data from Artist Object
 exports.getArtistNameFromArtist = function(artist)
 {
     return artist.name.toUpperCase();
