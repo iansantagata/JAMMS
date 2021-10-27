@@ -1,7 +1,7 @@
 <!-- General Badges -->
 [![Site Status](https://img.shields.io/website?label=Website&down_color=critical&down_message=offline&up_color=success&up_message=online&url=https%3A%2F%2Fjamms.app)](https://jamms.app)
-[![Site HTTP Header Security](https://img.shields.io/security-headers?url=https%3A%2F%2Fjamms.app&label=Security%20Headers%20Grade&color=success)](https://securityheaders.com/?q=https%3A%2F%2Fjamms.app%2F&followRedirects=on)
-[![License](https://img.shields.io/github/license/iansantagata/jamms?label=License&color=success)](LICENSE)
+[![Site HTTP Header Security](https://img.shields.io/security-headers?url=https%3A%2F%2Fjamms.app&label=Security%20Headers%20Grade&color=blue)](https://securityheaders.com/?q=https%3A%2F%2Fjamms.app%2F&followRedirects=on)
+[![License](https://img.shields.io/github/license/iansantagata/jamms?label=License&color=yellow)](LICENSE)
 <!-- Developmental Badges -->
 [![Continuous Deployment](https://github.com/iansantagata/jamms/actions/workflows/continuous-deployment.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/continuous-deployment.yml)
 [![Code QL Scan](https://github.com/iansantagata/jamms/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/codeql-analysis.yml)
