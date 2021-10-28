@@ -68,14 +68,26 @@ function previewSmartPlaylist()
     fetch("/getSmartPlaylistPreview", fetchOptions)
         .then(response => response.json())
         .then(displaySmartPlaylistPreview)
-        .catch(handlePlaylistPreviewError)
+        .catch(handleUnexpectedPlaylistPreviewError)
         .finally(restoreGeneratePreviewButton);
 }
 
-function handlePlaylistPreviewError(error)
+function handleUnexpectedPlaylistPreviewError(error)
+{
+    const customErrorMessage = "Error - Unexpected error occurred when gathering playlist preview data. Try again.";
+    handlePlaylistPreviewError(error, customErrorMessage);
+}
+
+function handlePlaylistPreviewHasNoTracksError(error)
+{
+    const customErrorMessage = "Error - Unable to find any tracks to preview with the submitted rules and settings. Try making adjustments.";
+    handlePlaylistPreviewError(error, customErrorMessage);
+}
+
+function handlePlaylistPreviewError(error, customErrorMessage)
 {
     // Create an alert telling the user there is a problem
-    const textElement = document.createTextNode("Error - Unable to find any tracks to preview with the submitted rules and settings.");
+    const textElement = document.createTextNode(customErrorMessage);
 
     const alertImageElement = document.createElement("i");
     alertImageElement.setAttribute("class", "bi-x-circle-fill mx-2");
@@ -100,14 +112,14 @@ function displaySmartPlaylistPreview(data)
     if (!data)
     {
         const dataNotFoundError = new Error("Failed to find AJAX response data");
-        handlePlaylistPreviewError(dataNotFoundError);
+        handleUnexpectedPlaylistPreviewError(dataNotFoundError);
         return;
     }
 
     if (!Array.isArray(data) || data.length <= 0)
     {
         const tracksNotFoundError = new Error("Failed to find tracks in AJAX response data");
-        handlePlaylistPreviewError(tracksNotFoundError);
+        handlePlaylistPreviewHasNoTracksError(tracksNotFoundError);
         return;
     }
 
@@ -119,7 +131,7 @@ function displaySmartPlaylistPreview(data)
     if (!Array.isArray(tracks) || tracks.length <= 0)
     {
         const validTracksNotFoundError = new Error("Failed to find valid tracks information in AJAX response data");
-        handlePlaylistPreviewError(validTracksNotFoundError);
+        handlePlaylistPreviewHasNoTracksError(validTracksNotFoundError);
         return;
     }
 
