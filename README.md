@@ -24,9 +24,11 @@ JAMMS was inspired by many applications like it, but in particular [PLYLST](http
 
 Although PLYLST is [open source](https://github.com/Shpigford/plylst), JAMMS is meant to approach the same problem for individual users rather than as a service for all users.
 
-## The Future
+## Bugs, Features, and Vulnerabilities
 
 For bugs, issues, and features to be developed, see the [Issues](https://github.com/iansantagata/jamms/issues) section of this repository.
+
+For security issues and vulnerabilities, see the [Security Policy](SECURITY.md).
 
 ## Installation
 
