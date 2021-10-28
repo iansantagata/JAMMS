@@ -7,6 +7,7 @@ const path = require("path"); // URI and local file paths
 const customModulePath = __dirname;
 const spotifyClient = require(path.join(customModulePath, "spotifyClient.js"));
 const logger = require(path.join(customModulePath, "logger.js"));
+const errorModule = require(path.join(customModulePath, "error.js"));
 
 // Smart Playlist Modules
 const smartPlaylistModulesPath = path.join(__dirname, "smartPlaylistModules");
@@ -75,7 +76,7 @@ exports.getSmartPlaylistPreview = async function(req, res, next)
     catch (error)
     {
         logger.logError(`Failed to get smart playlist preview: ${error.message}`);
-        next(error);
+        errorModule.handleAjaxError(req, res);
     }
 };
 
