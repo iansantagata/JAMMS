@@ -49,7 +49,7 @@ exports.createSmartPlaylistPage = function(req, res, next)
     }
 };
 
-exports.getSmartPlaylistPreview = async function(req, res, next)
+exports.getSmartPlaylistPreview = async function(req, res)
 {
     try
     {
