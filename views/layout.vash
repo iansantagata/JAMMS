@@ -35,30 +35,37 @@
   <script defer src="scripts/layout.js"></script>
 
   <header class="card-header p-0 mb-2">
-    <nav class="navbar navbar-expand navbar-light">
+    <nav class="navbar navbar-expand-sm navbar-light">
       <div class="container">
         <span class="navbar-brand font-weight-bold px-3">JAMMS</span>
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-            @if (!model.isAwaitingLogin && !model.isLoginError)
-            {
-              <a class="nav-link" href="/home">Home</a>
-            }
-            else
-            {
-              <a class="nav-link" href="/">Home</a>
-            }
-          </li>
-        </ul>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#headerCollapseList">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-        @if (!model.isAwaitingLogin && !model.isLoginError)
-        {
-          <a id="logOutButton" href="/logout" role="button" class="nav-link btn btn-info btn-sm">Log Out</a>
-        }
-        else
-        {
-          <a id="loginButton" href="/login" role="button" class="nav-link btn btn-info btn-sm">Log In</a>
-        }
+        <div class="collapse navbar-collapse" id="headerCollapseList">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              @if (!model.isAwaitingLogin && !model.isLoginError)
+              {
+                <a class="nav-link" href="/home">Home</a>
+              }
+              else
+              {
+                <a class="nav-link" href="/">Home</a>
+              }
+            </li>
+            <li class="nav-item">
+              @if (!model.isAwaitingLogin && !model.isLoginError)
+              {
+                <a class="nav-link" href="/logout">Log Out</a>
+              }
+              else
+              {
+                <a class="nav-link" href="/login">Log In</a>
+              }
+            </li>
+          </ul>
+        </div>
       </div>
     </nav>
   </header>
