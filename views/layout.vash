@@ -27,7 +27,7 @@
   <!-- Helper Functions Used Across the App -->
   <script src="scripts/helperFunctions.js"></script>
   <!-- Favicon -->
-  <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="images/favicon/favicon.ico" type="image/x-icon">
 </head>
 
 <body class="d-flex flex-column h-100">
@@ -37,33 +37,41 @@
   <header class="card-header p-0 mb-2">
     <nav class="navbar navbar-expand-sm navbar-light">
       <div class="container">
+
         <span class="navbar-brand font-weight-bold px-3">JAMMS</span>
+
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#headerCollapseList">
           <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="headerCollapseList">
           <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-              @if (!model.isAwaitingLogin && !model.isLoginError)
-              {
+            @if (!model.isAwaitingLogin && !model.isLoginError)
+            {
+              <li class="nav-item">
                 <a class="nav-link" href="/home">Home</a>
-              }
-              else
-              {
-                <a class="nav-link" href="/">Home</a>
-              }
-            </li>
-            <li class="nav-item">
-              @if (!model.isAwaitingLogin && !model.isLoginError)
-              {
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown">Playlists</a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="/createPlaylist">Create Playlist</a>
+                  <a class="dropdown-item" href="/createSmartPlaylist">Create Smart Playlist</a>
+                  <a class="dropdown-item" href="/playlists">See All Playlists</a>
+                </div>
+              </li>
+              <li class="nav-item">
                 <a class="nav-link" href="/logout">Log Out</a>
-              }
-              else
-              {
+              </li>
+            }
+            else
+            {
+              <li class="nav-item">
+                <a class="nav-link" href="/">Home</a>
+              </li>
+              <li class="nav-item">
                 <a class="nav-link" href="/login">Log In</a>
-              }
-            </li>
+              </li>
+            }
           </ul>
         </div>
       </div>
