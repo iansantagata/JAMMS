@@ -27,7 +27,7 @@
   <!-- Helper Functions Used Across the App -->
   <script src="scripts/helperFunctions.js"></script>
   <!-- Favicon -->
-  <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="images/favicon/favicon.ico" type="image/x-icon">
 </head>
 
 <body class="d-flex flex-column h-100">
@@ -35,30 +35,68 @@
   <script defer src="scripts/layout.js"></script>
 
   <header class="card-header p-0 mb-2">
-    <nav class="navbar navbar-expand navbar-light">
+    <nav class="navbar navbar-expand-md navbar-light">
       <div class="container">
-        <a class="navbar-brand nav-link font-weight-bold" href="/">JAMMS</a>
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
+
+        <span class="navbar-brand font-weight-bold px-3">JAMMS</span>
+
+        <a class="navbar-toggler" role="button" data-toggle="collapse" data-target="#headerCollapseList">
+          <i class="navbar-toggler-icon"></i>
+        </a>
+
+        <div class="collapse navbar-collapse" id="headerCollapseList">
+          <ul class="navbar-nav ml-auto">
             @if (!model.isAwaitingLogin && !model.isLoginError)
             {
-              <a class="nav-link" href="/home">Home</a>
+              <li class="nav-item">
+                <a class="nav-link" href="/home">
+                  <i class="bi bi-house-door-fill"></i>
+                  <span>Home</span>
+                </a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown">
+                  <i class="bi bi-music-note-list"></i>
+                  <span>Playlists</span>
+                  </a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="/createPlaylist">Create Playlist</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="/createSmartPlaylist">Create Smart Playlist</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="/playlists">See All Playlists</a>
+                </div>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="@html.raw('mailto:admin@jamms.app')">
+                  <i class="bi bi-question-circle-fill"></i>
+                  <span>Support</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/logout">
+                  <i class="bi bi-door-closed-fill"></i>
+                  <span>Log Out</span>
+                </a>
+              </li>
             }
             else
             {
-              <a class="nav-link" href="/">Home</a>
+              <li class="nav-item">
+                <a class="nav-link" href="/">
+                  <i class="bi bi-house-door-fill"></i>
+                  <span>Home</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="@html.raw('mailto:admin@jamms.app')">
+                  <i class="bi bi-question-circle-fill"></i>
+                  <span>Support</span>
+                </a>
+              </li>
             }
-          </li>
-        </ul>
-
-        @if (!model.isAwaitingLogin && !model.isLoginError)
-        {
-          <a id="logOutButton" href="/logout" role="button" class="nav-link btn btn-info btn-sm">Log Out</a>
-        }
-        else
-        {
-          <a id="loginButton" href="/login" role="button" class="nav-link btn btn-info btn-sm">Log In</a>
-        }
+          </ul>
+        </div>
       </div>
     </nav>
   </header>
@@ -76,18 +114,23 @@
           <li class="nav-item mr-2">
             <span class="navbar-text">&copy; 2020</span>
           </li>
-          <span class="navbar-text">•</span>
+          <span class="navbar-text">
+            <i class="bi bi-dot"></i>
+          </span>
           <li class="nav-item">
             <a class="nav-link" href="@html.raw('mailto:admin@jamms.app')">Contact</a>
           </li>
         </ul>
-        <!-- Musical Bridged 8th Notes HTML Entity Code -->
-        <span class="navbar-text">&#9835;</span>
+        <span class="navbar-text">
+          <i class="bi bi-music-note-beamed"></i>
+        </span>
         <ul class="navbar-nav">
           <li class="nav-item">
             <a class="nav-link" href="https://github.com/iansantagata/jamms">Source</a>
           </li>
-          <span class="navbar-text">&bull;</span>
+          <span class="navbar-text">
+            <i class="bi bi-dot"></i>
+          </span>
           <li class="nav-item">
             <a class="nav-link" href="http://iansantagata.com">Author</a>
           </li>

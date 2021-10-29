@@ -1,5 +1,5 @@
 "use strict";
 
 // Script Logic
-addOnClickEventListenerToElementById("homeButton", controlLoadingIndicatorWithText);
-addOnClickEventListenerToElementById("logOutButton", controlLoadingIndicatorWithText);
+addOnClickEventListenerToElementById("loginButton", controlLoadingIndicator);
+addOnClickEventListenerToElementById("logOutButton", controlLoadingIndicator);
