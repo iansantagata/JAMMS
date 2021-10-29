@@ -26,6 +26,8 @@
     crossorigin="anonymous"></script>
   <!-- Helper Functions Used Across the App -->
   <script src="scripts/helperFunctions.js"></script>
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
 </head>
 
 <body class="d-flex flex-column h-100">
