@@ -72,10 +72,6 @@
             role="button" class="btn btn-info btn-sm">See All Playlists</a>
       </div>
       <div class="col">
-        <a id="createPlaylistButton" href="/createPlaylist"
-            role="button" class="btn btn-info btn-sm">Create Playlist</a>
-      </div>
-      <div class="col">
         <a id="createSmartPlaylistButton" href="/createSmartPlaylist"
             role="button" class="btn btn-info btn-sm">Create Smart Playlist</a>
       </div>

@@ -32,8 +32,6 @@
 
 <body class="d-flex flex-column h-100">
 
-  <script defer src="scripts/layout.js"></script>
-
   <header class="card-header p-0 mb-2">
     <nav class="navbar navbar-expand-md navbar-light">
       <div class="container">
@@ -60,8 +58,6 @@
                   <span>Playlists</span>
                   </a>
                 <div class="dropdown-menu">
-                  <a class="dropdown-item" href="/createPlaylist">Create Playlist</a>
-                  <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="/createSmartPlaylist">Create Smart Playlist</a>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="/playlists">See All Playlists</a>

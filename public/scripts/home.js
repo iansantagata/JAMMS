@@ -2,7 +2,6 @@
 
 // Script Logic
 addOnClickEventListenerToElementById("seeAllPlaylistsButton", controlLoadingIndicatorWithText);
-addOnClickEventListenerToElementById("createPlaylistButton", controlLoadingIndicatorWithText);
 addOnClickEventListenerToElementById("createSmartPlaylistButton", controlLoadingIndicatorWithText);
 addOnClickListenersForViewPlaylistLinks();
 
