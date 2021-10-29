@@ -95,10 +95,8 @@ app.get("/logout", logout.logOut);
 // Playlist Logic
 app.get("/playlist", playlist.getPlaylistPage);
 app.get("/playlists", playlist.getAllPlaylistPage);
-app.get("/createPlaylist", playlist.createPlaylistPage);
 app.get("/deletePlaylist", playlist.deletePlaylistPage);
 app.get("/restorePlaylist", playlist.restorePlaylistPage);
-app.post("/createPlaylist", playlist.createPlaylist);
 
 // Smart Playlist Logic
 app.get("/createSmartPlaylist", smartPlaylist.createSmartPlaylistPage);
