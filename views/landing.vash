@@ -5,7 +5,7 @@
 
     <div id="login" class="mb-3">
         <h1 class="my-3">Welcome to JAMMS!</h1>
-        <a id="loginToSpotifyButton" href="/login" role="button" class="my-3 btn btn-primary">Log in with Spotify to Use JAMMS</a>
+        <a id="loginToSpotifyButton" href="/login" role="button" class="my-3 btn btn-info">Log in with Spotify to Use JAMMS</a>
     </div>
 
     <h2 class="mt-5 mb-3">FAQ</h2>

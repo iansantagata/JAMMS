@@ -37,7 +37,7 @@
   <header class="card-header p-0 mb-2">
     <nav class="navbar navbar-expand navbar-light">
       <div class="container">
-        <a class="navbar-brand nav-link font-weight-bold" href="/">JAMMS</a>
+        <span class="navbar-brand font-weight-bold px-3">JAMMS</span>
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
             @if (!model.isAwaitingLogin && !model.isLoginError)
