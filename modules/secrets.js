@@ -3,13 +3,10 @@
 // Dependencies
 const path = require("path"); // URI and local file paths
 
-// Custom Modules
-const customModulePath = __dirname;
-const environment = require(path.join(customModulePath, "environment.js"));
-
 // Utility Modules
 const utilityModulesPath = path.join(__dirname, "utilityModules");
 const logger = require(path.join(utilityModulesPath, "logger.js"));
+const environment = require(path.join(utilityModulesPath, "environment.js"));
 
 // Secrets Logic
 exports.getBase64EncodedAuthorizationToken = async function()
