@@ -1,6 +1,6 @@
 "use strict";
 
-// Generic Helper Functions
+// Chunk Logic Functions
 exports.getArrayChunks = function(inputArray, chunkSize)
 {
     if (!Array.isArray(inputArray))

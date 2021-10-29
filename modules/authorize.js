@@ -10,11 +10,11 @@ const customModulePath = __dirname;
 const redirect = require(path.join(customModulePath, "redirect.js"));
 const secrets = require(path.join(customModulePath, "secrets.js"));
 const cookie = require(path.join(customModulePath, "cookie.js"));
-const units = require(path.join(customModulePath, "unitConversion.js"));
 
 // Utility Modules
 const utilityModulesPath = path.join(__dirname, "utilityModules");
 const logger = require(path.join(utilityModulesPath, "logger.js"));
+const units = require(path.join(utilityModulesPath, "unitConversion.js"));
 
 // Authorize Logic
 const spotifyAccessTokenUri = "https://accounts.spotify.com/api/token";
