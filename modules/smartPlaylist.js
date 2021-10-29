@@ -11,13 +11,16 @@ const errorModule = require(path.join(customModulePath, "error.js"));
 
 // Smart Playlist Modules
 const smartPlaylistModulesPath = path.join(__dirname, "smartPlaylistModules");
-const chunk = require(path.join(smartPlaylistModulesPath, "chunk.js"));
 const enrichment = require(path.join(smartPlaylistModulesPath, "enrichment.js"));
 const specialRules = require(path.join(smartPlaylistModulesPath, "specialRules.js"));
 const dataRetrieval = require(path.join(smartPlaylistModulesPath, "dataRetrieval.js"));
 const limits = require(path.join(smartPlaylistModulesPath, "limits.js"));
 const ordering = require(path.join(smartPlaylistModulesPath, "ordering.js"));
 const rules = require(path.join(smartPlaylistModulesPath, "rules.js"));
+
+// Utility Modules
+const utilityModulesPath = path.join(__dirname, "utilityModules");
+const chunk = require(path.join(utilityModulesPath, "chunk.js"));
 
 // Default Constant Values
 const playlistNamePrefix = "JAMMS: ";
