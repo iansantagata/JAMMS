@@ -12,6 +12,12 @@ const notFoundStatusCode = 404;
 const serverErrorStatusCode = 500;
 
 // Error Handling Logic
+exports.handleAjaxError = function(req, res)
+{
+    res.status(serverErrorStatusCode);
+    res.json(null);
+};
+
 exports.handlePageNotFound = async function(req, res)
 {
     const errorPageData = await getErrorPageData(req, res);
