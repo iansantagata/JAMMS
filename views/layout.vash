@@ -34,30 +34,33 @@
 
   <header class="card-header p-0 mb-2">
     <nav class="navbar navbar-expand-lg navbar-light">
-      <a class="navbar-brand nav-link font-weight-bold" href="/">JAMMS</a>
-      <ul class="navbar-nav mr-auto">
+      <div class="container">
+        <a class="navbar-brand nav-link font-weight-bold" href="/">JAMMS</a>
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            @if (!model.isAwaitingLogin && !model.isLoginError)
+            {
+              <a class="nav-link" href="/home">Home</a>
+            }
+            else
+            {
+              <a class="nav-link" href="/">Home</a>
+            }
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="@html.raw('mailto:admin@jamms.app')">Contact</a>
+          </li>
+        </ul>
+
         @if (!model.isAwaitingLogin && !model.isLoginError)
         {
-          <li class="nav-item">
-            <a class="nav-link" href="/home">Home</a>
-          </li>
+          <a id="logOutButton" href="/logout" role="button" class="nav-link btn btn-info btn-sm">Log Out</a>
         }
         else
         {
-          <li class="nav-item">
-            <a class="nav-link" href="/">Home</a>
-          </li>
+          <a id="loginButton" href="/login" role="button" class="nav-link btn btn-info btn-sm">Log In</a>
         }
-      </ul>
-
-      @if (!model.isAwaitingLogin && !model.isLoginError)
-      {
-        <a id="logOutButton" href="/logout" role="button" class="nav-link btn btn-info btn-sm">Log Out</a>
-      }
-      else
-      {
-        <a id="loginButton" href="/login" role="button" class="nav-link btn btn-info btn-sm">Log In</a>
-      }
+      </div>
     </nav>
   </header>
 
@@ -67,20 +70,25 @@
     </div>
   </main>
 
-  <footer class="footer mt-auto">
-    <div class="card-footer text-center">
-      <div class="row">
-        <div class="col">
-          <p class="my-0">JAMMS is <a href="https://github.com/iansantagata/jamms">open source</a>!</p>
-        </div>
-        <div class="col">
-          <p class="my-0">Created by <a href="http://iansantagata.com">Ian Santagata</a></p>
-        </div>
-        <div class="col">
-          <p class="my-0"><a href="@html.raw('mailto:admin@jamms.app')">Contact E-Mail</a></p>
-        </div>
+  <footer class="footer card-footer p-0 mt-auto">
+    <nav class="navbar navbar-expand navbar-light">
+      <div class="container">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <span class="navbar-text">Copyright © 2020</span>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="http://iansantagata.com">Creator</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="@html.raw('mailto:admin@jamms.app')">Contact</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://github.com/iansantagata/jamms">Source</a>
+          </li>
+        </ul>
       </div>
-    </div>
+    </nav>
   </footer>
 
 </body>
