@@ -40,9 +40,9 @@
 
         <span class="navbar-brand font-weight-bold px-3">JAMMS</span>
 
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#headerCollapseList">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+        <a class="navbar-toggler" role="button" data-toggle="collapse" data-target="#headerCollapseList">
+          <i class="navbar-toggler-icon"></i>
+        </a>
 
         <div class="collapse navbar-collapse" id="headerCollapseList">
           <ul class="navbar-nav ml-auto">
