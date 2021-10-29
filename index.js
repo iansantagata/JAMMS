@@ -56,7 +56,7 @@ const helmetConfiguration = {
                 "data:",
                 "*.scdn.co"
             ],
-            "script-src-elem": [
+            "script-src": [
                 "'self'",
                 "'unsafe-inline'",
                 "stackpath.bootstrapcdn.com",
