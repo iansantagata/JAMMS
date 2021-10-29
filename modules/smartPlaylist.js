@@ -11,7 +11,7 @@ const errorModule = require(path.join(customModulePath, "error.js"));
 
 // Smart Playlist Modules
 const smartPlaylistModulesPath = path.join(__dirname, "smartPlaylistModules");
-const helperFunctions = require(path.join(smartPlaylistModulesPath, "helperFunctions.js"));
+const chunk = require(path.join(smartPlaylistModulesPath, "chunk.js"));
 const enrichment = require(path.join(smartPlaylistModulesPath, "enrichment.js"));
 const specialRules = require(path.join(smartPlaylistModulesPath, "specialRules.js"));
 const dataRetrieval = require(path.join(smartPlaylistModulesPath, "dataRetrieval.js"));
@@ -118,7 +118,7 @@ exports.createSmartPlaylist = async function(req, res, next)
         // Now that we have created the playlist, we want to add the valid songs to it based on the smart playlist rules
         const playlistId = createPlaylistResponse.id;
         const trackUris = smartPlaylistTracks.map(dataRetrieval.getUriFromSavedTrack);
-        const trackUriChunks = helperFunctions.getArrayChunks(trackUris, trackAddPlaylistLimit);
+        const trackUriChunks = chunk.getArrayChunks(trackUris, trackAddPlaylistLimit);
         req.body.playlistId = playlistId;
 
         // Add songs to the playlist in batches since there is a limit to how many can be added at once

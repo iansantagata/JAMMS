@@ -10,7 +10,7 @@ const spotifyClient = require(path.join(customModulePath, "spotifyClient.js"));
 
 // Smart Playlist Modules
 const smartPlaylistModulesPath = __dirname;
-const helperFunctions = require(path.join(smartPlaylistModulesPath, "helperFunctions.js"));
+const chunk = require(path.join(smartPlaylistModulesPath, "chunk.js"));
 const rules = require(path.join(smartPlaylistModulesPath, "rules.js"));
 
 // Default Constant Values
@@ -91,7 +91,7 @@ exports.getArtistIdToGenreMap = async function(req, res, savedTracks, existingAr
 
         // With a set of unique unmapped artist IDs, group them into chunks to get genre data for artists in batches
         const artistIds = Array.from(unmappedArtistIds);
-        const artistIdChunks = helperFunctions.getArrayChunks(artistIds, artistGenreRetrievalLimit);
+        const artistIdChunks = chunk.getArrayChunks(artistIds, artistGenreRetrievalLimit);
         const artistIdToGenresMap = new Map();
 
         for (const artistIdChunk of artistIdChunks)
@@ -176,7 +176,7 @@ exports.getTrackIdToAudioFeaturesMap = async function(req, res, savedTracks, exi
 
         // With a set of unique unmapped track IDs, group them into chunks to get audio feature data for tracks in batches
         const trackIds = Array.from(unmappedTrackIds);
-        const trackIdChunks = helperFunctions.getArrayChunks(trackIds, audioFeaturesRetrievalLimit);
+        const trackIdChunks = chunk.getArrayChunks(trackIds, audioFeaturesRetrievalLimit);
         const trackIdToAudioFeaturesMap = new Map();
 
         for (const trackIdChunk of trackIdChunks)
