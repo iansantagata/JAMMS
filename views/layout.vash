@@ -32,26 +32,33 @@
 
   <script defer src="scripts/layout.js"></script>
 
-  <header class="card-header text-center mb-2">
-    <div class="row">
-      @if(!model.isAwaitingLogin && !model.isLoginError)
-      {
-        <div class="col">
-          <a id="homeButton" href="/home" role="button" class="btn btn-info btn-sm">Home</a>
-        </div>
-      }
+  <header class="mb-2">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand nav-link font-weight-bold" href="/">JAMMS</a>
+      <ul class="navbar-nav mr-auto">
+        @if (!model.isAwaitingLogin && !model.isLoginError)
+        {
+          <li class="nav-item">
+            <a class="nav-link" href="/home">Home</a>
+          </li>
+        }
+        else
+        {
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+        }
+      </ul>
 
-      <div class="col">
-        <h5 class="my-0">JAMMS</h5>
-      </div>
-
-      @if(!model.isAwaitingLogin && !model.isLoginError)
+      @if (!model.isAwaitingLogin && !model.isLoginError)
       {
-        <div class="col">
-            <a id="logOutButton" href="/logout" role="button" class="btn btn-info btn-sm">Log Out</a>
-        </div>
+        <a id="logOutButton" href="/logout" role="button" class="nav-link btn btn-info btn-sm">Log Out</a>
       }
-    </div>
+      else
+      {
+        <a id="loginButton" href="/login" role="button" class="nav-link btn btn-info btn-sm">Log In</a>
+      }
+    </nav>
   </header>
 
   <main role="main" class="flex-shrink-0">
