@@ -8,7 +8,10 @@ const querystring = require("querystring"); // URI query string manipulation
 // Custom Modules
 const customModulePath = __dirname;
 const authorize = require(path.join(customModulePath, "authorize.js"));
-const logger = require(path.join(customModulePath, "logger.js"));
+
+// Utility Modules
+const utilityModulesPath = path.join(__dirname, "utilityModules");
+const logger = require(path.join(utilityModulesPath, "logger.js"));
 
 // Spotify URIs
 const spotifyBaseUri = "https://api.spotify.com/v1";

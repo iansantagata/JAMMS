@@ -5,8 +5,11 @@ const path = require("path"); // URI and local file paths
 
 // Custom Modules
 const customModulePath = __dirname;
-const logger = require(path.join(customModulePath, "logger.js"));
 const environment = require(path.join(customModulePath, "environment.js"));
+
+// Utility Modules
+const utilityModulesPath = path.join(__dirname, "utilityModules");
+const logger = require(path.join(utilityModulesPath, "logger.js"));
 
 // Cookie Logic
 exports.getCookie = function(req, cookieName)

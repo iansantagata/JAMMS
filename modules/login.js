@@ -10,7 +10,10 @@ const authorize = require(path.join(customModulePath, "authorize.js"));
 const environment = require(path.join(customModulePath, "environment.js"));
 const redirect = require(path.join(customModulePath, "redirect.js"));
 const cookie = require(path.join(customModulePath, "cookie.js"));
-const logger = require(path.join(customModulePath, "logger.js"));
+
+// Utility Modules
+const utilityModulesPath = path.join(__dirname, "utilityModules");
+const logger = require(path.join(utilityModulesPath, "logger.js"));
 
 // Login Logic
 const spotifyAuthorizeUri = "https://accounts.spotify.com/authorize";

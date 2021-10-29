@@ -6,7 +6,10 @@ const path = require("path"); // URI and local file paths
 // Custom Modules
 const customModulePath = __dirname;
 const spotifyClient = require(path.join(customModulePath, "spotifyClient.js"));
-const logger = require(path.join(customModulePath, "logger.js"));
+
+// Utility Modules
+const utilityModulesPath = path.join(__dirname, "utilityModules");
+const logger = require(path.join(utilityModulesPath, "logger.js"));
 
 // Home Logic
 exports.getHomePage = async function(req, res, next)

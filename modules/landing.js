@@ -6,8 +6,11 @@ const path = require("path"); // URI and local file paths
 // Custom Modules
 const customModulePath = __dirname;
 const login = require(path.join(customModulePath, "login.js"));
-const logger = require(path.join(customModulePath, "logger.js"));
 const home = require(path.join(customModulePath, "home.js"));
+
+// Utility Modules
+const utilityModulesPath = path.join(__dirname, "utilityModules");
+const logger = require(path.join(utilityModulesPath, "logger.js"));
 
 // Landing Logic
 exports.getLandingPage = async function(req, res, next)

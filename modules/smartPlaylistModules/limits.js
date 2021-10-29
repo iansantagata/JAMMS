@@ -5,12 +5,15 @@ const path = require("path"); // URI and local file paths
 
 // Custom Modules
 const customModulePath = path.join(__dirname, "..");
-const logger = require(path.join(customModulePath, "logger.js"));
 const units = require(path.join(customModulePath, "unitConversion.js"));
 
 // Smart Playlist Modules
 const smartPlaylistModulesPath = __dirname;
 const dataRetrieval = require(path.join(smartPlaylistModulesPath, "dataRetrieval.js"));
+
+// Utility Modules
+const utilityModulesPath = path.join(__dirname, "..", "utilityModules");
+const logger = require(path.join(utilityModulesPath, "logger.js"));
 
 // Default Constant Values
 const maximumPlaylistSongLimit = 10000;
