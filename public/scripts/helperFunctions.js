@@ -262,21 +262,29 @@ function getShortenedNumericRepresentation(number, significantFigures)
         return number;
     }
 
-    const truncatedNumber = number.toPrecision(significantFigures);
-    if (truncatedNumber <= 999)
+    // Round the number to the specified number of significant figures
+    const roundedNumber = number.toPrecision(significantFigures);
+
+    const thousand = 1000;
+    if (roundedNumber < thousand)
     {
-        return truncatedNumber;
+        return roundedNumber;
     }
 
-    if (truncatedNumber <= 999999)
+    const million = 1000000;
+    if (roundedNumber < million)
     {
-        return (truncatedNumber / 1000) + "K";
+        const numberOfThousands = roundedNumber / thousand;
+        return `${numberOfThousands}K`;
     }
 
-    if (truncatedNumber <= 999999999)
+    const billion = 1000000000;
+    if (roundedNumber < billion)
     {
-        return (truncatedNumber / 1000000) + "M";
+        const numberOfMillions = roundedNumber / million;
+        return `${numberOfMillions}M`;
     }
 
-    return (truncatedNumber / 1000000000) + "B";
+    const numberOfBillions = roundedNumber / billion;
+    return `${numberOfBillions}B`;
 }
