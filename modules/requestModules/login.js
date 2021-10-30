@@ -4,7 +4,7 @@
 const path = require("path"); // URI and local file paths
 
 // Utility Modules
-const utilityModulesPath = path.join(__dirname, "utilityModules");
+const utilityModulesPath = path.join(__dirname, "..", "utilityModules");
 const logger = require(path.join(utilityModulesPath, "logger.js"));
 const environment = require(path.join(utilityModulesPath, "environment.js"));
 const loginUtils = require(path.join(utilityModulesPath, "loginUtils.js"));
