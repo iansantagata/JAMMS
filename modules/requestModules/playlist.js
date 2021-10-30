@@ -2,12 +2,12 @@
 
 // Dependencies
 const path = require("path"); // URI and local file paths
-const probe = require("probe-image-size"); // Image dimensional details
 
 // Utility Modules
 const utilityModulesPath = path.join(__dirname, "..", "utilityModules");
 const logger = require(path.join(utilityModulesPath, "logger.js"));
 const spotifyClient = require(path.join(utilityModulesPath, "spotifyClient.js"));
+const imageUtils = require(path.join(utilityModulesPath, "imageUtils.js"));
 
 // Playlist Logic
 exports.getPlaylistPage = async function(req, res, next)
@@ -17,7 +17,7 @@ exports.getPlaylistPage = async function(req, res, next)
     {
         const spotifyResponse = await spotifyClient.getSinglePlaylist(req, res);
 
-        const images = await getMissingImageDimensions(spotifyResponse.images);
+        const images = await imageUtils.getMissingImageDimensions(spotifyResponse.images);
 
         const playlistData = {
             deleted: false,
@@ -52,7 +52,7 @@ exports.getAllPlaylistPage = async function(req, res, next)
         const numberOfPages = Math.ceil(spotifyResponse.total / spotifyResponse.limit);
         const currentPage = Math.floor((spotifyResponse.offset + spotifyResponse.limit) / spotifyResponse.limit);
 
-        const playlists = await getMissingImageDimensionsForPlaylists(spotifyResponse.items);
+        const playlists = await imageUtils.getMissingImageDimensionsForPlaylists(spotifyResponse.items);
 
         const playlistsPageData = {
             currentPage: currentPage,
@@ -133,62 +133,3 @@ exports.restorePlaylistPage = async function(req, res, next)
         next(error);
     }
 };
-
-// Local Helper Functions
-async function getMissingImageDimensionsForPlaylists(playlists)
-{
-    if (!playlists)
-    {
-        return Promise.resolve(playlists);
-    }
-
-    for (const playlist of playlists)
-    {
-        if (!playlist)
-        {
-            continue;
-        }
-
-        const images = playlist.images;
-        playlist.images = await getMissingImageDimensions(images);
-    }
-
-    return Promise.resolve(playlists);
-}
-
-async function getMissingImageDimensions(images)
-{
-    if (!images)
-    {
-        return Promise.resolve(images);
-    }
-
-    for (const image of images)
-    {
-        if (!image)
-        {
-            continue;
-        }
-
-        // With an image url but no dimensions, make sure dimensions are populated
-        if (image.url && (!image.width || !image.height))
-        {
-            try
-            {
-                const probeResult = await probe(image.url);
-
-                // If probe was successful, set the dimension fields on the image
-                image.width = probeResult.width;
-                image.height = probeResult.height;
-            }
-            catch (error)
-            {
-                // Do not want to throw an error here because we have a fallback default image already
-                logger.logWarn(`Failed to probe image dimensions: ${error.message}`);
-                continue;
-            }
-        }
-    }
-
-    return Promise.resolve(images);
-}
