@@ -5,7 +5,7 @@ const path = require("path"); // URI and local file paths
 const probe = require("probe-image-size"); // Image dimensional details
 
 // Utility Modules
-const utilityModulesPath = path.join(__dirname, "utilityModules");
+const utilityModulesPath = path.join(__dirname, "..", "utilityModules");
 const logger = require(path.join(utilityModulesPath, "logger.js"));
 const spotifyClient = require(path.join(utilityModulesPath, "spotifyClient.js"));
 
@@ -134,7 +134,7 @@ exports.restorePlaylistPage = async function(req, res, next)
     }
 };
 
-// Helper Functions
+// Local Helper Functions
 async function getMissingImageDimensionsForPlaylists(playlists)
 {
     if (!playlists)

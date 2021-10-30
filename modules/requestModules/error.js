@@ -49,7 +49,7 @@ exports.handleUnexpectedError = async function(err, req, res, next)
     next(err);
 };
 
-// Helper Functions
+// Local Helper Functions
 async function getErrorPageData(req, res)
 {
     const isUserLoggedIn = await loginUtils.isUserLoggedIn(req, res);
