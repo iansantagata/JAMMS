@@ -3,14 +3,11 @@
 // Dependencies
 const path = require("path"); // URI and local file paths
 
-// Custom Modules
-const customModulePath = path.join(__dirname, "..");
-const authorize = require(path.join(customModulePath, "authorize.js"));
-
 // Utility Modules
 const utilityModulesPath = __dirname;
 const logger = require(path.join(utilityModulesPath, "logger.js"));
 const uriBuilder = require(path.join(utilityModulesPath, "uriBuilder.js"));
+const authorize = require(path.join(utilityModulesPath, "authorize.js"));
 
 // Default Constant Values
 const validateLoginEndpoint = "validateLogin";

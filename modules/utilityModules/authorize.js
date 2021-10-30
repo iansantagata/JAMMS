@@ -6,7 +6,7 @@ const path = require("path"); // URI and local file paths
 const querystring = require("querystring"); // URI query string manipulation
 
 // Utility Modules
-const utilityModulesPath = path.join(__dirname, "utilityModules");
+const utilityModulesPath = __dirname;
 const logger = require(path.join(utilityModulesPath, "logger.js"));
 const units = require(path.join(utilityModulesPath, "unitConversion.js"));
 const cookie = require(path.join(utilityModulesPath, "cookie.js"));
@@ -14,12 +14,13 @@ const environment = require(path.join(utilityModulesPath, "environment.js"));
 const encoding = require(path.join(utilityModulesPath, "encoding.js"));
 const loginUtils = require(path.join(utilityModulesPath, "loginUtils.js"));
 
-// Authorize Logic
+// Default Constant Values
 const spotifyAccessTokenUri = "https://accounts.spotify.com/api/token";
 
 const accessKey = "AccessToken";
 const refreshKey = "RefreshToken";
 
+// Authorize Logic
 exports.getAuthorizationTokens = async function(req)
 {
     try
@@ -50,15 +51,20 @@ exports.getAuthorizationTokens = async function(req)
         };
 
         // Trigger the authorization request
-        const response = await axios.post(spotifyAccessTokenUri, querystring.stringify(requestData), requestOptions);
+        const response = await axios.post(
+            spotifyAccessTokenUri,
+            querystring.stringify(requestData),
+            requestOptions
+        );
 
         // Extract only the data from the successful response that is needed
+        const responseData = response.data;
         const authorizationResponse = {
-            accessToken: response.data.access_token,
-            refreshToken: response.data.refresh_token,
-            scopes: response.data.scope,
-            tokenExpirationInMsec: units.getMillisecondsFromSeconds(response.data.expires_in),
-            tokenType: response.data.token_type
+            accessToken: responseData.access_token,
+            refreshToken: responseData.refresh_token,
+            scopes: responseData.scope,
+            tokenExpirationInMsec: units.getMillisecondsFromSeconds(responseData.expires_in),
+            tokenType: responseData.token_type
         };
 
         // Return authorization data to the caller
@@ -96,12 +102,13 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
         const response = await axios.post(spotifyAccessTokenUri, querystring.stringify(requestData), requestOptions);
 
         // Got a new access token successfully
+        const responseData = response.data;
         const refreshAuthorizationResponse = {
-            accessToken: response.data.access_token,
-            refreshToken: response.data.refresh_token,
-            scopes: response.data.scope,
-            tokenExpirationInMsec: units.getMillisecondsFromSeconds(response.data.expires_in),
-            tokenType: response.data.token_type
+            accessToken: responseData.access_token,
+            refreshToken: responseData.refresh_token,
+            scopes: responseData.scope,
+            tokenExpirationInMsec: units.getMillisecondsFromSeconds(responseData.expires_in),
+            tokenType: responseData.token_type
         };
 
         // Throw the new token back into a cookie for the user to use
