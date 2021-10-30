@@ -19,11 +19,14 @@ console.log("Imported major dependencies");
 const customModulePath = path.join(__dirname, "modules");
 const error = require(path.join(customModulePath, "error.js"));
 const home = require(path.join(customModulePath, "home.js"));
-const landing = require(path.join(customModulePath, "landing.js"));
 const login = require(path.join(customModulePath, "login.js"));
 const logout = require(path.join(customModulePath, "logout.js"));
 const playlist = require(path.join(customModulePath, "playlist.js"));
 const smartPlaylist = require(path.join(customModulePath, "smartPlaylist.js"));
+
+// Request Modules
+const requestModulesPath = path.join(customModulePath, "requestModules");
+const landing = require(path.join(requestModulesPath, "landing.js"));
 
 // Utility Modules
 const utilityModulesPath = path.join(customModulePath, "utilityModules");

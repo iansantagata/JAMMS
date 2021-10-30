@@ -4,11 +4,11 @@
 const path = require("path"); // URI and local file paths
 
 // Custom Modules
-const customModulePath = __dirname;
+const customModulePath = path.join(__dirname, "..");
 const home = require(path.join(customModulePath, "home.js"));
 
 // Utility Modules
-const utilityModulesPath = path.join(__dirname, "utilityModules");
+const utilityModulesPath = path.join(__dirname, "..", "utilityModules");
 const logger = require(path.join(utilityModulesPath, "logger.js"));
 const loginUtils = require(path.join(utilityModulesPath, "loginUtils.js"));
 
