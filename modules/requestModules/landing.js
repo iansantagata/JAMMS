@@ -3,9 +3,9 @@
 // Dependencies
 const path = require("path"); // URI and local file paths
 
-// Custom Modules
-const customModulePath = path.join(__dirname, "..");
-const home = require(path.join(customModulePath, "home.js"));
+// Request Modules
+const requestModulesPath = __dirname;
+const home = require(path.join(requestModulesPath, "home.js"));
 
 // Utility Modules
 const utilityModulesPath = path.join(__dirname, "..", "utilityModules");
