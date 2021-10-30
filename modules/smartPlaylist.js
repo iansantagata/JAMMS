@@ -6,7 +6,6 @@ const path = require("path"); // URI and local file paths
 // Custom Modules
 const customModulePath = __dirname;
 const spotifyClient = require(path.join(customModulePath, "spotifyClient.js"));
-const errorModule = require(path.join(customModulePath, "error.js"));
 
 // Smart Playlist Modules
 const smartPlaylistModulesPath = path.join(__dirname, "smartPlaylistModules");
@@ -21,6 +20,7 @@ const rules = require(path.join(smartPlaylistModulesPath, "rules.js"));
 const utilityModulesPath = path.join(__dirname, "utilityModules");
 const chunk = require(path.join(utilityModulesPath, "chunk.js"));
 const logger = require(path.join(utilityModulesPath, "logger.js"));
+const errorUtils = require(path.join(utilityModulesPath, "errorUtils.js"));
 
 // Default Constant Values
 const playlistNamePrefix = "JAMMS: ";
@@ -79,7 +79,7 @@ exports.getSmartPlaylistPreview = async function(req, res)
     catch (error)
     {
         logger.logError(`Failed to get smart playlist preview: ${error.message}`);
-        errorModule.handleAjaxError(req, res);
+        errorUtils.handleAjaxError(res);
     }
 };
 

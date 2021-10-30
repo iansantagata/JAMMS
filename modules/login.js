@@ -8,18 +8,14 @@ const querystring = require("querystring"); // URI query string manipulation
 const utilityModulesPath = path.join(__dirname, "utilityModules");
 const logger = require(path.join(utilityModulesPath, "logger.js"));
 const environment = require(path.join(utilityModulesPath, "environment.js"));
-const cookie = require(path.join(utilityModulesPath, "cookie.js"));
-const random = require(path.join(utilityModulesPath, "random.js"));
 const loginUtils = require(path.join(utilityModulesPath, "loginUtils.js"));
 const authorize = require(path.join(utilityModulesPath, "authorize.js"));
+const state = require(path.join(utilityModulesPath, "state.js"));
 
 // Default Constant Values
 const spotifyAuthorizeUri = "https://accounts.spotify.com/authorize";
 
 const scopes = "playlist-read-private playlist-read-collaborative user-top-read user-library-read user-follow-read playlist-modify-public playlist-modify-private";
-
-const stateKey = "SpotifyAuthorizationState";
-const stateLength = 16;
 
 // Login Logic
 exports.getLoginPage = async function(req, res, next)
@@ -27,8 +23,8 @@ exports.getLoginPage = async function(req, res, next)
     try
     {
         // Set state token locally for logging in to be validated against Spotify returned state token
-        const stateToken = random.generateRandomString(stateLength);
-        cookie.setCookie(req, res, stateKey, stateToken); // Session cookie (no explicit expiration)
+        const stateToken = await state.generateStateToken();
+        await state.setStateToken(req, res, stateToken);
 
         const clientId = await environment.getClientId();
         const redirectUri = await loginUtils.getValidateLoginRedirectUri(req);
@@ -65,20 +61,10 @@ exports.validateLogin = async function(req, res)
         }
 
         // Validate state token from Spotify callback request is the same from the request made locally
-        const stateToken = req.query.state;
-        if (!stateToken)
-        {
-            throw new Error("Failed to find state token in request object");
-        }
-
-        const storedStateToken = await cookie.getCookie(req, stateKey);
-        if (stateToken !== storedStateToken)
-        {
-            throw new Error("Failed to match state token of browser to Spotify state token");
-        }
+        await state.validateStateTokenMatch(req);
 
         // State validated successfully, can clear the state cookie
-        await cookie.clearCookie(res, stateKey);
+        await state.clearStateToken(res);
 
         // Redirect to authorization handling
         const authorizationResponse = await authorize.getAuthorizationTokens(req);
@@ -93,7 +79,7 @@ exports.validateLogin = async function(req, res)
     {
         // Clean up any potentially set login cookies if login has failed
         // This is to be sure that a user is not stuck in a half logged in state
-        await cookie.clearCookie(res, stateKey);
+        await state.clearStateToken(res);
         await authorize.deleteAuthorizationCookies(res);
 
         logger.logError(`Failed to authorize user with Spotify: ${error.message}`);
