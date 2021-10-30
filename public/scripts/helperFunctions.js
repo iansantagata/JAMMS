@@ -208,7 +208,7 @@ function getCommaSeparatedArtistNames(artists)
     return artistNames;
 }
 
-function getImagePath(images, minimumPixelsPerSide, defaultImagePath)
+function getImagePath(images, defaultImagePath)
 {
     // Make sure we actually have images, or else we can short circuit
     if (!Array.isArray(images) || images.length === 0)
@@ -216,47 +216,15 @@ function getImagePath(images, minimumPixelsPerSide, defaultImagePath)
         return defaultImagePath;
     }
 
-    // Images are ordered from widest to smallest width, so start at the end to keep images small-ish yet reasonably visible
-    let imageIndex = images.length - 1;
-
-    // We want images that are at least over the minimum pixels in both dimensions for the user to see them
-    // If there are none, we will end up using the first and biggest image
-    while (imageIndex >= 0)
-    {
-        // If the image is not valid, keep going to the next image
-        const image = images[imageIndex];
-        if (!image)
-        {
-            imageIndex--;
-            continue;
-        }
-
-        // Make sure the image has all the information we need
-        if (!image.width || !image.height || !image.url)
-        {
-            imageIndex--;
-            continue;
-        }
-
-        // Make sure the image can satisfy the minimum bounds
-        if (image.width >= minimumPixelsPerSide && image.height >= minimumPixelsPerSide)
-        {
-            // We have found our image index so we can exit the loop
-            break;
-        }
-
-        imageIndex -= 1;
-    }
-
-    // Image was not found, so use the default image
-    const targetImage = images[imageIndex];
+    // Images are ordered from widest to smallest width, so select the first image to choose the widest one if one exists
+    const targetImage = images[0];
     if (!targetImage)
     {
         return defaultImagePath;
     }
 
 
-    // The URL was invalid, so use the default image
+    // If URL is invalid, use the default image
     const targetImageUrl = targetImage.url;
     if (!targetImageUrl)
     {
@@ -280,4 +248,35 @@ function getCamelCase(str)
             nonAlphanumericRepeatingFollowedBySingleAlphanumericRegex,
             (match, chr) => chr.toUpperCase()
         );
+}
+
+function getShortenedNumericRepresentation(number, significantFigures)
+{
+    if (!number)
+    {
+        return number;
+    }
+
+    if (number !== Math.floor(number))
+    {
+        return number;
+    }
+
+    const truncatedNumber = number.toPrecision(significantFigures);
+    if (truncatedNumber <= 999)
+    {
+        return truncatedNumber;
+    }
+
+    if (truncatedNumber <= 999999)
+    {
+        return (truncatedNumber / 1000) + "K";
+    }
+
+    if (truncatedNumber <= 999999999)
+    {
+        return (truncatedNumber / 1000000) + "M";
+    }
+
+    return (truncatedNumber / 1000000000) + "B";
 }

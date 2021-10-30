@@ -34,7 +34,7 @@
                 <th scope="row" class="align-middle">@playlistCount</th>
                 <td class="align-middle text-capitalize">@item.name</td>
                 <td class="align-middle">@item.owner.display_name</td>
-                <td class="align-middle col-md-2">
+                <td class="align-middle">
                   @{
                     var viewPlaylistLinkId = "viewPlaylistLink-" + playlistCount;
                   }
@@ -42,7 +42,7 @@
                     View
                   </a>
                 </td>
-                <td class="align-middle col-md-2">
+                <td class="align-middle col-2 col-lg-1">
                   @{
                     // Have to manually JSON stringify this object
                     // This is being done so that Vash at compile time can transfer data to JavaScript at run-time
@@ -50,13 +50,12 @@
                     var imagesJson = JSON.stringify(item.images);
 
                     var playlistImageId = `imageForPlaylist-${playlistCount}`;
-                    var minimumPixelsPerSide = 50;
-                    var defaultImagePath = "images/question_small.png";
+                    var defaultImagePath = "images/question.png";
                   }
                   <img id="@playlistImageId" class="img-fluid" alt="Playlist Named @item.name" />
                   <script type="text/javascript">
                     var images = @html.raw(imagesJson);
-                    var playlistImagePath = getImagePath(images, @minimumPixelsPerSide, "@defaultImagePath");
+                    var playlistImagePath = getImagePath(images, "@defaultImagePath");
 
                     setImageSourceAttributeById("@playlistImageId", playlistImagePath);
                   </script>
@@ -125,7 +124,7 @@
                 </script>
 
                 <td class="align-middle text-capitalize">@item.album.name</td>
-                <td class="align-middle col-md-2">
+                <td class="align-middle col-2 col-lg-1">
                   @{
                     // Have to manually JSON stringify this object
                     // This is being done so that Vash at compile time can transfer data to JavaScript at run-time
@@ -134,13 +133,12 @@
                     var imagesJson = JSON.stringify(album.images);
 
                     var albumImageId = `albumImageForTrack-${trackCount}`;
-                    var minimumPixelsPerSide = 64;
                     var defaultImagePath = "images/question.png";
                   }
                   <img id="@albumImageId" class="img-fluid" alt="Album Named @album.name" />
                   <script type="text/javascript">
                     var images = @html.raw(imagesJson);
-                    var albumImagePath = getImagePath(images, @minimumPixelsPerSide, "@defaultImagePath");
+                    var albumImagePath = getImagePath(images, "@defaultImagePath");
 
                     setImageSourceAttributeById("@albumImageId", albumImagePath);
                   </script>
@@ -165,6 +163,7 @@
             <tr>
               <th scope="col" class="align-middle">Artist #</th>
               <th scope="col" class="align-middle">Artist Name</th>
+              <th scope="col" class="align-middle">Followers</th>
               <th scope="col" class="align-middle">Genres</th>
               <th scope="col" class="align-middle">Image</th>
             </tr>
@@ -180,6 +179,16 @@
               <tr>
                 <th scope="row" class="align-middle">@artistCount</th>
                 <td class="align-middle text-capitalize">@item.name</td>
+                @{
+                  var artistFollowersId = `followersForArtist-${artistCount}`;
+                }
+                <td id="@artistFollowersId" class="align-middle"></td>
+                <script type="text/javascript">
+                  var significantFigures = 3;
+                  var followersCount = getShortenedNumericRepresentation(@item.followers.total, significantFigures);
+
+                  setTextInElementById("@artistFollowersId", followersCount);
+                </script>
                 <td class="align-middle text-capitalize">
                   @item.genres.forEach(function(genre)
                   {
@@ -187,7 +196,7 @@
                     <br/>
                   })
                 </td>
-                <td class="align-middle col-md-2">
+                <td class="align-middle col-2 col-lg-1">
                   @{
                     // Have to manually JSON stringify this object
                     // This is being done so that Vash at compile time can transfer data to JavaScript at run-time
@@ -195,13 +204,12 @@
                     var imagesJson = JSON.stringify(item.images);
 
                     var artistImageId = `imageForArtist-${artistCount}`;
-                    var minimumPixelsPerSide = 100;
                     var defaultImagePath = "images/question.png";
                   }
                   <img id="@artistImageId" class="img-fluid" alt="Artist Named @item.name" />
                   <script type="text/javascript">
                     var images = @html.raw(imagesJson);
-                    var artistImagePath = getImagePath(images, @minimumPixelsPerSide, "@defaultImagePath");
+                    var artistImagePath = getImagePath(images, "@defaultImagePath");
 
                     setImageSourceAttributeById("@artistImageId", artistImagePath);
                   </script>

@@ -50,7 +50,7 @@
                 <th scope="row" class="align-middle">@playlistCount</th>
                 <td class="align-middle text-capitalize">@item.name</td>
                 <td class="align-middle">@item.owner.display_name</td>
-                <td class="align-middle col-md-2">
+                <td class="align-middle">
                   @{
                     var viewPlaylistLinkId = "viewPlaylistLink-" + playlistCount;
                   }
@@ -58,7 +58,7 @@
                     View
                   </a>
                 </td>
-                <td class="align-middle col-md-2">
+                <td class="align-middle col-2 col-lg-1">
                   @{
                     // Have to manually JSON stringify this object
                     // This is being done so that Vash at compile time can transfer data to JavaScript at run-time
@@ -66,13 +66,12 @@
                     var imagesJson = JSON.stringify(item.images);
 
                     var playlistImageId = `imageForPlaylist-${playlistCount}`;
-                    var minimumPixelsPerSide = 60;
-                    var defaultImagePath = "images/question_small.png";
+                    var defaultImagePath = "images/question.png";
                   }
                   <img id="@playlistImageId" class="img-fluid" alt="Playlist Named @item.playlistName" />
                   <script type="text/javascript">
                     var images = @html.raw(imagesJson);
-                    var playlistImagePath = getImagePath(images, @minimumPixelsPerSide, "@defaultImagePath");
+                    var playlistImagePath = getImagePath(images, "@defaultImagePath");
 
                     setImageSourceAttributeById("@playlistImageId", playlistImagePath);
                   </script>
