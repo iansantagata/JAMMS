@@ -246,7 +246,7 @@ function displaySmartPlaylistPreview(data)
 
     // Create the table element where the data will reside
     const tableElement = document.createElement("table");
-    tableElement.setAttribute("class", "table table-striped table-sm table-hover");
+    tableElement.setAttribute("class", "table table-striped table-sm table-hover small");
     tableElement.appendChild(tableHeadElement);
     tableElement.appendChild(tableBodyElement);
 
@@ -265,12 +265,15 @@ function displaySmartPlaylistPreview(data)
     buttonDivElement.appendChild(buttonElement);
 
     // Mark the table as responsive and shove the data inside of it
+    const tableContainerElement = document.createElement("div");
+    tableContainerElement.setAttribute("class", "table-responsive");
+    tableContainerElement.appendChild(tableElement);
+
     const previewContainerElement = document.createElement("div");
     previewContainerElement.setAttribute("id", "previewContainer");
-    previewContainerElement.setAttribute("class", "table-responsive");
     previewContainerElement.appendChild(headerElement);
     previewContainerElement.appendChild(alertDivElement);
-    previewContainerElement.appendChild(tableElement);
+    previewContainerElement.appendChild(tableContainerElement);
     previewContainerElement.appendChild(buttonDivElement);
 
     // Finally, append all of this new content onto the end of the existing form
