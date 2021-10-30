@@ -15,12 +15,42 @@ const encoding = require(path.join(utilityModulesPath, "encoding.js"));
 const loginUtils = require(path.join(utilityModulesPath, "loginUtils.js"));
 
 // Default Constant Values
-const spotifyAccessTokenUri = "https://accounts.spotify.com/api/token";
+const spotifyAccountsUri = "https://accounts.spotify.com";
+const spotifyAccessTokenUri = `${spotifyAccountsUri}/api/token`;
+const spotifyAuthorizeUri = `${spotifyAccountsUri}/authorize`;
 
 const accessKey = "AccessToken";
 const refreshKey = "RefreshToken";
 
+const spotifyScopedPermissions = [
+    "playlist-read-private",
+    "playlist-read-collaborative",
+    "user-top-read",
+    "user-library-read",
+    "user-follow-read",
+    "playlist-modify-public",
+    "playlist-modify-private"
+];
+
 // Authorize Logic
+exports.getAuthorizationRequestUri = function(clientId, redirectUri, stateToken)
+{
+    const scopes = spotifyScopedPermissions.join(" ");
+
+    const requestParameters = {
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        response_type: "code",
+        scope: scopes,
+        show_dialog: true,
+        state: stateToken
+    };
+
+    const stringifiedRequestParameters = querystring.stringify(requestParameters);
+    const spotifyAuthorizationRequestUri = `${spotifyAuthorizeUri}?${stringifiedRequestParameters}`;
+    return spotifyAuthorizationRequestUri;
+};
+
 exports.getAuthorizationTokens = async function(req)
 {
     try

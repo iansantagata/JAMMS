@@ -2,7 +2,6 @@
 
 // Dependencies
 const path = require("path"); // URI and local file paths
-const querystring = require("querystring"); // URI query string manipulation
 
 // Utility Modules
 const utilityModulesPath = path.join(__dirname, "utilityModules");
@@ -12,35 +11,21 @@ const loginUtils = require(path.join(utilityModulesPath, "loginUtils.js"));
 const authorize = require(path.join(utilityModulesPath, "authorize.js"));
 const state = require(path.join(utilityModulesPath, "state.js"));
 
-// Default Constant Values
-const spotifyAuthorizeUri = "https://accounts.spotify.com/authorize";
-
-const scopes = "playlist-read-private playlist-read-collaborative user-top-read user-library-read user-follow-read playlist-modify-public playlist-modify-private";
-
 // Login Logic
 exports.getLoginPage = async function(req, res, next)
 {
     try
     {
+        const clientId = await environment.getClientId();
+        const redirectUri = await loginUtils.getValidateLoginRedirectUri(req);
+
         // Set state token locally for logging in to be validated against Spotify returned state token
         const stateToken = await state.generateStateToken();
         await state.setStateToken(req, res, stateToken);
 
-        const clientId = await environment.getClientId();
-        const redirectUri = await loginUtils.getValidateLoginRedirectUri(req);
-
-        const requestParameters = {
-            client_id: clientId,
-            redirect_uri: redirectUri,
-            response_type: "code",
-            scope: scopes,
-            show_dialog: true,
-            state: stateToken
-        };
-
         // Request authorization for this application via a Spotify login page
-        const spotifyAuthorizeFullUri = `${spotifyAuthorizeUri}?${querystring.stringify(requestParameters)}`;
-        res.redirect(spotifyAuthorizeFullUri);
+        const spotifyAuthorizeUri = await authorize.getAuthorizationRequestUri(clientId, redirectUri, stateToken);
+        res.redirect(spotifyAuthorizeUri);
     }
     catch (error)
     {
