@@ -19,7 +19,6 @@
     "cors": "^2.8.4",
     "express": "~4.16.0",
     "helmet": "^4.6.0",
-    "probe-image-size": "^7.2.1",
     "querystring": "^0.2.1",
     "vash": "^0.13.0"
   },
