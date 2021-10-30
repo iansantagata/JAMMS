@@ -8,13 +8,14 @@ const querystring = require("querystring"); // URI query string manipulation
 // Custom Modules
 const customModulePath = __dirname;
 const redirect = require(path.join(customModulePath, "redirect.js"));
-const secrets = require(path.join(customModulePath, "secrets.js"));
 
 // Utility Modules
 const utilityModulesPath = path.join(__dirname, "utilityModules");
 const logger = require(path.join(utilityModulesPath, "logger.js"));
 const units = require(path.join(utilityModulesPath, "unitConversion.js"));
 const cookie = require(path.join(utilityModulesPath, "cookie.js"));
+const environment = require(path.join(utilityModulesPath, "environment.js"));
+const encoding = require(path.join(utilityModulesPath, "encoding.js"));
 
 // Authorize Logic
 const spotifyAccessTokenUri = "https://accounts.spotify.com/api/token";
@@ -42,7 +43,7 @@ exports.getAuthorizationTokens = async function(req)
             redirect_uri: redirectUri
         };
 
-        const authorizationToken = await secrets.getBase64EncodedAuthorizationToken();
+        const authorizationToken = await getBase64EncodedAuthorizationToken();
 
         const requestOptions = {
             headers: {
@@ -87,7 +88,7 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
             refresh_token: refreshToken
         };
 
-        const authToken = await secrets.getBase64EncodedAuthorizationToken();
+        const authToken = await getBase64EncodedAuthorizationToken();
         const requestOptions = {
             headers: {
                 Authorization: `Basic ${authToken}`
@@ -246,6 +247,26 @@ exports.deleteAuthorizationCookies = async function(res)
     catch (error)
     {
         logger.logError(`Failed to delete authorization cookies: ${error.message}`);
+        return Promise.reject(error);
+    }
+};
+
+// Local Helper Functions
+async function getBase64EncodedAuthorizationToken()
+{
+    try
+    {
+        const clientId = await environment.getClientId();
+        const clientSecret = await environment.getClientSecret();
+
+        const authorizationString = `${clientId}:${clientSecret}`;
+        const encodedBase64String = await encoding.encodeInBase64(authorizationString);
+
+        return Promise.resolve(encodedBase64String);
+    }
+    catch (error)
+    {
+        logger.logError(`Failed to get base 64 encoded authorization token: ${error.message}`);
         return Promise.reject(error);
     }
 };
