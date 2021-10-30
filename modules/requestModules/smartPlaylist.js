@@ -4,7 +4,7 @@
 const path = require("path"); // URI and local file paths
 
 // Smart Playlist Modules
-const smartPlaylistModulesPath = path.join(__dirname, "smartPlaylistModules");
+const smartPlaylistModulesPath = path.join(__dirname, "..", "smartPlaylistModules");
 const enrichment = require(path.join(smartPlaylistModulesPath, "enrichment.js"));
 const specialRules = require(path.join(smartPlaylistModulesPath, "specialRules.js"));
 const dataRetrieval = require(path.join(smartPlaylistModulesPath, "dataRetrieval.js"));
@@ -13,7 +13,7 @@ const ordering = require(path.join(smartPlaylistModulesPath, "ordering.js"));
 const rules = require(path.join(smartPlaylistModulesPath, "rules.js"));
 
 // Utility Modules
-const utilityModulesPath = path.join(__dirname, "utilityModules");
+const utilityModulesPath = path.join(__dirname, "..", "utilityModules");
 const chunk = require(path.join(utilityModulesPath, "chunk.js"));
 const logger = require(path.join(utilityModulesPath, "logger.js"));
 const errorUtils = require(path.join(utilityModulesPath, "errorUtils.js"));
