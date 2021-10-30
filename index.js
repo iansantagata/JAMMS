@@ -17,15 +17,21 @@ console.log("Imported major dependencies");
 
 // Custom Modules
 const customModulePath = path.join(__dirname, "modules");
-const error = require(path.join(customModulePath, "error.js"));
-const home = require(path.join(customModulePath, "home.js"));
-const landing = require(path.join(customModulePath, "landing.js"));
-const login = require(path.join(customModulePath, "login.js"));
-const logout = require(path.join(customModulePath, "logout.js"));
-const playlist = require(path.join(customModulePath, "playlist.js"));
-const logger = require(path.join(customModulePath, "logger.js"));
-const environment = require(path.join(customModulePath, "environment.js"));
-const smartPlaylist = require(path.join(customModulePath, "smartPlaylist.js"));
+
+// Request Modules
+const requestModulesPath = path.join(customModulePath, "requestModules");
+const landing = require(path.join(requestModulesPath, "landing.js"));
+const home = require(path.join(requestModulesPath, "home.js"));
+const error = require(path.join(requestModulesPath, "error.js"));
+const login = require(path.join(requestModulesPath, "login.js"));
+const logout = require(path.join(requestModulesPath, "logout.js"));
+const playlist = require(path.join(requestModulesPath, "playlist.js"));
+const smartPlaylist = require(path.join(requestModulesPath, "smartPlaylist.js"));
+
+// Utility Modules
+const utilityModulesPath = path.join(customModulePath, "utilityModules");
+const logger = require(path.join(utilityModulesPath, "logger.js"));
+const environment = require(path.join(utilityModulesPath, "environment.js"));
 
 logger.logInfo("Imported custom modules");
 

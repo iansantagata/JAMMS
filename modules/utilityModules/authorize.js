@@ -5,19 +5,51 @@ const axios = require("axios"); // Make HTTP requests
 const path = require("path"); // URI and local file paths
 const querystring = require("querystring"); // URI query string manipulation
 
-// Custom Modules
-const customModulePath = __dirname;
-const redirect = require(path.join(customModulePath, "redirect.js"));
-const secrets = require(path.join(customModulePath, "secrets.js"));
-const cookie = require(path.join(customModulePath, "cookie.js"));
-const logger = require(path.join(customModulePath, "logger.js"));
-const units = require(path.join(customModulePath, "unitConversion.js"));
+// Utility Modules
+const utilityModulesPath = __dirname;
+const logger = require(path.join(utilityModulesPath, "logger.js"));
+const units = require(path.join(utilityModulesPath, "unitConversion.js"));
+const cookie = require(path.join(utilityModulesPath, "cookie.js"));
+const environment = require(path.join(utilityModulesPath, "environment.js"));
+const encoding = require(path.join(utilityModulesPath, "encoding.js"));
+const loginUtils = require(path.join(utilityModulesPath, "loginUtils.js"));
 
-// Authorize Logic
-const spotifyAccessTokenUri = "https://accounts.spotify.com/api/token";
+// Default Constant Values
+const spotifyAccountsUri = "https://accounts.spotify.com";
+const spotifyAccessTokenUri = `${spotifyAccountsUri}/api/token`;
+const spotifyAuthorizeUri = `${spotifyAccountsUri}/authorize`;
 
 const accessKey = "AccessToken";
 const refreshKey = "RefreshToken";
+
+const spotifyScopedPermissions = [
+    "playlist-read-private",
+    "playlist-read-collaborative",
+    "user-top-read",
+    "user-library-read",
+    "user-follow-read",
+    "playlist-modify-public",
+    "playlist-modify-private"
+];
+
+// Authorize Logic
+exports.getAuthorizationRequestUri = function(clientId, redirectUri, stateToken)
+{
+    const scopes = spotifyScopedPermissions.join(" ");
+
+    const requestParameters = {
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        response_type: "code",
+        scope: scopes,
+        show_dialog: true,
+        state: stateToken
+    };
+
+    const stringifiedRequestParameters = querystring.stringify(requestParameters);
+    const spotifyAuthorizationRequestUri = `${spotifyAuthorizeUri}?${stringifiedRequestParameters}`;
+    return spotifyAuthorizationRequestUri;
+};
 
 exports.getAuthorizationTokens = async function(req)
 {
@@ -30,7 +62,7 @@ exports.getAuthorizationTokens = async function(req)
             throw new Error("Failed to locate authorization code from Spotify");
         }
 
-        const redirectUri = redirect.getValidateLoginRedirectUri(req);
+        const redirectUri = await loginUtils.getValidateLoginRedirectUri(req);
 
         // Make the request to get access and refresh tokens
         const requestData = {
@@ -39,7 +71,7 @@ exports.getAuthorizationTokens = async function(req)
             redirect_uri: redirectUri
         };
 
-        const authorizationToken = await secrets.getBase64EncodedAuthorizationToken();
+        const authorizationToken = await getBase64EncodedAuthorizationToken();
 
         const requestOptions = {
             headers: {
@@ -49,15 +81,20 @@ exports.getAuthorizationTokens = async function(req)
         };
 
         // Trigger the authorization request
-        const response = await axios.post(spotifyAccessTokenUri, querystring.stringify(requestData), requestOptions);
+        const response = await axios.post(
+            spotifyAccessTokenUri,
+            querystring.stringify(requestData),
+            requestOptions
+        );
 
         // Extract only the data from the successful response that is needed
+        const responseData = response.data;
         const authorizationResponse = {
-            accessToken: response.data.access_token,
-            refreshToken: response.data.refresh_token,
-            scopes: response.data.scope,
-            tokenExpirationInMsec: units.getMillisecondsFromSeconds(response.data.expires_in),
-            tokenType: response.data.token_type
+            accessToken: responseData.access_token,
+            refreshToken: responseData.refresh_token,
+            scopes: responseData.scope,
+            tokenExpirationInMsec: units.getMillisecondsFromSeconds(responseData.expires_in),
+            tokenType: responseData.token_type
         };
 
         // Return authorization data to the caller
@@ -84,7 +121,7 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
             refresh_token: refreshToken
         };
 
-        const authToken = await secrets.getBase64EncodedAuthorizationToken();
+        const authToken = await getBase64EncodedAuthorizationToken();
         const requestOptions = {
             headers: {
                 Authorization: `Basic ${authToken}`
@@ -95,12 +132,13 @@ exports.getAuthorizationTokensViaRefresh = async function(req, res)
         const response = await axios.post(spotifyAccessTokenUri, querystring.stringify(requestData), requestOptions);
 
         // Got a new access token successfully
+        const responseData = response.data;
         const refreshAuthorizationResponse = {
-            accessToken: response.data.access_token,
-            refreshToken: response.data.refresh_token,
-            scopes: response.data.scope,
-            tokenExpirationInMsec: units.getMillisecondsFromSeconds(response.data.expires_in),
-            tokenType: response.data.token_type
+            accessToken: responseData.access_token,
+            refreshToken: responseData.refresh_token,
+            scopes: responseData.scope,
+            tokenExpirationInMsec: units.getMillisecondsFromSeconds(responseData.expires_in),
+            tokenType: responseData.token_type
         };
 
         // Throw the new token back into a cookie for the user to use
@@ -246,3 +284,23 @@ exports.deleteAuthorizationCookies = async function(res)
         return Promise.reject(error);
     }
 };
+
+// Local Helper Functions
+async function getBase64EncodedAuthorizationToken()
+{
+    try
+    {
+        const clientId = await environment.getClientId();
+        const clientSecret = await environment.getClientSecret();
+
+        const authorizationString = `${clientId}:${clientSecret}`;
+        const encodedBase64String = await encoding.encodeInBase64(authorizationString);
+
+        return Promise.resolve(encodedBase64String);
+    }
+    catch (error)
+    {
+        logger.logError(`Failed to get base 64 encoded authorization token: ${error.message}`);
+        return Promise.reject(error);
+    }
+}
