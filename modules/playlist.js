@@ -4,13 +4,10 @@
 const path = require("path"); // URI and local file paths
 const probe = require("probe-image-size"); // Image dimensional details
 
-// Custom Modules
-const customModulePath = __dirname;
-const spotifyClient = require(path.join(customModulePath, "spotifyClient.js"));
-
 // Utility Modules
 const utilityModulesPath = path.join(__dirname, "utilityModules");
 const logger = require(path.join(utilityModulesPath, "logger.js"));
+const spotifyClient = require(path.join(utilityModulesPath, "spotifyClient.js"));
 
 // Playlist Logic
 exports.getPlaylistPage = async function(req, res, next)

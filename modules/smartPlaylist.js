@@ -3,10 +3,6 @@
 // Dependencies
 const path = require("path"); // URI and local file paths
 
-// Custom Modules
-const customModulePath = __dirname;
-const spotifyClient = require(path.join(customModulePath, "spotifyClient.js"));
-
 // Smart Playlist Modules
 const smartPlaylistModulesPath = path.join(__dirname, "smartPlaylistModules");
 const enrichment = require(path.join(smartPlaylistModulesPath, "enrichment.js"));
@@ -21,6 +17,7 @@ const utilityModulesPath = path.join(__dirname, "utilityModules");
 const chunk = require(path.join(utilityModulesPath, "chunk.js"));
 const logger = require(path.join(utilityModulesPath, "logger.js"));
 const errorUtils = require(path.join(utilityModulesPath, "errorUtils.js"));
+const spotifyClient = require(path.join(utilityModulesPath, "spotifyClient.js"));
 
 // Default Constant Values
 const playlistNamePrefix = "JAMMS: ";

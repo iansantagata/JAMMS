@@ -6,7 +6,7 @@ const path = require("path"); // URI and local file paths
 const querystring = require("querystring"); // URI query string manipulation
 
 // Utility Modules
-const utilityModulesPath = path.join(__dirname, "utilityModules");
+const utilityModulesPath = __dirname;
 const logger = require(path.join(utilityModulesPath, "logger.js"));
 const authorize = require(path.join(utilityModulesPath, "authorize.js"));
 

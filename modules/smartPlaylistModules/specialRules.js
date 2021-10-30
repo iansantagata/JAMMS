@@ -3,10 +3,6 @@
 // Dependencies
 const path = require("path"); // URI and local file paths
 
-// Custom Modules
-const customModulePath = path.join(__dirname, "..");
-const spotifyClient = require(path.join(customModulePath, "spotifyClient.js"));
-
 // Smart Playlist Modules
 const smartPlaylistModulesPath = __dirname;
 const rules = require(path.join(smartPlaylistModulesPath, "rules.js"));
@@ -15,6 +11,7 @@ const rules = require(path.join(smartPlaylistModulesPath, "rules.js"));
 const utilityModulesPath = path.join(__dirname, "..", "utilityModules");
 const chunk = require(path.join(utilityModulesPath, "chunk.js"));
 const logger = require(path.join(utilityModulesPath, "logger.js"));
+const spotifyClient = require(path.join(utilityModulesPath, "spotifyClient.js"));
 
 // Default Constant Values
 const artistGenreRetrievalLimit = 50;
