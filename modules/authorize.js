@@ -5,10 +5,6 @@ const axios = require("axios"); // Make HTTP requests
 const path = require("path"); // URI and local file paths
 const querystring = require("querystring"); // URI query string manipulation
 
-// Custom Modules
-const customModulePath = __dirname;
-const login = require(path.join(customModulePath, "login.js"));
-
 // Utility Modules
 const utilityModulesPath = path.join(__dirname, "utilityModules");
 const logger = require(path.join(utilityModulesPath, "logger.js"));
@@ -16,6 +12,7 @@ const units = require(path.join(utilityModulesPath, "unitConversion.js"));
 const cookie = require(path.join(utilityModulesPath, "cookie.js"));
 const environment = require(path.join(utilityModulesPath, "environment.js"));
 const encoding = require(path.join(utilityModulesPath, "encoding.js"));
+const loginUtils = require(path.join(utilityModulesPath, "loginUtils.js"));
 
 // Authorize Logic
 const spotifyAccessTokenUri = "https://accounts.spotify.com/api/token";
@@ -34,7 +31,7 @@ exports.getAuthorizationTokens = async function(req)
             throw new Error("Failed to locate authorization code from Spotify");
         }
 
-        const redirectUri = await login.getValidateLoginRedirectUri(req);
+        const redirectUri = await loginUtils.getValidateLoginRedirectUri(req);
 
         // Make the request to get access and refresh tokens
         const requestData = {
@@ -269,4 +266,4 @@ async function getBase64EncodedAuthorizationToken()
         logger.logError(`Failed to get base 64 encoded authorization token: ${error.message}`);
         return Promise.reject(error);
     }
-};
+}

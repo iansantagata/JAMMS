@@ -13,7 +13,8 @@ const utilityModulesPath = path.join(__dirname, "utilityModules");
 const logger = require(path.join(utilityModulesPath, "logger.js"));
 const environment = require(path.join(utilityModulesPath, "environment.js"));
 const cookie = require(path.join(utilityModulesPath, "cookie.js"));
-const uriBuilder = require(path.join(utilityModulesPath, "uriBuilder.js"));
+const random = require(path.join(utilityModulesPath, "random.js"));
+const loginUtils = require(path.join(utilityModulesPath, "loginUtils.js"));
 
 // Default Constant Values
 const spotifyAuthorizeUri = "https://accounts.spotify.com/authorize";
@@ -23,19 +24,17 @@ const scopes = "playlist-read-private playlist-read-collaborative user-top-read 
 const stateKey = "SpotifyAuthorizationState";
 const stateLength = 16;
 
-const validateLoginEndpoint = "validateLogin";
-
 // Login Logic
 exports.getLoginPage = async function(req, res, next)
 {
     try
     {
         // Set state token locally for logging in to be validated against Spotify returned state token
-        const stateToken = generateRandomString(stateLength);
+        const stateToken = random.generateRandomString(stateLength);
         cookie.setCookie(req, res, stateKey, stateToken); // Session cookie (no explicit expiration)
 
         const clientId = await environment.getClientId();
-        const redirectUri = await exports.getValidateLoginRedirectUri(req);
+        const redirectUri = await loginUtils.getValidateLoginRedirectUri(req);
 
         const requestParameters = {
             client_id: clientId,
@@ -104,47 +103,3 @@ exports.validateLogin = async function(req, res)
         res.redirect("/accessDenied");
     }
 };
-
-exports.isUserLoggedIn = async function(req, res)
-{
-    try
-    {
-        await authorize.getRefreshTokenFromCookies(req);
-        await authorize.getAccessToken(req, res);
-
-        // If we have a valid refresh and access token (retrieving them did not throw an error), then a user can be considered logged in
-        return Promise.resolve(true);
-    }
-    catch (error)
-    {
-        // User is not logged in if we failed to get their login tokens (can swallow errors here)
-        return Promise.resolve(false);
-    }
-};
-
-exports.getValidateLoginRedirectUri = function(req)
-{
-    try
-    {
-        const validateLoginRedirectUri = uriBuilder.getUriWithPath(req, validateLoginEndpoint);
-        return Promise.resolve(validateLoginRedirectUri);
-    }
-    catch (error)
-    {
-        logger.logError(`Failed to construct validate login URI: ${error.message}`);
-        return Promise.reject(error);
-    }
-};
-
-// Helper Functions
-function generateRandomString(targetLength)
-{
-    let text = "";
-    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for (let i = 0; i < targetLength; i++)
-    {
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    return text;
-}

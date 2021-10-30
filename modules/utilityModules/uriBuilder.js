@@ -8,10 +8,10 @@ const utilityModulesPath = __dirname;
 const environment = require(path.join(utilityModulesPath, "environment.js"));
 
 // Uri Builder Logic
-exports.getUriWithPath = function(req, path)
+exports.getUriWithPath = function(req, uriPath)
 {
-    const baseUri = getBaseUri(req);
-    const fullUri = path.join(baseUri, path);
+    const baseUri = exports.getBaseUri(req);
+    const fullUri = path.join(baseUri, uriPath);
     return fullUri;
 };
 
