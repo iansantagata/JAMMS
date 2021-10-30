@@ -4,7 +4,7 @@
 const path = require("path"); // URI and local file paths
 
 // Utility Modules
-const utilityModulesPath = path.join(__dirname, "utilityModules");
+const utilityModulesPath = path.join(__dirname, "..", "utilityModules");
 const loginUtils = require(path.join(utilityModulesPath, "loginUtils.js"));
 
 const accessDeniedStatusCode = 403;
