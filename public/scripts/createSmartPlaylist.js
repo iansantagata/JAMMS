@@ -220,8 +220,7 @@ function displaySmartPlaylistPreview(data)
 
         // Album Art
         const defaultImagePath = "/images/question.png";
-        const minimumPixelsPerSide = 64;
-        const albumArtPath = getImagePath(track.album.images, minimumPixelsPerSide, defaultImagePath);
+        const albumArtPath = getImagePath(track.album.images, defaultImagePath);
 
         const albumArtImageElement = document.createElement("img");
         albumArtImageElement.setAttribute("class", "img-fluid");
@@ -229,7 +228,7 @@ function displaySmartPlaylistPreview(data)
         albumArtImageElement.setAttribute("src", albumArtPath);
 
         const tableBodyFourthDataElement = document.createElement("td");
-        tableBodyFourthDataElement.setAttribute("class", "align-middle col-md-2");
+        tableBodyFourthDataElement.setAttribute("class", "align-middle col-2 col-lg-1");
         tableBodyFourthDataElement.appendChild(albumArtImageElement);
 
         // Combine all the cells together into the table row

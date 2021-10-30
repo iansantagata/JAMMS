@@ -19,13 +19,12 @@
           var imagesJson = JSON.stringify(model.images);
 
           var playlistImageId = "imageForPlaylist";
-          var minimumPixelsPerSide = 300;
           var defaultImagePath = "images/question.png";
         }
         <img id="@playlistImageId" class="img-fluid" alt="Playlist Named @model.playlistName" />
         <script type="text/javascript">
           var images = @html.raw(imagesJson);
-          var playlistImagePath = getImagePath(images, @minimumPixelsPerSide, "@defaultImagePath");
+          var playlistImagePath = getImagePath(images, "@defaultImagePath");
 
           setImageSourceAttributeById("@playlistImageId", playlistImagePath);
         </script>
