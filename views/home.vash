@@ -11,7 +11,7 @@
       <p>Some of your playlists are listed below!</p>
 
       <div id="playlists" class="table-responsive">
-        <table class="table table-striped table-sm table-hover">
+        <table class="table table-striped table-sm table-hover small">
           <thead>
             <tr>
               <th scope="col" class="align-middle">Playlist #</th>
@@ -38,7 +38,9 @@
                   @{
                     var viewPlaylistLinkId = "viewPlaylistLink-" + playlistCount;
                   }
-                  <a id="@viewPlaylistLinkId" href="/playlist?playlistId=@item.id" role="button" class="btn btn-outline-info btn-sm">View Playlist</a>
+                  <a id="@viewPlaylistLinkId" href="/playlist?playlistId=@item.id" role="button" class="btn btn-outline-info btn-sm">
+                    View
+                  </a>
                 </td>
                 <td class="align-middle col-md-2">
                   @{
@@ -85,7 +87,7 @@
       <h6 class="my-4">Your Top Tracks</h6>
 
       <div id="songs" class="table-responsive">
-        <table class="table table-striped table-sm table-hover">
+        <table class="table table-striped table-sm table-hover small">
           <thead>
             <tr>
               <th scope="col" class="align-middle">Track #</th>
@@ -158,7 +160,7 @@
       <h6 class="my-4">Your Top Artists</h6>
 
       <div id="artists" class="table-responsive">
-        <table class="table table-striped table-sm table-hover">
+        <table class="table table-striped table-sm table-hover small">
           <thead>
             <tr>
               <th scope="col" class="align-middle">Artist #</th>

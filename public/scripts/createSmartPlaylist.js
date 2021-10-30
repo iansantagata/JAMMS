@@ -246,7 +246,7 @@ function displaySmartPlaylistPreview(data)
 
     // Create the table element where the data will reside
     const tableElement = document.createElement("table");
-    tableElement.setAttribute("class", "table table-striped table-sm table-hover");
+    tableElement.setAttribute("class", "table table-striped table-sm table-hover small");
     tableElement.appendChild(tableHeadElement);
     tableElement.appendChild(tableBodyElement);
 
