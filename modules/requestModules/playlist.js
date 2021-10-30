@@ -7,22 +7,19 @@ const path = require("path"); // URI and local file paths
 const utilityModulesPath = path.join(__dirname, "..", "utilityModules");
 const logger = require(path.join(utilityModulesPath, "logger.js"));
 const spotifyClient = require(path.join(utilityModulesPath, "spotifyClient.js"));
-const imageUtils = require(path.join(utilityModulesPath, "imageUtils.js"));
 
 // Playlist Logic
 exports.getPlaylistPage = async function(req, res, next)
 {
-    // Grab single playlist data that the user has requested
     try
     {
+        // Grab single playlist data that the user has requested
         const spotifyResponse = await spotifyClient.getSinglePlaylist(req, res);
-
-        const images = await imageUtils.getMissingImageDimensions(spotifyResponse.images);
 
         const playlistData = {
             deleted: false,
             followersCount: spotifyResponse.followers.total,
-            images: images,
+            images: spotifyResponse.images,
             isCollaborative: spotifyResponse.collaborative,
             isPublic: spotifyResponse.public,
             playlistDescription: spotifyResponse.description,
@@ -44,21 +41,19 @@ exports.getPlaylistPage = async function(req, res, next)
 
 exports.getAllPlaylistPage = async function(req, res, next)
 {
-    // Grab all playlist data from the user to show them on the home page in case they want to edit their playlists
     try
     {
+        // Grab all playlist data from the user to show them on the home page in case they want to edit their playlists
         const spotifyResponse = await spotifyClient.getAllPlaylists(req, res);
 
         const numberOfPages = Math.ceil(spotifyResponse.total / spotifyResponse.limit);
         const currentPage = Math.floor((spotifyResponse.offset + spotifyResponse.limit) / spotifyResponse.limit);
 
-        const playlists = await imageUtils.getMissingImageDimensionsForPlaylists(spotifyResponse.items);
-
         const playlistsPageData = {
             currentPage: currentPage,
             numberOfPages: numberOfPages,
             numberOfPlaylistsPerPage: spotifyResponse.limit,
-            playlists: playlists,
+            playlists: spotifyResponse.items,
             totalNumberOfPlaylists: spotifyResponse.total
         };
 
