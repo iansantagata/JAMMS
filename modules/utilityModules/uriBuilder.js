@@ -11,7 +11,7 @@ const environment = require(path.join(utilityModulesPath, "environment.js"));
 exports.getUriWithPath = function(req, uriPath)
 {
     const baseUri = exports.getBaseUri(req);
-    const fullUri = path.join(baseUri, uriPath);
+    const fullUri = `${baseUri}/${uriPath}`;
     return fullUri;
 };
 
