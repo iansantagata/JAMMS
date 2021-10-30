@@ -7,7 +7,7 @@ const querystring = require("querystring"); // URI query string manipulation
 
 // Custom Modules
 const customModulePath = __dirname;
-const redirect = require(path.join(customModulePath, "redirect.js"));
+const login = require(path.join(customModulePath, "login.js"));
 
 // Utility Modules
 const utilityModulesPath = path.join(__dirname, "utilityModules");
@@ -34,7 +34,7 @@ exports.getAuthorizationTokens = async function(req)
             throw new Error("Failed to locate authorization code from Spotify");
         }
 
-        const redirectUri = redirect.getValidateLoginRedirectUri(req);
+        const redirectUri = await login.getValidateLoginRedirectUri(req);
 
         // Make the request to get access and refresh tokens
         const requestData = {

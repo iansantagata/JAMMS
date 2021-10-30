@@ -7,15 +7,15 @@ const querystring = require("querystring"); // URI query string manipulation
 // Custom Modules
 const customModulePath = __dirname;
 const authorize = require(path.join(customModulePath, "authorize.js"));
-const redirect = require(path.join(customModulePath, "redirect.js"));
 
 // Utility Modules
 const utilityModulesPath = path.join(__dirname, "utilityModules");
 const logger = require(path.join(utilityModulesPath, "logger.js"));
 const environment = require(path.join(utilityModulesPath, "environment.js"));
 const cookie = require(path.join(utilityModulesPath, "cookie.js"));
+const uriBuilder = require(path.join(utilityModulesPath, "uriBuilder.js"));
 
-// Login Logic
+// Default Constant Values
 const spotifyAuthorizeUri = "https://accounts.spotify.com/authorize";
 
 const scopes = "playlist-read-private playlist-read-collaborative user-top-read user-library-read user-follow-read playlist-modify-public playlist-modify-private";
@@ -23,6 +23,9 @@ const scopes = "playlist-read-private playlist-read-collaborative user-top-read 
 const stateKey = "SpotifyAuthorizationState";
 const stateLength = 16;
 
+const validateLoginEndpoint = "validateLogin";
+
+// Login Logic
 exports.getLoginPage = async function(req, res, next)
 {
     try
@@ -32,7 +35,7 @@ exports.getLoginPage = async function(req, res, next)
         cookie.setCookie(req, res, stateKey, stateToken); // Session cookie (no explicit expiration)
 
         const clientId = await environment.getClientId();
-        const redirectUri = redirect.getValidateLoginRedirectUri(req);
+        const redirectUri = await exports.getValidateLoginRedirectUri(req);
 
         const requestParameters = {
             client_id: clientId,
@@ -116,6 +119,20 @@ exports.isUserLoggedIn = async function(req, res)
     {
         // User is not logged in if we failed to get their login tokens (can swallow errors here)
         return Promise.resolve(false);
+    }
+};
+
+exports.getValidateLoginRedirectUri = function(req)
+{
+    try
+    {
+        const validateLoginRedirectUri = uriBuilder.getUriWithPath(req, validateLoginEndpoint);
+        return Promise.resolve(validateLoginRedirectUri);
+    }
+    catch (error)
+    {
+        logger.logError(`Failed to construct validate login URI: ${error.message}`);
+        return Promise.reject(error);
     }
 };
 
