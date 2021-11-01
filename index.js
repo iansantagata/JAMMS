@@ -101,6 +101,7 @@ app.get("/logout", logout.logOut);
 
 // Contact Logic
 app.get("/contact", contact.getContactPage);
+app.post("/contact", contact.sendContactEmail);
 
 // Playlist Logic
 app.get("/playlist", playlist.getPlaylistPage);

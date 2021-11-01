@@ -66,6 +66,7 @@ function previewSmartPlaylist()
 
     // Make the AJAX call and handle the response by displaying the preview data
     fetch("/getSmartPlaylistPreview", fetchOptions)
+        .then(checkResponseCodeValidity)
         .then(response => response.json())
         .then(displaySmartPlaylistPreview)
         .catch(handleUnexpectedPlaylistPreviewError)

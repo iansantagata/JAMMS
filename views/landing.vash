@@ -12,11 +12,11 @@
     <div id="faq" class="accordion text-left mb-5">
       <div class="card">
         <div class="card-header" id="faqWhatIsJamms">
-          <h2 class="mb-0">
+          <h3 class="mb-0">
             <button class="btn btn-link btn-block" type="button" data-toggle="collapse" data-target="#faqWhatIsJammsResponse" aria-expanded="true" aria-controls="faqWhatIsJammsResponse">
               What is JAMMS?
             </button>
-          </h2>
+          </h3>
         </div>
 
         <div id="faqWhatIsJammsResponse" class="collapse" aria-labelledby="faqWhatIsJamms" data-parent="#faq">
@@ -28,11 +28,11 @@
 
       <div class="card">
         <div class="card-header" id="faqWhatDoesJammsDo">
-          <h2 class="mb-0">
+          <h3 class="mb-0">
             <button class="btn btn-link btn-block collapsed" type="button" data-toggle="collapse" data-target="#faqWhatDoesJammsDoResponse" aria-expanded="false" aria-controls="faqWhatDoesJammsDoResponse">
               What does JAMMS do?
             </button>
-          </h2>
+          </h3>
         </div>
 
         <div id="faqWhatDoesJammsDoResponse" class="collapse" aria-labelledby="faqWhatDoesJammsDo" data-parent="#faq">
@@ -45,11 +45,11 @@
 
       <div class="card">
         <div class="card-header" id="faqWhatIsASmartPlaylist">
-          <h2 class="mb-0">
+          <h3 class="mb-0">
             <button class="btn btn-link btn-block collapsed" type="button" data-toggle="collapse" data-target="#faqWhatIsASmartPlaylistResponse" aria-expanded="false" aria-controls="faqWhatDoesJammsDoResponse">
               What is a smart playlist?
             </button>
-          </h2>
+          </h3>
         </div>
 
         <div id="faqWhatIsASmartPlaylistResponse" class="collapse" aria-labelledby="faqWhatIsASmartPlaylist" data-parent="#faq">
@@ -66,11 +66,11 @@
 
       <div class="card">
         <div class="card-header" id="faqWhyUseASmartPlaylist">
-          <h2 class="mb-0">
+          <h3 class="mb-0">
             <button class="btn btn-link btn-block collapsed" type="button" data-toggle="collapse" data-target="#faqWhyUseASmartPlaylistResponse" aria-expanded="false" aria-controls="faqWhyUseASmartPlaylistResponse">
               Why use smart playlists at all?
             </button>
-          </h2>
+          </h3>
         </div>
 
         <div id="faqWhyUseASmartPlaylistResponse" class="collapse" aria-labelledby="faqWhyUseASmartPlaylist" data-parent="#faq">
@@ -100,11 +100,11 @@
 
       <div class="card">
         <div class="card-header" id="faqWhyShouldIUseJamms">
-          <h2 class="mb-0">
+          <h3 class="mb-0">
             <button class="btn btn-link btn-block collapsed" type="button" data-toggle="collapse" data-target="#faqWhyShouldIUseJammsResponse" aria-expanded="false" aria-controls="faqWhyShouldIUseJamms">
               Why should I use JAMMS?
             </button>
-          </h2>
+          </h3>
         </div>
 
         <div id="faqWhyShouldIUseJammsResponse" class="collapse" aria-labelledby="faqWhyShouldIUseJamms" data-parent="#faq">

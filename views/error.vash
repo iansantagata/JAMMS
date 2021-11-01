@@ -1,6 +1,6 @@
 @html.extend('layout', function(model) {
   @html.block('content', function(model) {
-    <h2>Request Error</h2>
+    <h2 class="mb-3">Request Error</h2>
     <p>
       We apologize, but there was an error in trying to process your request.
     </p>
