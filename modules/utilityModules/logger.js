@@ -19,6 +19,11 @@ exports.logError = function(logMessage)
     console.error(`[${timeStamp}] ERROR: ${logMessage}`);
 };
 
+exports.logObjectDump = function(object)
+{
+    console.log(object);
+};
+
 // Local Helper Functions
 function getTimeStamp()
 {
