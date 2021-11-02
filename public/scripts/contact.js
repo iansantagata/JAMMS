@@ -80,7 +80,7 @@ function handleSendContactEmailError(error)
     // Finally, restore the form submit button so the user can try again if they wish to
     const eventElement = document.getElementById("sendEmailButton");
     controlEnablementOfElement(eventElement);
-    replaceElementContentsWithText(eventElement, "Send Email");
+    replaceElementContentsWithText(eventElement, "Submit");
 }
 
 function handleEmailSendSuccess(response)
