@@ -8,6 +8,11 @@ const utilityModulesPath = path.join(__dirname, "..", "utilityModules");
 const logger = require(path.join(utilityModulesPath, "logger.js"));
 const loginUtils = require(path.join(utilityModulesPath, "loginUtils.js"));
 const errorUtils = require(path.join(utilityModulesPath, "errorUtils.js"));
+const emailUtils = require(path.join(utilityModulesPath, "emailUtils.js"));
+const environment = require(path.join(utilityModulesPath, "environment.js"));
+
+// Default Constant Values
+const successCode = 200;
 
 // Contact Logic
 exports.getContactPage = async function(req, res, next)
@@ -36,14 +41,39 @@ exports.sendContactEmail = async function(req, res)
 {
     try
     {
-        // TODO - send an email here
+        // Attempt to send an email from contact form to admin based on the user's inputs
+        const contactEmail = await environment.getSmtpContactUser();
+        const contactPassword = await environment.getSmtpContactPassword();
+        const contactEmailConnection = await emailUtils.getEmailConnection(contactEmail, contactPassword);
 
-        // Send a success status code back to the user if the process was successful
-        res.sendStatus(200);
+        const user = await emailUtils.getUser(req);
+        req.body.emailTo = emailUtils.getUserString("Admin", "admin@jamms.app");
+        req.body.emailFrom = emailUtils.getUserString("Contact", contactEmail);
+        req.body.replyTo = user;
+
+        const contactEmailMessage = await emailUtils.getEmailMessage(req);
+        await emailUtils.sendEmailMessage(contactEmailConnection, contactEmailMessage);
+
+        // Also, attempt to send confirmation email to the user
+        const doNotReplyEmail = await environment.getSmtpDoNotReplyUser();
+        const doNotReplyPassword = await environment.getSmtpDoNotReplyPassword();
+        const confirmationEmailConnection = await emailUtils.getEmailConnection(doNotReplyEmail, doNotReplyPassword);
+
+        req.body.emailTo = user;
+        req.body.emailFrom = emailUtils.getUserString("JAMMS.app", doNotReplyEmail);
+        req.body.replyTo = null;
+        req.body.emailSubject = "Contact Confirmation - JAMMS.app";
+        req.body.emailBody = await emailUtils.getConfirmationEmailBody(contactEmailMessage);
+
+        const confirmationEmailMessage = await emailUtils.getEmailMessage(req);
+        await emailUtils.sendEmailMessage(confirmationEmailConnection, confirmationEmailMessage);
+
+        // Send a success status code back to the user if the emails were successful
+        res.sendStatus(successCode);
     }
     catch (error)
     {
         logger.logError(`Failed to send contact email: ${error.message}`);
         errorUtils.handleAjaxError(res);
     }
-}
+};
