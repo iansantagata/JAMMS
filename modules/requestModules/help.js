@@ -21,25 +21,25 @@ const doNotReplyUserName = "JAMMS.app";
 const adminEmail = "admin@jamms.app";
 const confirmationEmailSubject = "Contact Confirmation - JAMMS.app";
 
-// Contact Logic
-exports.getContactPage = async function(req, res, next)
+// Help Logic
+exports.getHelpPage = async function(req, res, next)
 {
     try
     {
-        // See if the user is already logged in to determine what to show them on the contact page
+        // See if the user is already logged in to determine what to show them on the help page
         const isUserLoggedIn = await loginUtils.isUserLoggedIn(req, res);
 
-        const contactPageData = {
+        const helpPageData = {
             isAwaitingLogin: !isUserLoggedIn
         };
 
-        // Render the contact page that the user can interact with
-        res.location("/contact");
-        res.render("contact", contactPageData);
+        // Render the help page that the user can interact with
+        res.location("/help");
+        res.render("help", helpPageData);
     }
     catch (error)
     {
-        logger.logError(`Failed to get contact page: ${error.message}`);
+        logger.logError(`Failed to get help page: ${error.message}`);
         next(error);
     }
 };

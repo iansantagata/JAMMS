@@ -1,0 +1,7 @@
+@html.extend('layout', function(model) {
+  @html.block('content', function(model) {
+    <h2 class="mb-3">Frequently Asked Questions (FAQ)</h2>
+
+    <p>TODO - Placeholder</p>
+  })
+})
