@@ -14,6 +14,13 @@ const environment = require(path.join(utilityModulesPath, "environment.js"));
 // Default Constant Values
 const successCode = 200;
 
+const contactUserName = "Contact";
+const adminUserName = "Admin";
+const doNotReplyUserName = "JAMMS.app";
+
+const adminEmail = "admin@jamms.app";
+const confirmationEmailSubject = "Contact Confirmation - JAMMS.app";
+
 // Contact Logic
 exports.getContactPage = async function(req, res, next)
 {
@@ -47,8 +54,8 @@ exports.sendContactEmail = async function(req, res)
         const contactEmailConnection = await emailUtils.getEmailConnection(contactEmail, contactPassword);
 
         const user = await emailUtils.getUser(req);
-        req.body.emailTo = emailUtils.getUserString("Admin", "admin@jamms.app");
-        req.body.emailFrom = emailUtils.getUserString("Contact", contactEmail);
+        req.body.emailTo = emailUtils.getUserString(adminUserName, adminEmail);
+        req.body.emailFrom = emailUtils.getUserString(contactUserName, contactEmail);
         req.body.replyTo = user;
 
         const contactEmailMessage = await emailUtils.getEmailMessage(req);
@@ -60,9 +67,9 @@ exports.sendContactEmail = async function(req, res)
         const confirmationEmailConnection = await emailUtils.getEmailConnection(doNotReplyEmail, doNotReplyPassword);
 
         req.body.emailTo = user;
-        req.body.emailFrom = emailUtils.getUserString("JAMMS.app", doNotReplyEmail);
+        req.body.emailFrom = emailUtils.getUserString(doNotReplyUserName, doNotReplyEmail);
         req.body.replyTo = null;
-        req.body.emailSubject = "Contact Confirmation - JAMMS.app";
+        req.body.emailSubject = confirmationEmailSubject;
         req.body.emailBody = await emailUtils.getConfirmationEmailBody(contactEmailMessage);
 
         const confirmationEmailMessage = await emailUtils.getEmailMessage(req);
