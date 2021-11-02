@@ -1,0 +1,42 @@
+@html.extend('layout', function(model) {
+  @html.block('content', function(model) {
+    <h2 class="mb-3">Contact Us</h2>
+
+    <script defer src="scripts/contact.js"></script>
+
+    <p>Not sure where to find what you're looking for?  Try our FAQ!</p>
+
+    <p>Feeling tech-savvy and want to get in touch about site functionality?  Try our <a href="https://github.com/iansantagata/jamms">open-source repository</a>!</p>
+
+    <p>Still can't find what you need?  Try sending us an email below!</p>
+
+    <h4 class="my-3">Send Us An Email</h4>
+    <div id="alertContainer"></div>
+    <form id="contactForm" action="/contact" method="post" name="contact">
+
+      <div class="form-row form-group">
+        <div class="col">
+          <input type="text" name="firstName" class="form-control" id="contactForm-firstNameInput" placeholder="First Name" required />
+        </div>
+        <div class="col">
+          <input type="text" name="lastName" class="form-control" id="contactForm-lastNameInput" placeholder="Last Name" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <input type="email" name="emailAddress" class="form-control" id="contactForm-emailAddressInput" placeholder="Email Address" required />
+      </div>
+
+      <div class="form-group">
+        <input type="text" name="emailSubject" class="form-control" id="contactForm-subjectInput" placeholder="Subject" required />
+      </div>
+
+      <div class="form-group">
+        <textarea name="emailBody" class="form-control" id="contactForm-emailBodyInput" placeholder="Body" rows="4" required></textarea>
+      </div>
+
+      <button id="sendEmailButton" type="submit" class="btn btn-info">Submit</button>
+
+    </form>
+  })
+})

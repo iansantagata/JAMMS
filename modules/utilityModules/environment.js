@@ -151,6 +151,132 @@ exports.getClientSecret = function()
     }
 };
 
+exports.getSmtpHost = function()
+{
+    try
+    {
+        checkEnvironmentVariablesExist();
+
+        const smtpHostEnvironmentVariable = process.env.SMTP_HOST;
+        if (!smtpHostEnvironmentVariable)
+        {
+            throw new Error("Environment variable for SMTP host value does not exist");
+        }
+
+        return Promise.resolve(smtpHostEnvironmentVariable);
+    }
+    catch (error)
+    {
+        logger.logError(`Failed to get SMTP host: ${error.message}`);
+        return Promise.reject(error);
+    }
+};
+
+exports.getSmtpPort = function()
+{
+    try
+    {
+        checkEnvironmentVariablesExist();
+
+        const smtpPortEnvironmentVariable = process.env.SMTP_PORT;
+        if (!smtpPortEnvironmentVariable)
+        {
+            throw new Error("Environment variable for SMTP port value does not exist");
+        }
+
+        return Promise.resolve(smtpPortEnvironmentVariable);
+    }
+    catch (error)
+    {
+        logger.logError(`Failed to get SMTP port: ${error.message}`);
+        return Promise.reject(error);
+    }
+};
+
+exports.getSmtpContactUser = function()
+{
+    try
+    {
+        checkEnvironmentVariablesExist();
+
+        const smtpContactUserEnvironmentVariable = process.env.SMTP_CONTACT_USER;
+        if (!smtpContactUserEnvironmentVariable)
+        {
+            throw new Error("Environment variable for SMTP contact user value does not exist");
+        }
+
+        return Promise.resolve(smtpContactUserEnvironmentVariable);
+    }
+    catch (error)
+    {
+        logger.logError(`Failed to get SMTP contact user: ${error.message}`);
+        return Promise.reject(error);
+    }
+};
+
+exports.getSmtpContactPassword = function()
+{
+    try
+    {
+        checkEnvironmentVariablesExist();
+
+        const smtpContactPasswordEnvironmentVariable = process.env.SMTP_CONTACT_PASSWORD;
+        if (!smtpContactPasswordEnvironmentVariable)
+        {
+            throw new Error("Environment variable for SMTP contact password value does not exist");
+        }
+
+        return Promise.resolve(smtpContactPasswordEnvironmentVariable);
+    }
+    catch (error)
+    {
+        logger.logError(`Failed to get SMTP contact password: ${error.message}`);
+        return Promise.reject(error);
+    }
+};
+
+exports.getSmtpDoNotReplyUser = function()
+{
+    try
+    {
+        checkEnvironmentVariablesExist();
+
+        const smtpDoNotReplyUserEnvironmentVariable = process.env.SMTP_DO_NOT_REPLY_USER;
+        if (!smtpDoNotReplyUserEnvironmentVariable)
+        {
+            throw new Error("Environment variable for SMTP do not reply user value does not exist");
+        }
+
+        return Promise.resolve(smtpDoNotReplyUserEnvironmentVariable);
+    }
+    catch (error)
+    {
+        logger.logError(`Failed to get SMTP do not reply user: ${error.message}`);
+        return Promise.reject(error);
+    }
+};
+
+exports.getSmtpDoNotReplyPassword = function()
+{
+    try
+    {
+        checkEnvironmentVariablesExist();
+
+        const smtpDoNotReplyPasswordEnvironmentVariable = process.env.SMTP_DO_NOT_REPLY_PASSWORD;
+        if (!smtpDoNotReplyPasswordEnvironmentVariable)
+        {
+            throw new Error("Environment variable for SMTP do not reply password value does not exist");
+        }
+
+        return Promise.resolve(smtpDoNotReplyPasswordEnvironmentVariable);
+    }
+    catch (error)
+    {
+        logger.logError(`Failed to get SMTP do not reply password: ${error.message}`);
+        return Promise.reject(error);
+    }
+};
+
 // Local Helper Functions
 function checkEnvironmentVariablesExist()
 {

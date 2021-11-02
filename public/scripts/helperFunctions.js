@@ -31,6 +31,21 @@ function addOnChangeEventListenerToElement(element, callback)
     }
 }
 
+function checkResponseCodeValidity(response)
+{
+    if (!response)
+    {
+        throw new Error("Failed to fetch response");
+    }
+
+    if (!response.ok)
+    {
+        throw new Error(`Response unsuccessful with HTTP code ${response.status}`);
+    }
+
+    return response;
+}
+
 function controlEnablementOfElementById(id)
 {
     const element = document.getElementById(id);

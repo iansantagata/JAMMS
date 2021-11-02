@@ -27,6 +27,7 @@ const login = require(path.join(requestModulesPath, "login.js"));
 const logout = require(path.join(requestModulesPath, "logout.js"));
 const playlist = require(path.join(requestModulesPath, "playlist.js"));
 const smartPlaylist = require(path.join(requestModulesPath, "smartPlaylist.js"));
+const contact = require(path.join(requestModulesPath, "contact.js"));
 
 // Utility Modules
 const utilityModulesPath = path.join(customModulePath, "utilityModules");
@@ -97,6 +98,10 @@ app.get("/home", home.getHomePage);
 app.get("/login", login.getLoginPage);
 app.get("/validateLogin", login.validateLogin);
 app.get("/logout", logout.logOut);
+
+// Contact Logic
+app.get("/contact", contact.getContactPage);
+app.post("/contact", contact.sendContactEmail);
 
 // Playlist Logic
 app.get("/playlist", playlist.getPlaylistPage);

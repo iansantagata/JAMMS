@@ -1,11 +1,11 @@
 @html.extend('layout', function(model) {
   @html.block('content', function(model) {
-    <h2>Create Smart Playlist</h2>
+    <h2 class="mb-3">Create Smart Playlist</h2>
 
     <script defer src="scripts/createSmartPlaylist.js"></script>
 
     <div id="smartPlaylist" class="row align-items-center justify-content-around">
-      <div class="col text-wrap my-3">
+      <div class="col text-wrap mb-3">
         <form id="createSmartPlaylistForm" action="/createSmartPlaylist" method="post" name="createSmartPlaylist">
 
           <div class="form-group">
