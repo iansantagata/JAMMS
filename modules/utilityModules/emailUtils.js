@@ -159,7 +159,7 @@ exports.getEmailMessage = function(req)
     }
 };
 
-exports.sendEmailMessage = async function(emailConnection, emailMessage)
+exports.sendEmailMessage = async function(emailConnection, emailMessage, forceSendEmail = false)
 {
     try
     {
@@ -171,6 +171,15 @@ exports.sendEmailMessage = async function(emailConnection, emailMessage)
         if (!emailMessage)
         {
             throw new Error("Failed to find valid email message");
+        }
+
+        // If we are in development, we do not want to send the emails unless explicitly told to
+        const isDevelopmentEnvironment = await environment.isDevelopmentEnvironmentSync();
+        if (isDevelopmentEnvironment && !forceSendEmail)
+        {
+            logger.logInfo("Rerouting email send to console in development environment");
+            logger.logObjectDump(emailMessage);
+            return Promise.resolve();
         }
 
         // Try to deliver the message - if it fails, it will throw an error

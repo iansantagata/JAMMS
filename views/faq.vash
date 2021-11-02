@@ -1,0 +1,124 @@
+@html.extend('layout', function(model) {
+  @html.block('content', function(model) {
+    <h2 class="mb-3">FAQ</h2>
+
+    <p>Below is a list of the most frequently asked questions about JAMMS.</p>
+    <p>Don't see what you are looking for here?  Try our <a href="/help">help page</a> where you can contact us directly!</p>
+
+    <div id="faq" class="accordion text-left mb-5">
+      <div class="card">
+        <div class="card-header" id="faqWhatIsJamms">
+          <h3 class="mb-0">
+            <button class="btn btn-link btn-block" type="button" data-toggle="collapse" data-target="#faqWhatIsJammsResponse" aria-expanded="true" aria-controls="faqWhatIsJammsResponse">
+              What is JAMMS?
+            </button>
+          </h3>
+        </div>
+
+        <div id="faqWhatIsJammsResponse" class="collapse" aria-labelledby="faqWhatIsJamms" data-parent="#faq">
+          <div class="card-body">
+            <p><strong>JAMMS</strong> is <em>Just a Music Maintainer for Spotify.</em></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" id="faqWhatDoesJammsDo">
+          <h3 class="mb-0">
+            <button class="btn btn-link btn-block collapsed" type="button" data-toggle="collapse" data-target="#faqWhatDoesJammsDoResponse" aria-expanded="false" aria-controls="faqWhatDoesJammsDoResponse">
+              What does JAMMS do?
+            </button>
+          </h3>
+        </div>
+
+        <div id="faqWhatDoesJammsDoResponse" class="collapse" aria-labelledby="faqWhatDoesJammsDo" data-parent="#faq">
+          <div class="card-body">
+            <p>JAMMS can modify, manipulate, and maintain Spotify playlists and libraries in ways that are currently not supported natively or easily within Spotify today.</p>
+            <p>The app's most popular feature is creating "smart playlists" within Spotify.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" id="faqWhatIsASmartPlaylist">
+          <h3 class="mb-0">
+            <button class="btn btn-link btn-block collapsed" type="button" data-toggle="collapse" data-target="#faqWhatIsASmartPlaylistResponse" aria-expanded="false" aria-controls="faqWhatDoesJammsDoResponse">
+              What is a smart playlist?
+            </button>
+          </h3>
+        </div>
+
+        <div id="faqWhatIsASmartPlaylistResponse" class="collapse" aria-labelledby="faqWhatIsASmartPlaylist" data-parent="#faq">
+          <div class="card-body">
+            <p>A smart playlist is a playlist that is created, filled, and maintained using a set of logical rules provided by the user.</p>
+            <br/>
+            <p>For a regular playlist, users create the playlist, manually add songs to it, and manually remove songs from it, one at a time.</p>
+            <p>For a smart playlist, a user specifies the rules they wish the smart playlist to follow when selecting music for their playlist. JAMMS grabs all the songs that follow these rules and puts them into a playlist for the user.</p>
+            <br/>
+            <p>Playlists created by JAMMS are considered "smart" because they allow users to offload some manual work to automation and computation. Since Spotify does not have smart playlist functionality natively, it does not differentiate between a playlist and a "smart" playlist. The distinction is only relevant within JAMMS.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" id="faqWhyUseASmartPlaylist">
+          <h3 class="mb-0">
+            <button class="btn btn-link btn-block collapsed" type="button" data-toggle="collapse" data-target="#faqWhyUseASmartPlaylistResponse" aria-expanded="false" aria-controls="faqWhyUseASmartPlaylistResponse">
+              Why use smart playlists at all?
+            </button>
+          </h3>
+        </div>
+
+        <div id="faqWhyUseASmartPlaylistResponse" class="collapse" aria-labelledby="faqWhyUseASmartPlaylist" data-parent="#faq">
+          <div class="card-body">
+            <p>Some users want the power and flexibility with creating custom, complex, and dynamic playlists of their music.</p>
+            <p>Smart playlists come with some advantages over regular playlists that users may desire as well.</p>
+            <ul>
+              <li>
+                <strong>Smart playlists can be more dynamic than regular playlists.</strong>
+                <br/>
+                <em>My 50 Most Popular Rock Songs Smart Playlist</em> can easily be created by specifying popularity, genre, and song limit rules for your smart playlist. To create and maintain the same playlist manually would be incredibly intensive.
+              </li>
+              <li>
+                <strong>Smart playlists can be automatically updated to refresh the music within them since the rules governing them are fixed.</strong>
+                <br/>
+                <em>My Newest 100 Liked Songs Smart Playlist</em> could be constantly changing as you discover more music, but <em>My 100 Songs From That One Time Playlist</em> is not going to change unless you update it manually.
+              </li>
+              <li>
+                <strong>Smart playlists allow you to quickly build complex playlists with a variety of different parameters and conditions.</strong>
+                <br/>
+                <em>My Happy Vibes Smart Playlist</em> might take into account beats per minute, how acoustic a song sounds, how upbeat it sounds, what key the song is in, and other audio features from a variety of artists and genres that you have liked to compile a playlist together for you.  Imagine how long that would take to analyze and build that same playlist yourself.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" id="faqWhyShouldIUseJamms">
+          <h3 class="mb-0">
+            <button class="btn btn-link btn-block collapsed" type="button" data-toggle="collapse" data-target="#faqWhyShouldIUseJammsResponse" aria-expanded="false" aria-controls="faqWhyShouldIUseJamms">
+              Why should I use JAMMS?
+            </button>
+          </h3>
+        </div>
+
+        <div id="faqWhyShouldIUseJammsResponse" class="collapse" aria-labelledby="faqWhyShouldIUseJamms" data-parent="#faq">
+          <div class="card-body">
+            <ul>
+              <li>Do you find it time-consuming to painstakingly add each individual song you want to a playlist and then maintain that playlist constantly?</li>
+              <li>Have you always wanted to create a playlist of every Carly Rae Jepsen, Yellowcard, and Foo Fighters song from after 2000?</li>
+              <li>Do you have so many songs saved that you constantly find yourself rediscovering old favorites in your own library?</li>
+              <li>Are you looking for a way to easily keep track of new music you just discovered in a playlist?</li>
+              <li>Do you crave the flexibility of creating custom playlists exactly to your liking with very little time and effort?</li>
+            </ul>
+            <p>Your time is precious, and your musical tastes are varied.</p>
+            <p>Let smart playlists do the heavy lifting for you and build your very own custom playlists.</p>
+            <p>Easier to maintain, easier to modify, and easier to customize your music.</p>
+            <p>It's your music. Listen to it the way you want to.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  })
+})

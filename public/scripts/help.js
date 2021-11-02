@@ -50,7 +50,7 @@ function sendContactEmail()
     };
 
     // Make the AJAX call and handle the response
-    fetch("/contact", fetchOptions)
+    fetch("/sendEmail", fetchOptions)
         .then(checkResponseCodeValidity)
         .then(handleEmailSendSuccess)
         .catch(handleSendContactEmailError);

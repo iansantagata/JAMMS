@@ -1,18 +1,18 @@
 @html.extend('layout', function(model) {
   @html.block('content', function(model) {
-    <h2 class="mb-3">Contact Us</h2>
+    <h2 class="mb-3">Help</h2>
 
-    <script defer src="scripts/contact.js"></script>
+    <script defer src="scripts/help.js"></script>
 
-    <p>Not sure where to find what you're looking for?  Try our FAQ!</p>
+    <p>Have a question?  Try our <a href="/faq">FAQ</a>!</p>
 
     <p>Feeling tech-savvy and want to get in touch about site functionality?  Try our <a href="https://github.com/iansantagata/jamms">open-source repository</a>!</p>
 
     <p>Still can't find what you need?  Try sending us an email below!</p>
 
-    <h4 class="my-3">Send Us An Email</h4>
+    <h5 class="mt-5 mb-3">Contact Us</h5>
     <div id="alertContainer"></div>
-    <form id="contactForm" action="/contact" method="post" name="contact">
+    <form id="contactForm" action="/sendEmail" method="post" name="contact">
 
       <div class="form-row form-group">
         <div class="col">
