@@ -9,9 +9,7 @@
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="external/bootstrap.min.css">
   <!-- Bootstrap Icons -->
-  <link rel="stylesheet" href="@html.raw('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css')"
-    integrity="sha384-zcT220VeVe5gEsYILZFoQoucXuQrFM1fJK1tbbfvKt77wPAQwUJWCRlnXRs/HENS"
-    crossorigin="anonymous">
+  <link rel="stylesheet" href="external/bootstrap-icons.css">
   <!-- JQuery JavaScript -->
   <script src="external/jquery.slim.min.js"></script>
   <!-- Bootstrap JavaScript -->
