@@ -12,8 +12,8 @@
     "lintvash": "linthtml **/*.vash",
     "lint": "npm run lintjs && npm run linthtml && npm run lintvash",
     "lintfix": "eslint . --fix --ignore-path .gitignore",
-    "preinstall": "sh ./build/skipInProduction.sh || grunt clean",
-    "postinstall": "sh ./build/skipInProduction.sh || grunt copy"
+    "preinstall": "bash ./build/skipInProduction.sh || grunt clean",
+    "postinstall": "bash ./build/skipInProduction.sh || grunt copy"
   },
   "dependencies": {
     "axios": "^0.21.4",
