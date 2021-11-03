@@ -7,11 +7,11 @@
   "license": "MIT",
   "repository": "github:iansantagata/jamms",
   "scripts": {
-    "lintjs": "eslint .",
+    "lintjs": "eslint . --ignore-path .gitignore",
     "linthtml": "linthtml **/*.html",
     "lintvash": "linthtml **/*.vash",
     "lint": "npm run lintjs && npm run linthtml && npm run lintvash",
-    "lintfix": "eslint . --fix",
+    "lintfix": "eslint . --fix --ignore-path .gitignore",
     "preinstall": "grunt clean",
     "postinstall": "grunt copy"
   },
