@@ -26,7 +26,8 @@ module.exports = function(grunt)
                     "bootstrap/dist/css/bootstrap.min.*",
                     "bootstrap-icons/font/bootstrap-icons.css"
                 ],
-                filter: "isFile"
+                filter: "isFile",
+                nonull: true
             },
             fonts:
             {
@@ -35,7 +36,8 @@ module.exports = function(grunt)
                 dest: "public/external",
                 cwd: "node_modules/bootstrap-icons/font",
                 src: "fonts/*",
-                filter: "isFile"
+                filter: "isFile",
+                nonull: true
             }
         }
     });
