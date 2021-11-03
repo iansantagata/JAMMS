@@ -26,6 +26,7 @@
   "devDependencies": {
     "@linthtml/linthtml": "^0.8.0",
     "dotenv": "^10.0.0",
-    "eslint": "^8.0.0"
+    "eslint": "^8.0.0",
+    "grunt": "^1.4.1"
   }
 }
