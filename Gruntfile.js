@@ -9,7 +9,7 @@ module.exports = function(grunt)
                 flatten: true,
                 dest: "public/external",
                 cwd: "node_modules/",
-                src: "jquery/dist/jquery.min.js",
+                src: ["jquery/dist/jquery.min.*", "bootstrap/dist/js/bootstrap.bundle.min.*"],
                 filter: "isFile"
             }
         }
