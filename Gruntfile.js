@@ -7,9 +7,9 @@ module.exports = function(grunt)
             files: {
                 expand: true,
                 flatten: true,
-                dest: "",
-                cwd: "",
-                src: "",
+                dest: "public/external",
+                cwd: "node_modules/",
+                src: "jquery/dist/jquery.min.js",
                 filter: "isFile"
             }
         }
