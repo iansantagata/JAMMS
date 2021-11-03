@@ -12,6 +12,7 @@
     "lintvash": "linthtml **/*.vash",
     "lint": "npm run lintjs && npm run linthtml && npm run lintvash",
     "lintfix": "eslint . --fix",
+    "preinstall": "rm -rf public/external",
     "postinstall": "grunt"
   },
   "dependencies": {
