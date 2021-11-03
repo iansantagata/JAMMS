@@ -8,12 +8,12 @@
   "repository": "github:iansantagata/jamms",
   "scripts": {
     "lintjs": "eslint . --ignore-path .gitignore",
-    "linthtml": "linthtml **/*.html",
-    "lintvash": "linthtml **/*.vash",
+    "linthtml": "linthtml \"**/*.html\"",
+    "lintvash": "linthtml \"**/*.vash\"",
     "lint": "npm run lintjs && npm run linthtml && npm run lintvash",
     "lintfix": "eslint . --fix --ignore-path .gitignore",
-    "preinstall": "bash build/skipInProduction.sh || grunt clean",
-    "postinstall": "bash build/skipInProduction.sh || grunt copy"
+    "preinstall": "bash build/runGruntCommand.sh clean",
+    "postinstall": "bash build/runGruntCommand.sh copy"
   },
   "dependencies": {
     "axios": "^0.21.4",
