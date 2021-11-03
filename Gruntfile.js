@@ -1,9 +1,9 @@
+"use strict";
+
 module.exports = function(grunt)
 {
     // Project Configuration
-    grunt.initConfig(
-    {
-        pkg: grunt.file.readJSON("package.json"),
+    grunt.initConfig({
         clean:
         {
             external:
@@ -15,35 +15,36 @@ module.exports = function(grunt)
         {
             files:
             {
-                expand: true,
-                flatten: true,
-                dest: "public/external",
                 cwd: "node_modules/",
+                dest: "public/external",
+                expand: true,
+                filter: "isFile",
+                flatten: true,
+                nonull: true,
                 src:
                 [
                     "jquery/dist/jquery.slim.min.*",
                     "bootstrap/dist/js/bootstrap.bundle.min.*",
                     "bootstrap/dist/css/bootstrap.min.*",
                     "bootstrap-icons/font/bootstrap-icons.css"
-                ],
-                filter: "isFile",
-                nonull: true
+                ]
             },
             fonts:
             {
-                expand: true,
-                flatten: false,
-                dest: "public/external",
                 cwd: "node_modules/bootstrap-icons/font",
-                src: "fonts/*",
+                dest: "public/external",
+                expand: true,
                 filter: "isFile",
-                nonull: true
+                flatten: false,
+                nonull: true,
+                src: "fonts/*"
             }
-        }
+        },
+        pkg: grunt.file.readJSON("package.json")
     });
 
     // Load Plugins
-    grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks("grunt-contrib-clean");
     grunt.loadNpmTasks("grunt-contrib-copy");
 
     // Default Tasks
