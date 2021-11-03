@@ -15,7 +15,7 @@
     integrity="sha384-zcT220VeVe5gEsYILZFoQoucXuQrFM1fJK1tbbfvKt77wPAQwUJWCRlnXRs/HENS"
     crossorigin="anonymous">
   <!-- JQuery JavaScript -->
-  <script src="external/jquery.min.js"></script>
+  <script src="external/jquery.slim.min.js"></script>
   <!-- Bootstrap JavaScript -->
   <script src="external/bootstrap.bundle.min.js"></script>
   <!-- Helper Functions Used Across the App -->
