@@ -4,9 +4,16 @@ module.exports = function(grunt)
     grunt.initConfig(
     {
         pkg: grunt.file.readJSON("package.json"),
+        clean:
+        {
+            external:
+            {
+                src: "public/external/*"
+            }
+        },
         copy:
         {
-            main:
+            files:
             {
                 expand: true,
                 flatten: true,
@@ -34,8 +41,9 @@ module.exports = function(grunt)
     });
 
     // Load Plugins
+    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks("grunt-contrib-copy");
 
     // Default Tasks
-    grunt.registerTask("default", ["copy:main", "copy:fonts"]);
+    grunt.registerTask("default", ["clean:external", "copy:files", "copy:fonts"]);
 };
