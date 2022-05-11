@@ -30,7 +30,7 @@ jobs:
         USER: ${{ secrets.SYNC_USER }}
         KEY:  ${{ secrets.SYNC_SSH_PRIVATE_KEY }}
         TARGET: ${{ secrets.SYNC_TARGET_PATH }}
-        ARGS_MORE: '--exclude=/node_modules/'
+        ARGS_MORE: '--exclude=/node_modules/ -vvv'
         MODE: push
         RUN_SCRIPT_ON: source
         VERBOSE: true
