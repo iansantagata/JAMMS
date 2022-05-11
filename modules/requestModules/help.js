@@ -10,7 +10,7 @@ const loginUtils = require(path.join(utilityModulesPath, "loginUtils.js"));
 const errorUtils = require(path.join(utilityModulesPath, "errorUtils.js"));
 const emailUtils = require(path.join(utilityModulesPath, "emailUtils.js"));
 const environment = require(path.join(utilityModulesPath, "environment.js"));
-const cookie = require(path.join(utilityModulesPath, "cookie.js"))
+const cookie = require(path.join(utilityModulesPath, "cookie.js"));
 
 // Default Constant Values
 const successCode = 200;
@@ -22,7 +22,7 @@ const doNotReplyUserName = "JAMMS.app";
 const adminEmail = "admin@jamms.app";
 const confirmationEmailSubject = "Contact Confirmation - JAMMS.app";
 
-const pageLoadKey = "PageLoadTime"
+const pageLoadKey = "PageLoadTime";
 const pageLoadToFormSubmitHumanLowerLimitInMsec = 5000;
 
 // Help Logic
@@ -38,7 +38,7 @@ exports.getHelpPage = async function(req, res, next)
         };
 
         // Set a cookie with a timestamp of when the help page was last loaded
-        pageLoadTimeStamp = Date.now();
+        const pageLoadTimeStamp = Date.now();
         cookie.setCookie(req, res, pageLoadKey, pageLoadTimeStamp); // Session cookie (no explicit expiration)
 
         // Render the help page that the user can interact with
@@ -60,7 +60,7 @@ exports.sendContactEmail = async function(req, res)
         // Page load time to form submit time should be over a reasonable amount (a few seconds) for a human
         const pageLoadTimeStamp = await cookie.getCookie(req, pageLoadKey);
 
-        formSubmitTimeStamp = Date.now();
+        const formSubmitTimeStamp = Date.now();
         const sendEmail = formSubmitTimeStamp - pageLoadTimeStamp >= pageLoadToFormSubmitHumanLowerLimitInMsec;
         if (sendEmail)
         {
