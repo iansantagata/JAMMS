@@ -10,6 +10,7 @@ const loginUtils = require(path.join(utilityModulesPath, "loginUtils.js"));
 const errorUtils = require(path.join(utilityModulesPath, "errorUtils.js"));
 const emailUtils = require(path.join(utilityModulesPath, "emailUtils.js"));
 const environment = require(path.join(utilityModulesPath, "environment.js"));
+const cookie = require(path.join(utilityModulesPath, "cookie.js"));
 
 // Default Constant Values
 const successCode = 200;
@@ -20,6 +21,9 @@ const doNotReplyUserName = "JAMMS.app";
 
 const adminEmail = "admin@jamms.app";
 const confirmationEmailSubject = "Contact Confirmation - JAMMS.app";
+
+const pageLoadKey = "PageLoadTime";
+const pageLoadToFormSubmitHumanLowerLimitInMsec = 5000;
 
 // Help Logic
 exports.getHelpPage = async function(req, res, next)
@@ -32,6 +36,10 @@ exports.getHelpPage = async function(req, res, next)
         const helpPageData = {
             isAwaitingLogin: !isUserLoggedIn
         };
+
+        // Set a cookie with a timestamp of when the help page was last loaded
+        const pageLoadTimeStamp = Date.now();
+        cookie.setCookie(req, res, pageLoadKey, pageLoadTimeStamp); // Session cookie (no explicit expiration)
 
         // Render the help page that the user can interact with
         res.location("/help");
@@ -48,20 +56,26 @@ exports.sendContactEmail = async function(req, res)
 {
     try
     {
-        // Force sending emails in development environment (used only for testing)
-        const forceSendEmail = true;
+        // Determine if we should send a contact form email by validating the user is likely not a bot
+        // Page load time to form submit time should be over a reasonable amount (a few seconds) for a human
+        const pageLoadTimeStamp = await cookie.getCookie(req, pageLoadKey);
 
-        // Attempt to send an email from contact form to admin based on the user's inputs
-        const contactEmailConnection = await getContactEmailConnection();
-        const contactEmailMessage = await getContactEmailMessage(req);
-        await emailUtils.sendEmailMessage(contactEmailConnection, contactEmailMessage, forceSendEmail);
+        const formSubmitTimeStamp = Date.now();
+        const sendEmail = formSubmitTimeStamp - pageLoadTimeStamp >= pageLoadToFormSubmitHumanLowerLimitInMsec;
+        if (sendEmail)
+        {
+            // Attempt to send an email from contact form to admin based on the user's inputs
+            const contactEmailConnection = await getContactEmailConnection();
+            const contactEmailMessage = await getContactEmailMessage(req);
+            await emailUtils.sendEmailMessage(contactEmailConnection, contactEmailMessage);
 
-        // Also, attempt to send confirmation email to the user
-        const confirmationEmailConnection = await getConfirmationEmailConnection();
-        const confirmationEmailMessage = await getConfirmationEmailMessage(req, contactEmailMessage);
-        await emailUtils.sendEmailMessage(confirmationEmailConnection, confirmationEmailMessage, forceSendEmail);
+            // Also, attempt to send confirmation email to the user
+            const confirmationEmailConnection = await getConfirmationEmailConnection();
+            const confirmationEmailMessage = await getConfirmationEmailMessage(req, contactEmailMessage);
+            await emailUtils.sendEmailMessage(confirmationEmailConnection, confirmationEmailMessage);
+        }
 
-        // Send a success status code back to the user if the emails were successful
+        // Send a success status code back to the user if the emails were successful (or if we suspect bot activity)
         res.sendStatus(successCode);
     }
     catch (error)

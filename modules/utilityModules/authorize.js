@@ -257,7 +257,7 @@ exports.setAuthorizationCookies = function(req, res, auth)
             maxAge: auth.tokenExpirationInMsec
         };
         cookie.setCookie(req, res, accessKey, accessTypeAndToken, cookieSettings);
-        cookie.setCookie(req, res, refreshKey, auth.refreshToken); // Session cookie (no explicit expiration);
+        cookie.setCookie(req, res, refreshKey, auth.refreshToken); // Session cookie (no explicit expiration)
 
         // No return value, just indicate success
         return Promise.resolve();
