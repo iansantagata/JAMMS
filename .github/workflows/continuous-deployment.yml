@@ -33,6 +33,7 @@ jobs:
         ARGS_MORE: '--exclude=/node_modules/'
         MODE: push
         RUN_SCRIPT_ON: source
+        VERBOSE: true
 
     - name: Remote Package Install via SSH
       uses: appleboy/ssh-action@v0.1.4
