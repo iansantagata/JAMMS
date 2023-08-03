@@ -2,7 +2,7 @@ name: Continuous Deployment
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
 
@@ -31,6 +31,7 @@ jobs:
         KEY:  ${{ secrets.SYNC_SSH_PRIVATE_KEY }}
         TARGET: ${{ secrets.SYNC_TARGET_PATH }}
         ARGS_MORE: '--exclude=/node_modules/ -vvv'
+        SSH_ARGS: '-p ${{ secrets.SYNC_PORT }} -o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedKeyTypes=+ssh-rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet'
         MODE: push
         RUN_SCRIPT_ON: source
         VERBOSE: true
