@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  lintjs:
+  lint-js:
     runs-on: ubuntu-latest
     name: Lint JavaScript Files
     steps:
@@ -24,9 +24,9 @@ jobs:
       run: npm ci
 
     - name: Lint JS
-      run: npm run lintjs
+      run: npm run lint:js
 
-  linthtml:
+  lint-html:
     runs-on: ubuntu-latest
     name: Lint HTML Files
     steps:
@@ -42,9 +42,9 @@ jobs:
       run: npm ci
 
     - name: Lint HTML
-      run: npm run linthtml
+      run: npm run lint:html
 
-  lintvash:
+  lint-vash:
     runs-on: ubuntu-latest
     name: Lint Vash Files
     steps:
@@ -60,4 +60,4 @@ jobs:
       run: npm ci
 
     - name: Lint Vash
-      run: npm run lintvash
+      run: npm run lint:vash
