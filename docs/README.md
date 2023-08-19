@@ -60,6 +60,6 @@ To run this application locally:
 
 In order to start-up the application locally, run `npm install` in the root directory of the repository.  This will pull the necessary packages listed in `package.json` and `package-lock.json` from `npm` (Node Package Manager) into the `node_modules/` folder locally.
 
-To start up the application after pulling the dependencies, simply run `node index.js` in the root directory of the repository.
+To start up the application after pulling the dependencies, simply run `node index.js` in the root directory of the repository.  You can instead run `nodemon index.js` if you wish to make changes and see them updated by `node` as you save them.
 
 Once the application is started, open a browser and navigate to [http://localhost](http://localhost) to start to interact with it.
