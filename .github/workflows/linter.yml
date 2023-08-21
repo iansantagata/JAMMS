@@ -8,56 +8,20 @@ on:
 
 jobs:
 
-  lint-js:
+  lint:
     runs-on: ubuntu-latest
-    name: Lint JavaScript Files
+    name: Lint Repository Files
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Setup Node.js
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
-        node-version: '12.x'
+        node-version: 14
 
     - name: Install Projects via NPM
       run: npm ci
 
-    - name: Lint JS
-      run: npm run lint:js
-
-  lint-html:
-    runs-on: ubuntu-latest
-    name: Lint HTML Files
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: '12.x'
-
-    - name: Install Projects via NPM
-      run: npm ci
-
-    - name: Lint HTML
-      run: npm run lint:html
-
-  lint-vash:
-    runs-on: ubuntu-latest
-    name: Lint Vash Files
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: '12.x'
-
-    - name: Install Projects via NPM
-      run: npm ci
-
-    - name: Lint Vash
-      run: npm run lint:vash
+    - name: Lint
+      run: npm run lint
