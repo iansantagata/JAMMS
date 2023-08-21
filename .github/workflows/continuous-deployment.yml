@@ -30,39 +30,75 @@ jobs:
         USER: ${{ secrets.SYNC_USER }}
         KEY:  ${{ secrets.SYNC_SSH_PRIVATE_KEY }}
         TARGET: ${{ secrets.SYNC_TARGET_PATH }}
-        ARGS_MORE: '--exclude=/node_modules/ -vvv'
+        ARGS_MORE: '--exclude=/node_modules/'
         SSH_ARGS: '-p ${{ secrets.SYNC_PORT }} -o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedKeyTypes=+ssh-rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet'
         MODE: push
         RUN_SCRIPT_ON: source
         VERBOSE: true
 
-    - name: Remote Package Install via SSH
+    - name: Verify Symbolic Links via SSH
       uses: appleboy/ssh-action@v0.1.4
       env:
-        NODE_MODULES_PATH: ${{ secrets.NODE_MODULES_TARGET_PATH }}
-        NPM_PATH: ${{ secrets.NPM_TARGET_PATH }}
+        NODE_VERSION: 14
+        HOME_DIRECTORY: ${{ secrets.HOME_DIRECTORY_PATH }}
+        CODE_PATH: ${{ secrets.SYNC_TARGET_PATH }}
       with:
         host: ${{ secrets.SYNC_SERVER }}
         port: ${{ secrets.SYNC_PORT }}
         username: ${{ secrets.SYNC_USER }}
         key: ${{ secrets.SYNC_SSH_PRIVATE_KEY }}
         script_stop: true
-        envs: NODE_MODULES_PATH, NPM_PATH
-        script: $NPM_PATH/npm install $NODE_MODULES_PATH
+        envs: NODE_VERSION, HOME_DIRECTORY, CODE_PATH
+        script: |
+          NODE_VENV_PATH=$HOME_DIRECTORY/nodevenv/node
+          NODE_MODULES_PATH=$NODE_VENV_PATH/$NODE_VERSION/lib
+          EXIT_CODE=0
+          if [ ! -L "$NODE_MODULES_PATH/package.json" ] || [ ! -e "$NODE_MODULES_PATH/package.json" ] || [ "$CODE_PATH/package.json" != "$(readlink $NODE_MODULES_PATH/package.json)" ]; then
+              echo "Expected symbolic link to file 'package.json', but the symbolic link file was not found, is broken, or is pointing to the incorrect path."
+              echo "Cannot execute remote install without reference to file: 'package.json'."
+              EXIT_CODE=1
+          fi
+          if [ ! -L "$NODE_MODULES_PATH/package-lock.json" ] || [ ! -e "$NODE_MODULES_PATH/package-lock.json" ] || [ "$CODE_PATH/package-lock.json" != "$(readlink $NODE_MODULES_PATH/package-lock.json)" ]; then
+              echo "Expected symbolic link to file 'package-lock.json', but the symbolic link file was not found, is broken, or is pointing to the incorrect path."
+              echo "Cannot execute remote install without reference to file: 'package-lock.json'."
+              EXIT_CODE=1
+          fi
+          exit $EXIT_CODE
+
+    - name: Remote Package Install via SSH
+      uses: appleboy/ssh-action@v0.1.4
+      env:
+        NODE_VERSION: 14
+        HOME_DIRECTORY: ${{ secrets.HOME_DIRECTORY_PATH }}
+      with:
+        host: ${{ secrets.SYNC_SERVER }}
+        port: ${{ secrets.SYNC_PORT }}
+        username: ${{ secrets.SYNC_USER }}
+        key: ${{ secrets.SYNC_SSH_PRIVATE_KEY }}
+        script_stop: true
+        envs: NODE_VERSION, HOME_DIRECTORY
+        script: |
+          NODE_VENV_PATH=$HOME_DIRECTORY/nodevenv/node
+          NODE_MODULES_PATH=$NODE_VENV_PATH/$NODE_VERSION/lib
+          NPM_PATH=$NODE_VENV_PATH/$NODE_VERSION/bin
+          $NPM_PATH/npm install $NODE_MODULES_PATH
 
     - name: Remote Server Restart via SSH
       uses: appleboy/ssh-action@v0.1.4
       env:
-        VENV_ACTIVATION_PATH: ${{ secrets.VENV_ACTIVATION_TARGET_PATH }}
+        NODE_VERSION: 14
+        HOME_DIRECTORY: ${{ secrets.HOME_DIRECTORY_PATH }}
         CODE_PATH: ${{ secrets.SYNC_TARGET_PATH }}
-        SELECTOR_PATH: ${{ secrets.SELECTOR_TARGET_PATH }}
       with:
         host: ${{ secrets.SYNC_SERVER }}
         port: ${{ secrets.SYNC_PORT }}
         username: ${{ secrets.SYNC_USER }}
         key: ${{ secrets.SYNC_SSH_PRIVATE_KEY }}
         script_stop: true
-        envs: VENV_ACTIVATION_PATH, CODE_PATH, SELECTOR_PATH
+        envs: NODE_VERSION, HOME_DIRECTORY, CODE_PATH
         script: |
+          NODE_VENV_PATH=$HOME_DIRECTORY/nodevenv/node
+          VENV_ACTIVATION_PATH=$NODE_VENV_PATH/$NODE_VERSION/bin
+          SELECTOR_PATH=/usr/sbin
           source $VENV_ACTIVATION_PATH/activate && cd $CODE_PATH
           $SELECTOR_PATH/cloudlinux-selector restart --json --interpreter nodejs --app-root $CODE_PATH
