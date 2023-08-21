@@ -10,7 +10,7 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
-    name: Lint JavaScript Files
+    name: Lint Repository Files
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
