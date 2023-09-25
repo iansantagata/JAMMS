@@ -10,7 +10,7 @@
 
 ## Overview
 
-JAMMS is Just A Music Maintainer for Spotify!
+**JAMMS** is **J**ust **A** **M**usic **M**aintainer for **S**potify!
 
 JAMMS is a Node.js web application meant to modify, manipulate, and maintain Spotify playlists and libraries in ways that are currently not supported natively or easily within Spotify today.
 
