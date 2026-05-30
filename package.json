@@ -7,8 +7,8 @@
     "license": "MIT",
     "repository": "github:iansantagata/jamms",
     "engines": {
-        "node": "=14.21.2",
-        "npm": "=6.14.17"
+        "node": "=24.15.0",
+        "npm": "=11.12.1"
     },
     "scripts": {
         "lint": "npm run lint:js && npm run lint:html && npm run lint:vash",
