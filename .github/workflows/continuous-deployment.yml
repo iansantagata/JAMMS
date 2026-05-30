@@ -12,12 +12,12 @@ jobs:
 
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v6
 
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v6
       with:
-        node-version: 14
+        node-version: 24
 
     - name: Install Projects via NPM
       run: npm ci
@@ -39,7 +39,7 @@ jobs:
     - name: Verify Symbolic Links via SSH
       uses: appleboy/ssh-action@v0.1.4
       env:
-        NODE_VERSION: 14
+        NODE_VERSION: 24
         HOME_DIRECTORY: ${{ secrets.HOME_DIRECTORY_PATH }}
         CODE_PATH: ${{ secrets.SYNC_TARGET_PATH }}
       with:
@@ -73,7 +73,7 @@ jobs:
     - name: Remote Package Install via SSH
       uses: appleboy/ssh-action@v0.1.4
       env:
-        NODE_VERSION: 14
+        NODE_VERSION: 24
         HOME_DIRECTORY: ${{ secrets.HOME_DIRECTORY_PATH }}
       with:
         host: ${{ secrets.SYNC_SERVER }}
@@ -91,7 +91,7 @@ jobs:
     - name: Remote Server Restart via SSH
       uses: appleboy/ssh-action@v0.1.4
       env:
-        NODE_VERSION: 14
+        NODE_VERSION: 24
         HOME_DIRECTORY: ${{ secrets.HOME_DIRECTORY_PATH }}
         CODE_PATH: ${{ secrets.SYNC_TARGET_PATH }}
       with:
