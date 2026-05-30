@@ -18,7 +18,7 @@ exports.encodeInBase64 = function(stringToEncode)
     }
     catch (error)
     {
-        logger.logError(`Failed to base 64 encode string: ${stringToEncode}`);
+        logger.logError(`Failed to base 64 encode string: ${error.message}`);
         return Promise.reject(error);
     }
 };
