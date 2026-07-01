@@ -1,7 +1,7 @@
 <!-- General Badges -->
 [![Site Status](https://img.shields.io/website?label=Website&down_color=critical&down_message=offline&up_color=success&up_message=online&url=https%3A%2F%2Fjamms.app)](https://jamms.app)
 [![Code of Conduct](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](CODE_OF_CONDUCT.md)
-[![License](https://img.shields.io/github/license/iansantagata/jamms?label=License&color=yellow)](../LICENSE)
+[![License](https://img.shields.io/github/license/iansantagata/jamms?label=License)](../LICENSE)
 <!-- Developmental Badges -->
 [![Continuous Deployment](https://github.com/iansantagata/jamms/actions/workflows/continuous-deployment.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/continuous-deployment.yml)
 [![Code QL Scan](https://github.com/iansantagata/jamms/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/iansantagata/jamms/actions/workflows/codeql-analysis.yml)
