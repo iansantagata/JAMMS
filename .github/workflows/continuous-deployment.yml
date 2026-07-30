@@ -63,6 +63,11 @@ jobs:
               echo "Cannot execute remote install without reference to file: 'package-lock.json'."
               EXIT_CODE=1
           fi
+          if [ ! -L "$NODE_MODULES_PATH/build" ] || [ ! -e "$NODE_MODULES_PATH/build" ] || [ "$CODE_PATH/build" != "$(readlink $NODE_MODULES_PATH/build)" ]; then
+              echo "Expected symbolic link to folder 'build', but the symbolic link file was not found, is broken, or is pointing to the incorrect path."
+              echo "Cannot execute remote install without reference to folder: 'build'."
+              EXIT_CODE=1
+          fi
           exit $EXIT_CODE
 
     - name: Remote Package Install via SSH
