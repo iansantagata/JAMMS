@@ -16,8 +16,8 @@
         "lint:js:fix": "eslint . --fix --ignore-path .gitignore",
         "lint:html": "linthtml \"**/*.html\"",
         "lint:vash": "linthtml \"**/*.vash\"",
-        "preinstall": "grunt clean",
-        "postinstall": "grunt copy",
+        "preinstall": "bash build/runGruntCommand.sh clean",
+        "postinstall": "bash build/runGruntCommand.sh copy",
         "start": "nodemon index.js"
     },
     "dependencies": {
