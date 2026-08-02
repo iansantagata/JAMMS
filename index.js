@@ -82,8 +82,9 @@ app.use(express.static(staticFilesPath))
     .use(express.urlencoded({ extended: true }));
 
 // Setup Templating Views
-app.set("view engine", "vash")
-    .set("views", viewsFilesPath);
+app.set("view engine", "vash");
+app.set("view engine", "hbs");
+app.set("views", viewsFilesPath);
 
 logger.logInfo("Set up application");
 
