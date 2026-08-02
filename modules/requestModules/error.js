@@ -54,7 +54,7 @@ async function getErrorPageData(req, res)
 {
     const isUserLoggedIn = await loginUtils.isUserLoggedIn(req, res);
     const errorPageData = {
-        isLoginError: !isUserLoggedIn
+        isUserLoggedIn: isUserLoggedIn
     };
 
     return errorPageData;
