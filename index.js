@@ -12,6 +12,7 @@ const path = require("path"); // URI and local file paths
 const cors = require("cors"); // Cross-origin resource sharing
 const cookieParser = require("cookie-parser"); // Parsing and storing encrypted cookies
 const helmet = require("helmet"); // HTTP header security
+const hbs = require("hbs"); // Handlebars view templating
 
 console.log("Imported major dependencies");
 
@@ -52,6 +53,7 @@ if (isDevelopmentEnvironment)
 // Setup Page Handling
 const staticFilesPath = path.join(__dirname, "public");
 const viewsFilesPath = path.join(__dirname, "views");
+const partialsFilesPath = path.join(viewsFilesPath, "partials");
 
 // Setup Application
 const cookieSigningKey = environment.getCookieSigningKeySync();
@@ -82,9 +84,10 @@ app.use(express.static(staticFilesPath))
     .use(express.urlencoded({ extended: true }));
 
 // Setup Templating Views
-app.set("view engine", "vash");
 app.set("view engine", "hbs");
 app.set("views", viewsFilesPath);
+
+hbs.registerPartials(partialsFilesPath);
 
 logger.logInfo("Set up application");
 
