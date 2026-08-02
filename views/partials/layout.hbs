@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+
+  <head>
+    <title>JAMMS - Just a Music Maintainer for Spotify</title>
+    <!-- Required meta tags for Bootstrap CSS -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="external/bootstrap.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="external/bootstrap-icons.css">
+    <!-- JQuery JavaScript -->
+    <script src="external/jquery.slim.min.js"></script>
+    <!-- Bootstrap JavaScript -->
+    <script src="external/bootstrap.bundle.min.js"></script>
+    <!-- Helper Functions Used Across the App -->
+    <script src="scripts/helperFunctions.js"></script>
+    <!-- Favicon -->
+    <link rel="icon" href="images/favicon/favicon.ico" type="image/x-icon">
+  </head>
+
+  <body class="d-flex flex-column h-100">
+
+    {{> header isUserLoggedIn=isUserLoggedIn}}
+
+    <main role="main" class="flex-shrink-0">
+      <div class="container text-center">
+        {{> @partial-block}}
+      </div>
+    </main>
+
+    {{> footer }}
+
+  </body>
+
+</html>

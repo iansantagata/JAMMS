@@ -1,0 +1,50 @@
+<header class="card-header p-0 mb-2">
+    <nav class="navbar navbar-expand-md navbar-light">
+        <div class="container">
+
+            <span class="navbar-brand font-weight-bold px-3">JAMMS</span>
+
+            <a class="navbar-toggler" role="button" data-toggle="collapse" data-target="#headerCollapseList">
+                <i class="navbar-toggler-icon"></i>
+            </a>
+
+            <div class="collapse navbar-collapse" id="headerCollapseList">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="bi bi-house-door-fill"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    {{#if isUserLoggedIn}}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown">
+                                <i class="bi bi-music-note-list"></i>
+                                <span>Playlists</span>
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="/createSmartPlaylist">Create Smart Playlist</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/playlists">See All Playlists</a>
+                            </div>
+                        </li>
+                    {{/if}}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/help">
+                            <i class="bi bi-question-circle-fill"></i>
+                            <span>Help</span>
+                        </a>
+                    </li>
+                    {{#if isUserLoggedIn}}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout">
+                                <i class="bi bi-door-closed-fill"></i>
+                                <span>Log Out</span>
+                            </a>
+                        </li>
+                    {{/if}}
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
