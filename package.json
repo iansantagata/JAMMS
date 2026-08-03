@@ -31,8 +31,7 @@
         "helmet": "^4.6.0",
         "jquery": "^3.5.1",
         "nodemailer": "^8.0.10",
-        "querystring": "^0.2.1",
-        "vash": "^0.13.0"
+        "querystring": "^0.2.1"
     },
     "devDependencies": {
         "@linthtml/linthtml": "^0.8.0",
