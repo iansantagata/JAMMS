@@ -1,0 +1,62 @@
+{{#> layout isUserLoggedIn=isUserLoggedIn}}
+
+  <script defer src="scripts/viewPlaylist.js"></script>
+
+  <h2 class="mb-3">Your Playlist</h2>
+
+  {{#if deleted}}
+    <div id="deletedPlaylistAlert" class="alert alert-danger my-3" role="alert">
+      <i class="bi-x-circle-fill mx-2"></i>
+      This playlist has been deleted. The playlist can be restored below if desired.
+    </div>
+  {{/if}}
+
+  <div id="playlist" class="row align-items-center justify-content-around">
+    <div class="col my-5">
+      <img id="imageForPlaylist" class="img-fluid" alt="Playlist Named {{playlistName}}" />
+      <script type="text/javascript">
+        var images = {{ images }};
+        var defaultImagePath = "images/question.png";
+        var playlistImagePath = getImagePath(images, defaultImagePath);
+
+        setImageSourceAttributeById("imageForPlaylist", playlistImagePath);
+      </script>
+    </div>
+
+    <div class="col text-wrap">
+      <h4 class="text-capitalize mb-3">{{playlistName}}</h4>
+      {{#if playlistDescription}}
+        <p class="mb-3">{{ playlistDescription }}</p>
+      {{/if}}
+      <p>Tracks: {{trackCount}}</p>
+      <p>Followers: {{followersCount}}</p>
+      {{#if isPublic}}
+        <p>Public: Yes</p>
+      {{else}}
+        <p>Public: No</p>
+      {{/if}}
+      {{#if isCollaborative}}
+        <p>Collaborative: Yes</p>
+      {{else}}
+        <p>Collaborative: No</p>
+      {{/if}}
+      {{#if deleted}}
+        <p>Deleted: Yes</p>
+      {{/if}}
+    </div>
+  </div>
+
+  <div id="interact" class="row align-items-center justify-content-center mb-5">
+    {{#if deleted}}
+      <div class="col">
+        <a id="restorePlaylistButton" href="/restorePlaylist?playlistId={{playlistId}}" role="button"
+          class="btn btn-info btn-sm">Restore Playlist</a>
+      </div>
+    {{else}}
+      <div class="col">
+        <a id="deletePlaylistButton" href="/deletePlaylist?playlistId={{playlistId}}" role="button"
+          class="btn btn-info btn-sm">Delete Playlist</a>
+      </div>
+    {{/if}}
+  </div>
+{{/layout}}
