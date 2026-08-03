@@ -17,7 +17,7 @@ exports.getFrequentlyAskedQuestionsPage = async function(req, res, next)
         const isUserLoggedIn = await loginUtils.isUserLoggedIn(req, res);
 
         const faqPageData = {
-            isAwaitingLogin: !isUserLoggedIn
+            isUserLoggedIn: isUserLoggedIn
         };
 
         // Render the FAQ page that the user can interact with

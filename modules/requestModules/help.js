@@ -34,7 +34,7 @@ exports.getHelpPage = async function(req, res, next)
         const isUserLoggedIn = await loginUtils.isUserLoggedIn(req, res);
 
         const helpPageData = {
-            isAwaitingLogin: !isUserLoggedIn
+            isUserLoggedIn: isUserLoggedIn
         };
 
         // Set a cookie with a timestamp of when the help page was last loaded
