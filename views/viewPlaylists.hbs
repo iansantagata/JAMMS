@@ -1,0 +1,77 @@
+{{#> layout isUserLoggedIn=isUserLoggedIn}}
+
+  <script src="scripts/viewPlaylists.js"></script>
+
+  <h2 class="mb-3">Your Playlists</h2>
+  <p>You currently have <strong>{{totalNumberOfPlaylists}}</strong> playlists saved in Spotify!</p>
+
+  <div id="playlistsPerPageSelector" class="align-items-center mb-4">
+    <div class="input-group justify-content-center">
+      <div class="dropdown input-group-prepend">
+        <button id="playlistsPerPageDropdown" class="btn btn-outline-info btn-sm dropdown-toggle" type="button"
+          data-toggle="dropdown">Playlists Per Page</button>
+        <div id="playlistsPerPageDropdownOptionsContainer" class="dropdown-menu">
+          <script type="text/javascript">
+            var playlistsPerPageSelected = {{ numberOfPlaylistsPerPage }};
+
+            addPlaylistsPerPageDropdownOptions(playlistsPerPageSelected);
+          </script>
+        </div>
+      </div>
+      <div class="input-group-append">
+        <label class="input-group-text" for="playlistsPerPageDropdown">{{numberOfPlaylistsPerPage}}</label>
+      </div>
+    </div>
+  </div>
+
+  {{#if playlists.length > 0}}
+    <div id="playlists" class="table-responsive">
+      <table class="table table-striped table-sm table-hover small">
+        <thead>
+          <tr>
+            <th scope="col" class="align-middle">Playlist #</th>
+            <th scope="col" class="align-middle">Name</th>
+            <th scope="col" class="align-middle">Owner</th>
+            <th scope="col" class="align-middle">Link</th>
+            <th scope="col" class="align-middle">Image</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          {{#each playlists}}
+            <tr>
+              <th scope="row" class="align-middle">{{((currentPage - 1) * numberOfPlaylistsPerPage) + @index + 1}}</th>
+              <td class="align-middle text-capitalize">{{this.name}}</td>
+              <td class="align-middle">{{this.owner.display_name}}</td>
+              <td class="align-middle">
+                <a id="viewPlaylistLink-{{((currentPage - 1) * numberOfPlaylistsPerPage) + @index + 1}}"
+                  href="/playlist?playlistId={{id}}" role="button" class="btn btn-outline-info btn-sm">
+                  View
+                </a>
+              </td>
+              <td class="align-middle col-2 col-lg-1">
+                <img id="imageForPlaylist-{{((currentPage - 1) * numberOfPlaylistsPerPage) + @index + 1}}"
+                  class="img-fluid" alt="Playlist Named {{this.playlistName}}" />
+                <script type="text/javascript">
+                  var images = {{ this.images }};
+                  var defaultImagePath = "images/question.png";
+                  var playlistImagePath = getImagePath(images, defaultImagePath);
+
+                  setImageSourceAttributeById("viewPlaylistLink-{{((currentPage - 1) * numberOfPlaylistsPerPage) + @index + 1}}", playlistImagePath);
+                </script>
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  {{/if}}
+
+  <nav id="pages" class="my-5">
+    <ul id="pageNavigationContainer" class="pagination justify-content-center">
+      <script type="text/javascript">
+        addPageNavigationButtons({{ currentPage }}, {{ numberOfPlaylistsPerPage }}, {{ numberOfPages }});
+      </script>
+    </ul>
+  </nav>
+{{/layout}}
